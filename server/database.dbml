@@ -1,0 +1,22 @@
+Table user{
+  id integer [primary key]
+  first_name string
+  last_name string
+  rank string 
+  email string 
+  phone string 
+  organization string
+  crew string
+  position string
+  permissions string
+  created_at timestamp
+}
+
+Table Events {
+  id integer [primary key]
+  user_id integer
+  dummy data
+  created_at timestamp
+}
+
+Ref: "user"."id" < "Events"."user_id"
