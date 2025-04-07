@@ -5,7 +5,6 @@ const express = require("express");
 const app = express();
 var PORT = process.env.SERVER_PORT;
 const cors = require("cors");
-const knex = require("knex")(require("../knexfile")["development"]);
 
 if (!PORT) {
 	dotenv.config({ path: path.resolve(__dirname, "../../.env") });
@@ -15,9 +14,11 @@ if (!PORT) {
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (req, res) => {
-	res.send("Hello World!");
-});
+const userRoute = require("./routes/user");
+const eventsRoute = require("./routes/events");
+
+app.use("/user", userRoute);
+app.use("/events", eventsRoute);
 
 const server = app.listen(PORT, () => {
 	console.log(`App listening at http://localhost:${PORT}`);
