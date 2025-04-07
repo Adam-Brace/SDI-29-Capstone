@@ -6,9 +6,13 @@ import RegisterPage from "./Routes/RegisterPage";
 import { AuthProvider } from "./Context/AuthContext";
 import "./styles/index.css"; 
 import "./styles/Form.css";  
+import UserData from "./UserData/UserData"
+
+
 
 export default function App() {
   const [theme, setTheme] = useState("light");
+
 
   
   useEffect(() => {
@@ -31,6 +35,7 @@ export default function App() {
         <Link to="/">Home</Link>
         <Link to="/login">Login</Link>
         <Link to="/register">Register</Link>
+        			<Link to="/profile">Profile Page</Link>
         <button onClick={toggleTheme} style={{ float: "right" }}>
           Switch to {theme === "light" ? "Dark" : "Light"} Mode
         </button>
@@ -41,6 +46,7 @@ export default function App() {
           <Route path="/" element={<div>Hello World</div>} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          		<Route path="/profile" element={<UserData />} />
         </Routes>
       </AuthProvider>
     </div>
