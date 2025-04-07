@@ -16,8 +16,10 @@ app.use(cors());
 app.use(express.json());
 
 const userRoute = require("./routes/user");
+const eventsRoute = require("./routes/events");
 
 app.use("/user", userRoute);
+app.use("/events", eventsRoute);
 
 app.get("/", (req, res) => {
 	res.send("Hello World!");
