@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../Context/AuthContext';
+import '../styles/Form.css';
 
 function LoginForm() {
   const { login } = useAuth();
@@ -28,23 +29,33 @@ function LoginForm() {
   return (
     <form onSubmit={handleSubmit}>
       {error && <div className="alert">{error}</div>}
-      <input 
-        type="text" 
-        name="username" 
-        placeholder="Username" 
-        value={form.username} 
-        onChange={handleChange} 
-        required 
-      />
-      <input 
-        type="password" 
-        name="password" 
-        placeholder="Password" 
-        value={form.password} 
-        onChange={handleChange} 
-        required 
-      />
-      <button type="submit">Login</button>
+      <div className="form-group">
+        <label className="form-label" htmlFor="username">Username</label>
+        <input 
+          type="text" 
+          name="username" 
+          id="username"
+          className="form-control"
+          placeholder="Enter your username" 
+          value={form.username} 
+          onChange={handleChange} 
+          required 
+        />
+      </div>
+      <div className="form-group">
+        <label className="form-label" htmlFor="password">Password</label>
+        <input 
+          type="password" 
+          name="password"
+          id="password" 
+          className="form-control"
+          placeholder="Enter your password" 
+          value={form.password} 
+          onChange={handleChange} 
+          required 
+        />
+      </div>
+      <button type="submit" className="btn-primary">Login</button>
     </form>
   );
 }
