@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './Edit.css';
 
-export default function handleEdit({ id, currentData }) {
+export default function Edit({ id, currentData }) {
   const [status, setStatus] = useState(null);
   const [formData, setFormData] = useState({
     first_name: '',
@@ -20,7 +20,6 @@ export default function handleEdit({ id, currentData }) {
     setFormData({
       ...formData,
       [name]: value
-      // [name]: name === 'approved_rejected' ? event.target.checked : value,
     });
   };
 
