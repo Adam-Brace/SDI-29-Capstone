@@ -15,6 +15,10 @@ if (!PORT) {
 app.use(cors());
 app.use(express.json());
 
+const userRoute = require("./routes/user");
+
+app.use("/user", userRoute);
+
 app.get("/", (req, res) => {
 	res.send("Hello World!");
 });
@@ -24,3 +28,5 @@ const server = app.listen(PORT, () => {
 });
 
 module.exports = { app, server, PORT };
+
+// /user
