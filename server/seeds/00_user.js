@@ -2,7 +2,7 @@ exports.seed = async function (knex) {
 	await knex("users").del();
 	await knex("users").insert([
 		{
-			Password: ";lasfgkuasbf;kjsbdvoszscakjsvcjkasvc;kJBljh",
+			password: ";lasfgkuasbf;kjsbdvoszscakjsvcjkasvc;kJBljh",
 			first_name: "John",
 			last_name: "Jacob",
 			rank: "Sgt",
@@ -14,7 +14,7 @@ exports.seed = async function (knex) {
 			permissions: "user",
 		},
 		{
-			Password: ";lasfgkuasbf;kjsbdvoszscakjsvcjkasvc;kJBljh",
+			password: ";lasfgkuasbf;kjsbdvoszscakjsvcjkasvc;kJBljh",
 			first_name: "Patrick",
 			last_name: "Johnson",
 			rank: "Cpt",
@@ -26,7 +26,7 @@ exports.seed = async function (knex) {
 			permissions: "admin",
 		},
 		{
-			Password: ";lasfgkuasbf;kjsbdvoszscakjsvcjkasvc;kJBljh",
+			password: ";lasfgkuasbf;kjsbdvoszscakjsvcjkasvc;kJBljh",
 			first_name: "Frank",
 			last_name: "Smith",
 			rank: "SMSgt",
@@ -38,7 +38,7 @@ exports.seed = async function (knex) {
 			permissions: "user",
 		},
 		{
-			Password: ";lasfgkuasbf;kjsbdvoszscakjsvcjkasvc;kJBljh",
+			password: ";lasfgkuasbf;kjsbdvoszscakjsvcjkasvc;kJBljh",
 			first_name: "Sarah",
 			last_name: "Young",
 			rank: "TSgt",

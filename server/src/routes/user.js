@@ -1,14 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const argon2 = require("argon2");
-const knex = require("knex")(require("../knexfile")["development"]);
+const knex = require("knex")(require("../../knexfile")["development"]);
 
 router.get("/", (req, res) => {
-	knex("user")
+	knex("users")
 		.select(
 			"id",
-			"firstName",
-			"lastName",
+			"first_name",
+			"last_name",
 			"rank",
 			"email",
 			"phone",
@@ -22,11 +22,11 @@ router.get("/", (req, res) => {
 });
 
 router.get("/:id", (req, res) => {
-	knex("user")
+	knex("users")
 		.select(
 			"id",
-			"firstName",
-			"lastName",
+			"first_name",
+			"last_name",
 			"rank",
 			"email",
 			"phone",
@@ -54,7 +54,7 @@ router.post("/", async (req, res) => {
 		permissions,
 	} = req.body;
 	const hashedPassword = await argon2.hash(password);
-	knex("user")
+	knex("users")
 		.insert({
 			password: hashedPassword,
 			first_name,
@@ -101,7 +101,7 @@ router.patch("/:id", async (req, res) => {
 		updateData.password = await argon2.hash(password);
 	}
 
-	knex("user")
+	knex("users")
 		.where("id", req.params.id)
 		.update(updateData)
 		.then(() => res.status(200).json({ message: "User updated" }))
@@ -109,7 +109,7 @@ router.patch("/:id", async (req, res) => {
 });
 
 router.delete("/:id", (req, res) => {
-	knex("user")
+	knex("users")
 		.where("id", req.params.id)
 		.del()
 		.then(() => res.status(200).json({ message: "User deleted" }))
@@ -119,7 +119,7 @@ router.delete("/:id", (req, res) => {
 router.post("/login", async (req, res) => {
 	try {
 		const { email, password } = req.body;
-		const user = await knex("user").where({ email }).first();
+		const user = await knex("users").where({ email }).first();
 
 		if (!user) {
 			return res.status(404).json({ error: "User not found" });
