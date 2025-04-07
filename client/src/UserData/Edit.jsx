@@ -24,7 +24,7 @@ export default function Edit({ id, currentData }) {
   };
 
   const handleEdit = () => {
-    fetch(`http://localhost:8081/user/${id}`, {
+    fetch(`http://localhost:3001/user/${id}`, {
       method: 'PATCH',
       mode: 'cors',
       headers: {
@@ -36,7 +36,9 @@ export default function Edit({ id, currentData }) {
 
       .then((res) => res.json())
       .then((data) => {
-        if (data.success) {
+        console.log("server response:", data)
+        console.log(data.message)
+        if (data.message) {
           window.location.reload();
           alert('Profile updated!')
           setStatus('Profile updated')
@@ -50,7 +52,6 @@ export default function Edit({ id, currentData }) {
   }
 
   const openModal = () => {
-    // Populate formData with current values when the modal is opened
     setFormData({
       first_name: currentData.first_name || '',
       last_name: currentData.last_name || '',
@@ -133,11 +134,11 @@ export default function Edit({ id, currentData }) {
               </div>
 
               <div>
-                <label htmlFor="org">Organization:</label>
+                <label htmlFor="organization">Organization:</label>
                 <input
                   type="text"
-                  id="org"
-                  name="org"
+                  id="organization"
+                  name="organization"
                   value={formData.organization}
                   onChange={handleInputChange}
                 />

@@ -3,10 +3,11 @@ import React from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import LoginPage from "./Routes/LoginPage";
 import RegisterPage from "./Routes/RegisterPage";
-import { AuthProvider } from "./Context/AuthContext";	
+import { AuthProvider } from "./Context/AuthContext";
+import UserData from "./UserData/UserData"
 
 
-	
+
 
 export default function App() {
 	return (
@@ -15,12 +16,14 @@ export default function App() {
 				<Link to="/">Home Page</Link>
 				<Link to="/login">Login Page</Link>
 				<Link to="/register">Register Page</Link>
+				<Link to="/profile">Profile Page</Link>
 			</nav>
 		<AuthProvider>
 			<Routes>
 				<Route path="/" element={<div>Hello World</div>} />
 				<Route path="/login" element={<LoginPage />} />
 				<Route path="/register" element={<RegisterPage />} />
+				<Route path="/profile" element={<UserData />} />
 			</Routes>
 		</AuthProvider>
 	</div>
