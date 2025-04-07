@@ -58,7 +58,7 @@ function ResponsiveAppBar() {
 							textDecoration: "none",
 						}}
 					>
-						LOGO
+						Fall In
 					</Typography>
 
 					<Box
@@ -95,11 +95,11 @@ function ResponsiveAppBar() {
 						>
 							{pages.map((page) => (
 								<MenuItem
-									key={page}
+									key={page.name}
 									onClick={handleCloseNavMenu}
 								>
 									<Typography sx={{ textAlign: "center" }}>
-										{page}
+										{page.name}
 									</Typography>
 								</MenuItem>
 							))}
@@ -121,7 +121,7 @@ function ResponsiveAppBar() {
 							textDecoration: "none",
 						}}
 					>
-						LOGO
+						Fall In
 					</Typography>
 					<Box
 						sx={{
@@ -131,11 +131,11 @@ function ResponsiveAppBar() {
 					>
 						{pages.map((page) => (
 							<Button
-								key={page}
+								key={page.name}
 								onClick={handleCloseNavMenu}
 								sx={{ my: 2, color: "white", display: "block" }}
 							>
-								{page}
+								{page.name}
 							</Button>
 						))}
 					</Box>
