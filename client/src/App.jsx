@@ -39,11 +39,10 @@ export default function App() {
 
 			<AuthProvider>
 				<Routes>
-					<Route path="/" element={<div>Hello World</div>} />
+					<Route path="/" element={<Schedule />} />
 					<Route path="/login" element={<LoginPage />} />
 					<Route path="/register" element={<RegisterPage />} />
 					<Route path="/profile" element={<UserData />} />
-					<Route path="/schedule" element={<Schedule />} />
 				</Routes>
 			</AuthProvider>
 		</div>
