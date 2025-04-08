@@ -8,9 +8,15 @@ import "./styles/Form.css";
 import UserData from "./UserData/UserData";
 import Schedule from "./Components/Schedule";
 import HomePage from "./Routes/HomePage";
+import UserBadge from "./Components/UserBadge";
 
 
 export default function App() {
+	const sampleUser = {
+		rank: "Capt",
+		firstName: "Jane",
+		lastName: "Doe",
+	  };
 	const [theme, setTheme] = useState("light");
 
 	useEffect(() => {
@@ -30,6 +36,7 @@ export default function App() {
 	return (
 		<div className={`container ${theme}-theme`}>
 			<nav>
+			<UserBadge user={sampleUser} />
 				<Link to="/">Home</Link>
 				<Link to="/login">Login</Link>
 				<Link to="/register">Register</Link>
