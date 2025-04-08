@@ -30,4 +30,15 @@ describe("Edit component", () => {
     expect(screen.getByLabelText(/Crew:/)).toHaveValue("Alpha");
     expect(screen.getByLabelText(/Position:/)).toHaveValue("CSS");
   });
+
+  test("closeModal function when cancel button is clicked", () => {
+    //Testing closeModal has to include that the modal was opened to be closed.
+    render(<Edit id={1} currentData={dummyCurrentData} />);
+    //Opened
+    fireEvent.click(screen.getByText(/Edit/));
+    expect(screen.getByText(/Edit Item/)).toBeInTheDocument();
+    //Closed by clicking cancel
+    fireEvent.click(screen.getByText(/Cancel/));
+    expect(screen.queryByText(/Edit Item/)).not.toBeInTheDocument();
+  });
 });
