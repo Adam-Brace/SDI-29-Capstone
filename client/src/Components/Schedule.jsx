@@ -4,6 +4,7 @@ import { Scheduler } from "@bitnoi.se/react-scheduler";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import { useEffect } from "react";
+import "../styles/HomePage.css";
 
 dayjs.extend(isBetween);
 
@@ -68,7 +69,7 @@ export default function Schedule() {
 	}));
 
 	return (
-		<section>
+		<section style={{ position: "relative", height: "100vh" }}>
 			<Scheduler
 				data={filteredSchedulerData}
 				isLoading={isLoading}

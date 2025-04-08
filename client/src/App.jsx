@@ -7,6 +7,8 @@ import "./styles/index.css";
 import "./styles/Form.css";
 import UserData from "./UserData/UserData";
 import Schedule from "./Components/Schedule";
+import HomePage from "./Routes/HomePage";
+
 
 export default function App() {
 	const [theme, setTheme] = useState("light");
@@ -39,7 +41,7 @@ export default function App() {
 
 			<AuthProvider>
 				<Routes>
-					<Route path="/" element={<Schedule />} />
+					<Route path="/" element={<HomePage/>} />
 					<Route path="/login" element={<LoginPage />} />
 					<Route path="/register" element={<RegisterPage />} />
 					<Route path="/profile" element={<UserData />} />
