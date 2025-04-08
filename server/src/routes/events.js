@@ -4,7 +4,6 @@ const knex = require("knex")(require("../../knexfile")["development"]);
 
 router.get("/", async (req, res) => {
 	try {
-		// Fetch users and their events using a JOIN query
 		const usersWithEvents = await knex("users")
 			.leftJoin("events", "users.id", "events.user_id")
 			.select(
@@ -91,5 +90,8 @@ router.get("/:id", (req, res) => {
 		})
 		.catch((err) => res.status(500).json({ error: err.message }));
 });
+
+router.get("/raw", (req, res) => {});
+router.get("/raw/:id", (req, res) => {});
 
 module.exports = router;

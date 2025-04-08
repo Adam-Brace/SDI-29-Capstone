@@ -1,83 +1,77 @@
-
-
-body, html {
-  font-family: Arial, sans-serif;
-  background-color: #f0f0f0;
-  margin: 0;
-  padding: 0;
+body,
+html {
+	font-family: Arial, sans-serif;
+	background-color: #f0f0f0;
+	margin: 0;
+	padding: 0;
 }
 
 .root-body {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.container {
-  max-width: 800px;
-  margin: 20px auto;
-  padding: 20px;
-  background: #fff;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
 }
 
 /* Navigation styles */
 nav {
-  margin-bottom: 20px;
+	margin-bottom: 20px;
 }
 
 nav a {
-  margin-right: 15px;
-  text-decoration: none;
-  color: #333;
+	margin-right: 15px;
+	text-decoration: none;
+	color: #333;
 }
 
 nav a:hover {
-  text-decoration: underline;
+	text-decoration: underline;
 }
 
-
-input, textarea, button {
-  margin-bottom: 10px;
-  box-sizing: border-box;
+input,
+textarea,
+button {
+	margin-bottom: 10px;
+	box-sizing: border-box;
 }
 
 button {
-  cursor: pointer;
+	cursor: pointer;
 }
 
 /* Light Theme */
 .light-theme {
-  --bg-color: #ffffff;
-  --text-color: #000000;
-  --link-color: #333333;
-  --nav-bg: #f0f0f0;
+	--bg-color: #ffffff;
+	--text-color: #000000;
+	--link-color: #333333;
+	--nav-bg: #f0f0f0;
 }
 
 /* Dark Theme */
 .dark-theme {
-  --bg-color: #121212;
-  --text-color: #ffffff;
-  --link-color: #dddddd;
-  --nav-bg: #1f1f1f;
+	--bg-color: #121212;
+	--text-color: #ffffff;
+	--link-color: #dddddd;
+	--nav-bg: #1f1f1f;
 }
 
 /* Use CSS variables across the app */
-body.light-theme, body.dark-theme {
-  background-color: var(--bg-color);
-  color: var(--text-color);
+body.light-theme,
+body.dark-theme {
+	background-color: var(--bg-color);
+	color: var(--text-color);
 }
 
 nav {
-  background-color: var(--nav-bg);
-  padding: 10px;
+	background-color: var(--nav-bg);
+	padding: 10px;
 }
 
 nav a {
-  color: var(--link-color);
+	color: var(--link-color);
 }
 
 .container {
-  background-color: var(--bg-color);
-  color: var(--text-color);
+	background-color: var(--bg-color);
+	color: var(--text-color);
+	width: 100vw;
 }
-

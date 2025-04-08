@@ -6,8 +6,10 @@ import { AuthProvider } from "./Context/AuthContext";
 import "./styles/index.css";
 import "./styles/Form.css";
 import UserData from "./UserData/UserData";
+import Schedule from "./Components/Schedule";
+import HomePage from "./Routes/HomePage";
 import UserBadge from "./Components/UserBadge";
-// import Schedule from "./Components/Schedule";
+
 
 export default function App() {
 	const sampleUser = {
@@ -46,7 +48,7 @@ export default function App() {
 
 			<AuthProvider>
 				<Routes>
-					{/* <Route path="/" element={<Schedule />} /> */}
+					<Route path="/" element={<HomePage/>} />
 					<Route path="/login" element={<LoginPage />} />
 					<Route path="/register" element={<RegisterPage />} />
 					<Route path="/profile" element={<UserData />} />
