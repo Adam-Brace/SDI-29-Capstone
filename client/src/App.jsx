@@ -3,9 +3,10 @@ import React, { useEffect, useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import LoginPage from "./Routes/LoginPage";
 import RegisterPage from "./Routes/RegisterPage";
+import Admin from "./Routes/Admin.jsx";
 import { AuthProvider } from "./Context/AuthContext";
-import "./styles/index.css"; 
-import "./styles/Form.css";  
+import "./styles/index.css";
+import "./styles/Form.css";
 import UserData from "./UserData/UserData"
 
 
@@ -14,11 +15,11 @@ export default function App() {
   const [theme, setTheme] = useState("light");
 
 
-  
+
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme") || "light";
     setTheme(storedTheme);
-    document.body.className = storedTheme + "-theme"; 
+    document.body.className = storedTheme + "-theme";
   }, []);
 
   // Toggle between light and dark themes
@@ -46,7 +47,8 @@ export default function App() {
           <Route path="/" element={<div>Hello World</div>} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          		<Route path="/profile" element={<UserData />} />
+          <Route path="/profile" element={<UserData />} />
+          <Route path="/admin" element={<Admin />} />
         </Routes>
       </AuthProvider>
     </div>
