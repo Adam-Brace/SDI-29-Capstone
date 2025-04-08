@@ -6,6 +6,7 @@ import Admin from "./Routes/Admin.jsx";
 import { AuthProvider } from "./Context/AuthContext";
 import "./styles/index.css";
 import "./styles/Form.css";
+
 import UserData from "./UserData/UserData";
 import Schedule from "./Components/Schedule";
 import HomePage from "./Routes/HomePage";
@@ -19,13 +20,11 @@ export default function App() {
 		document.body.className = storedTheme + "-theme";
 	}, []);
 
-	// Toggle between light and dark themes
-	const toggleTheme = () => {
-		const newTheme = theme === "light" ? "dark" : "light";
-		setTheme(newTheme);
-		localStorage.setItem("theme", newTheme);
-		document.body.className = newTheme + "-theme";
-	};
+	useEffect(() => {
+		const storedTheme = localStorage.getItem("theme") || "light";
+		setTheme(storedTheme);
+		document.body.className = storedTheme + "-theme";
+	}, []);
 
 	return (
 		<div className={`container ${theme}-theme`}>
@@ -45,6 +44,7 @@ export default function App() {
 					<Route path="/login" element={<LoginPage />} />
 					<Route path="/register" element={<RegisterPage />} />
 					<Route path="/profile" element={<UserData />} />
+					<Route path="/admin" element={<Admin />} />
 				</Routes>
 			</AuthProvider>
 		</div>
