@@ -17,6 +17,14 @@ export default function Schedule() {
 			setIsLoading(true);
 			try {
 				const response = await fetch("http://localhost:3001/events/");
+				if (!response.ok) {
+					console.error(
+						"Server error:",
+						response.status,
+						response.statusText
+					);
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
 				const data = await response.json();
 				setSchedulerData(data);
 			} catch (error) {
@@ -27,8 +35,7 @@ export default function Schedule() {
 		};
 
 		fetchData();
-	}),
-		[setIsLoading];
+	}, []);
 
 	const [range, setRange] = useState({
 		startDate: new Date(),
