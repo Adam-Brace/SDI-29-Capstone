@@ -7,7 +7,11 @@ exports.up = function (knex) {
 		table.increments("id").primary();
 		table.integer("user_id");
 		table.foreign("user_id").references("users.id").onDelete("CASCADE");
-		// Dummy data needed
+		table.datetime("start_date").notNullable();
+		table.datetime("end_date").notNullable();
+		table.string("title").notNullable();
+		table.string("description");
+		table.string("color");
 		table.timestamps(true, true);
 	});
 };
