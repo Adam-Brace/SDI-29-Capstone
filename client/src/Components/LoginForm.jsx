@@ -7,7 +7,7 @@ import '../styles/Form.css';
 function LoginForm() {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ username: '', password: '' });
+  const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
 
   const handleChange = (e) => {
@@ -16,49 +16,69 @@ function LoginForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    loginUser(form)
-      .then((response) => {
-        login(response.data.user);
-        navigate('/');
+
+    fetch('http://localhost:3001/users/login', {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(form)
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.user) {
+          
+          login(data.user);
+          navigate('/');
+        } else {
+          setError(data.error || 'Login failed.');
+        }
       })
       .catch((err) => {
-        setError(err.response?.data?.error || 'Login failed.');
+        console.error('Login error:', err);
+        setError('Login failed.');
       });
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <div className="auth-container">
+      <h2>Login</h2>
       {error && <div className="alert">{error}</div>}
-      <div className="form-group">
-        <label className="form-label" htmlFor="username">Username</label>
-        <input 
-          type="text" 
-          name="username" 
-          id="username"
-          className="form-control"
-          placeholder="Enter your username" 
-          value={form.username} 
-          onChange={handleChange} 
-          required 
-        />
-      </div>
-      <div className="form-group">
-        <label className="form-label" htmlFor="password">Password</label>
-        <input 
-          type="password" 
-          name="password"
-          id="password" 
-          className="form-control"
-          placeholder="Enter your password" 
-          value={form.password} 
-          onChange={handleChange} 
-          required 
-        />
-      </div>
-      <button type="submit" className="btn-primary">Login</button>
-    </form>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label className="form-label" htmlFor="email">Email</label>
+          <input 
+            type="email" 
+            name="email" 
+            id="email"
+            className="form-control"
+            placeholder="Enter your email" 
+            value={form.email} 
+            onChange={handleChange} 
+            required 
+          />
+        </div>
+        <div className="form-group">
+          <label className="form-label" htmlFor="password">Password</label>
+          <input 
+            type="password" 
+            name="password" 
+            id="password"
+            className="form-control"
+            placeholder="Enter your password" 
+            value={form.password} 
+            onChange={handleChange} 
+            required 
+          />
+        </div>
+        <button type="submit" className="btn-primary">Login</button>
+      </form>
+    </div>
   );
 }
 
 export default LoginForm;
+
 
