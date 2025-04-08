@@ -1,1 +1,81 @@
+.content-container {
+    padding: 20px;
+    margin-top: 20px;
+}
+.schedule-container {
+    margin-top: 20px;
+}
 
+.schedule-container section {
+    position: relative;
+    height: 100vh;
+}
+
+.details-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: auto;
+    width: 300px;
+    z-index: 1000;
+}
+
+.selected-item-container {
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+}
+.selected-item-container h3 {
+    margin-top: 0;
+    color: #333;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+.event-details {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.event-details p {
+    margin: 5px 0;
+    color: #444;
+}
+.event-details strong {
+    color: #333;
+    margin-right: 10px;
+}
+
+
+.event-actions {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+.event-actions button {
+    margin-top: 5px;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+}
+.edit-button {
+    flex: 1;
+}
+.delete-button {
+    flex: 1;
+}
+
+.MuiDialog-paper {
+    min-width: 400px;
+}
+.MuiDialogContent-root {
+    padding-top: 16px !important;
+}
+.MuiTextField-root {
+    margin-bottom: 16px;
+}

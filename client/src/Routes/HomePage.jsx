@@ -6,7 +6,6 @@ function HomePage() {
   return (
     <div>
         <div>
-            <h1>Schedule</h1>
             <div className='schedule-container'>
                 <Schedule />
             </div>
