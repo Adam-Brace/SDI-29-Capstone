@@ -1,0 +1,80 @@
+.admin-container {
+  display: flex;
+}
+
+.admin-sidebar {
+  width: 300px;
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-right: 1px solid #ddd;
+}
+
+.admin-sidebar h2 {
+  margin-bottom: 20px;
+}
+
+.admin-user-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.admin-user-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.admin-dropdown-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.admin-dropdown-btn:hover {
+  background-color: #0056b3;
+}
+
+.admin-edit-panel {
+  flex-grow: 1;
+  padding: 20px;
+  background-color: #f0f0f0;
+}
+
+.admin-close-btn {
+  margin-top: 20px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.admin-close-btn:hover {
+  background-color: #c82333;
+}
+
+.admin-search-bar {
+  width: 300px;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.admin-user-card p {
+  margin: 0;
+  inline-size: 245px;
+  overflow-wrap: break-word;
+}

@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import LoginPage from "./Routes/LoginPage";
 import RegisterPage from "./Routes/RegisterPage";
+import Admin from "./Routes/Admin.jsx";
 import { AuthProvider } from "./Context/AuthContext";
 import "./styles/index.css";
 import "./styles/Form.css";
 import UserData from "./UserData/UserData";
 import Schedule from "./Components/Schedule";
 import HomePage from "./Routes/HomePage";
-
 
 export default function App() {
 	const [theme, setTheme] = useState("light");
@@ -41,7 +41,7 @@ export default function App() {
 
 			<AuthProvider>
 				<Routes>
-					<Route path="/" element={<HomePage/>} />
+					<Route path="/" element={<div>Hello World</div>} />
 					<Route path="/login" element={<LoginPage />} />
 					<Route path="/register" element={<RegisterPage />} />
 					<Route path="/profile" element={<UserData />} />
