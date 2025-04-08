@@ -69,7 +69,7 @@ export default function Schedule() {
 	}));
 
 	return (
-		<section className="schedule-container">
+		<section style={{ position: "relative", height: "100vh" }}>
 			<Scheduler
 				data={filteredSchedulerData}
 				isLoading={isLoading}
