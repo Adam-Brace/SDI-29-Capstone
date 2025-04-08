@@ -1,8 +1,8 @@
-import "@bitnoi.se/react-scheduler/dist/style.css";
+// import "@bitnoi.se/react-scheduler/dist/style.css";
 import React, { useCallback, useState } from "react";
-import { Scheduler } from "@bitnoi.se/react-scheduler";
-import dayjs from "dayjs";
-import isBetween from "dayjs/plugin/isBetween";
+// import { Scheduler } from "@bitnoi.se/react-scheduler";
+// import dayjs from "dayjs";
+// import isBetween from "dayjs/plugin/isBetween";
 import { useEffect } from "react";
 
 dayjs.extend(isBetween);
