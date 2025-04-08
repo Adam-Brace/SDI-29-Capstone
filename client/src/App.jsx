@@ -17,7 +17,7 @@ export default function App() {
 		rank: "Capt",
 		firstName: "Jane",
 		lastName: "Doe",
-	  };
+	};
 	const [theme, setTheme] = useState("light");
 
 	useEffect(() => {
@@ -32,10 +32,17 @@ export default function App() {
 		document.body.className = storedTheme + "-theme";
 	}, []);
 
+	const toggleTheme = () => {
+		const newTheme = theme === "light" ? "dark" : "light";
+		setTheme(newTheme);
+		localStorage.setItem("theme", newTheme);
+		document.body.className = newTheme + "-theme";
+	};
+
 	return (
 		<div className={`container ${theme}-theme`}>
 			<nav>
-			<UserBadge user={sampleUser} />
+				<UserBadge user={sampleUser} />
 				<Link to="/">Home</Link>
 				<Link to="/login">Login</Link>
 				<Link to="/register">Register</Link>
@@ -47,7 +54,7 @@ export default function App() {
 
 			<AuthProvider>
 				<Routes>
-					<Route path="/" element={<div>Hello World</div>} />
+					<Route path="/" element={<HomePage />} />
 					<Route path="/login" element={<LoginPage />} />
 					<Route path="/register" element={<RegisterPage />} />
 					<Route path="/profile" element={<UserData />} />

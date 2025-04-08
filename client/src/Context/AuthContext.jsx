@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
 
 	useEffect(() => {
 		const userData = Cookies.get("user");
-		if (userData) {
+		if (userData != "undefined") {
 			setUser(JSON.parse(userData));
 		}
 	}, []);

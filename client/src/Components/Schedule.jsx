@@ -1,8 +1,8 @@
-// import "@bitnoi.se/react-scheduler/dist/style.css";
+import "@bitnoi.se/react-scheduler/dist/style.css";
 import React, { useCallback, useState } from "react";
-// import { Scheduler } from "@bitnoi.se/react-scheduler";
-// import dayjs from "dayjs";
-// import isBetween from "dayjs/plugin/isBetween";
+import { Scheduler } from "@bitnoi.se/react-scheduler";
+import dayjs from "dayjs";
+import isBetween from "dayjs/plugin/isBetween";
 import { useEffect } from "react";
 import "../styles/HomePage.css";
 import Button from "@mui/material/Button";
@@ -26,7 +26,7 @@ export default function Schedule() {
 		title: "",
 		startDate: "",
 		endDate: "",
-		description: ""
+		description: "",
 	});
 
 	useEffect(() => {
@@ -65,42 +65,47 @@ export default function Schedule() {
 
 	const handleDeleteEvent = async () => {
 		if (!selectedTile || !selectedTile.id) return;
-		
+
 		try {
-			const response = await fetch(`http://localhost:3001/events/${selectedTile.id}`, {
-				method: 'DELETE',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			});
-			
+			const response = await fetch(
+				`http://localhost:3001/events/${selectedTile.id}`,
+				{
+					method: "DELETE",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			);
+
 			if (response.ok) {
 				// Refresh the events after deletion
 				fetchEvents();
 				// Clear the selected tile
 				setSelectedTile(null);
 			} else {
-				console.error('Failed to delete event:', response.statusText);
+				console.error("Failed to delete event:", response.statusText);
 			}
 		} catch (error) {
-			console.error('Error deleting event:', error);
+			console.error("Error deleting event:", error);
 		}
 	};
 
 	const handleOpenDialog = () => {
 		if (!selectedTile) return;
-		
+
 		// Format dates for the form
-		const startDate = dayjs(selectedTile.startDate).format('YYYY-MM-DDTHH:mm');
-		const endDate = dayjs(selectedTile.endDate).format('YYYY-MM-DDTHH:mm');
-		
+		const startDate = dayjs(selectedTile.startDate).format(
+			"YYYY-MM-DDTHH:mm"
+		);
+		const endDate = dayjs(selectedTile.endDate).format("YYYY-MM-DDTHH:mm");
+
 		setEditForm({
 			title: selectedTile.title || "",
 			startDate: startDate,
 			endDate: endDate,
-			description: selectedTile.description || ""
+			description: selectedTile.description || "",
 		});
-		
+
 		setOpenDialog(true);
 	};
 
@@ -112,28 +117,31 @@ export default function Schedule() {
 		const { name, value } = e.target;
 		setEditForm({
 			...editForm,
-			[name]: value
+			[name]: value,
 		});
 	};
 
 	const handleUpdateEvent = async () => {
 		if (!selectedTile || !selectedTile.id) return;
-		
+
 		try {
-			const response = await fetch(`http://localhost:3001/events/${selectedTile.id}`, {
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					...selectedTile,
-					title: editForm.title,
-					startDate: editForm.startDate,
-					endDate: editForm.endDate,
-					description: editForm.description
-				})
-			});
-			
+			const response = await fetch(
+				`http://localhost:3001/events/${selectedTile.id}`,
+				{
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						...selectedTile,
+						title: editForm.title,
+						startDate: editForm.startDate,
+						endDate: editForm.endDate,
+						description: editForm.description,
+					}),
+				}
+			);
+
 			if (response.ok) {
 				// Refresh the events after update
 				fetchEvents();
@@ -145,13 +153,13 @@ export default function Schedule() {
 					title: editForm.title,
 					startDate: editForm.startDate,
 					endDate: editForm.endDate,
-					description: editForm.description
+					description: editForm.description,
 				});
 			} else {
-				console.error('Failed to update event:', response.statusText);
+				console.error("Failed to update event:", response.statusText);
 			}
 		} catch (error) {
-			console.error('Error updating event:', error);
+			console.error("Error updating event:", error);
 		}
 	};
 
@@ -183,8 +191,14 @@ export default function Schedule() {
 					data={filteredSchedulerData}
 					isLoading={isLoading}
 					onRangeChange={handleRangeChange}
-					onTileClick={(clickedResource) => {setSelectedTile(clickedResource); console.log(clickedResource)}}
-					onItemClick={(item) => { setSelectedTile(item); console.log(item); }}
+					onTileClick={(clickedResource) => {
+						setSelectedTile(clickedResource);
+						console.log(clickedResource);
+					}}
+					onItemClick={(item) => {
+						setSelectedTile(item);
+						console.log(item);
+					}}
 					onFilterData={() => {
 						// Some filtering logic...
 						setFilterButtonState(1);
@@ -205,37 +219,49 @@ export default function Schedule() {
 					<div className="selected-item-container">
 						<h3>Selected Event Details</h3>
 						<div className="event-details">
-							<p><strong>Title:</strong> {selectedTile.title}</p>
-							<p><strong>Start Date:</strong> {dayjs(selectedTile.startDate).format('MMMM D, YYYY h:mm A')}</p>
-							<p><strong>End Date:</strong> {dayjs(selectedTile.endDate).format('MMMM D, YYYY h:mm A')}</p>
-							{selectedTile.description && <p><strong>Description:</strong> {selectedTile.description}</p>}
+							<p>
+								<strong>Title:</strong> {selectedTile.title}
+							</p>
+							<p>
+								<strong>Start Date:</strong>{" "}
+								{dayjs(selectedTile.startDate).format(
+									"MMMM D, YYYY h:mm A"
+								)}
+							</p>
+							<p>
+								<strong>End Date:</strong>{" "}
+								{dayjs(selectedTile.endDate).format(
+									"MMMM D, YYYY h:mm A"
+								)}
+							</p>
+							{selectedTile.description && (
+								<p>
+									<strong>Description:</strong>{" "}
+									{selectedTile.description}
+								</p>
+							)}
 						</div>
 						<div className="event-actions">
 							<div className="button-group">
-								<Button 
-									variant="contained" 
-									color="primary" 
+								<Button
+									variant="contained"
+									color="primary"
 									startIcon={<EditIcon />}
 									onClick={handleOpenDialog}
 									className="edit-button"
-								>
-									
-								</Button>
-								<Button 
-									variant="contained" 
-									color="error" 
+								></Button>
+								<Button
+									variant="contained"
+									color="error"
 									startIcon={<DeleteIcon />}
 									onClick={handleDeleteEvent}
 									className="delete-button"
-								>
-									
-								</Button>
+								></Button>
 							</div>
 						</div>
 					</div>
 				)}
 			</div>
-
 
 			{/* <Dialog open={openDialog} onClose={handleCloseDialog}>
 				<DialogTitle>Edit</DialogTitle>
