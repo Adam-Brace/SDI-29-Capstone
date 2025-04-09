@@ -3,13 +3,14 @@ import Edit from './Edit'
 import './UserData.css';
 import { useAuth } from '../Context/AuthContext';
 
-export default function UserData() {
 
+export default function UserData() {
   const [userdata, setUserdata] = useState([]);
   const {user} = useAuth()
 
 
   useEffect(() => {
+    if (!user || !user.id) return;
     fetch(`http://localhost:3001/user/${user.id}`)
       .then(res=>res.json())
       .then(data => {
@@ -18,7 +19,7 @@ export default function UserData() {
         setUserdata(data)
   })
       .catch(err=>console.error(err))
-  }, [])
+  }, [user])
 
 
 
