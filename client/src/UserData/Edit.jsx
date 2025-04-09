@@ -2,7 +2,6 @@ import { useState } from 'react';
 import './Edit.css';
 
 export default function Edit({ id, currentData }) {
-  const [status, setStatus] = useState(null);
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -39,15 +38,14 @@ export default function Edit({ id, currentData }) {
         console.log("server response:", data)
         console.log(data.message)
         if (data.message) {
-          window.location.reload();
           alert('Profile updated!')
-          setStatus('Profile updated')
+          window.location.reload();
         } else {
-          setStatus('Failed to update')
+          alert('Failed to update')
         }
       })
       .catch((error) => {
-        setStatus('Failed to update')
+        alert('Failed to update')
       })
   }
 

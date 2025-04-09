@@ -1,21 +1,25 @@
 import { useEffect, useState } from 'react';
 import Edit from './Edit'
 import './UserData.css';
+import { useAuth } from '../Context/AuthContext';
+
 
 export default function UserData() {
-
   const [userdata, setUserdata] = useState([]);
+  const {user} = useAuth()
 
 
   useEffect(() => {
-    fetch(`http://localhost:3001/user/1`)
+    if (!user || !user.id) return;
+    fetch(`http://localhost:3001/user/${user.id}`)
       .then(res=>res.json())
       .then(data => {
         // console.log('fetched data:', data)
+        // console.log(user.id)
         setUserdata(data)
   })
       .catch(err=>console.error(err))
-  }, [])
+  }, [user])
 
 
 
