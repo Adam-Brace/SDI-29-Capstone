@@ -41,6 +41,10 @@ router.get("/:id", (req, res) => {
 });
 
 router.post("/", async (req, res) => {
+	const user = await knex("users").where(req.body.email).first();
+	if (user) {
+		return res.status(409).json({ error: "User already exists" });
+	}
 	const {
 		password,
 		first_name,
