@@ -17,7 +17,7 @@ function LoginForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    fetch('http://localhost:3001/users/login', {
+    fetch('http://localhost:3001/user/login', {
       method: 'POST',
       mode: 'cors',
       headers: {
