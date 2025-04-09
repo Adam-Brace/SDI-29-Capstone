@@ -25,7 +25,7 @@ export default function UserData() {
 
   return (
     <>
-    <h1>{userdata.length > 0 ? `${userdata[0].rank} ${userdata[0].last_name}'s Profile` : "Loading..."}</h1>
+    <h1 className="user-name">{userdata.length > 0 ? `${userdata[0].rank} ${userdata[0].last_name}'s Profile` : "Loading..."}</h1>
 
     <div className="user-data-box">
         <ul className="user-list">
