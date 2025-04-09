@@ -17,7 +17,7 @@ function LoginForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    fetch('http://localhost:3001/users/login', {
+    fetch('http://localhost:3001/user/login', {
       method: 'POST',
       mode: 'cors',
       headers: {
@@ -29,7 +29,7 @@ function LoginForm() {
       .then((res) => res.json())
       .then((data) => {
         if (data.user) {
-          
+
           login(data.user);
           navigate('/');
         } else {
@@ -49,28 +49,28 @@ function LoginForm() {
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label className="form-label" htmlFor="email">Email</label>
-          <input 
-            type="email" 
-            name="email" 
+          <input
+            type="email"
+            name="email"
             id="email"
             className="form-control"
-            placeholder="Enter your email" 
-            value={form.email} 
-            onChange={handleChange} 
-            required 
+            placeholder="Enter your email"
+            value={form.email}
+            onChange={handleChange}
+            required
           />
         </div>
         <div className="form-group">
           <label className="form-label" htmlFor="password">Password</label>
-          <input 
-            type="password" 
-            name="password" 
+          <input
+            type="password"
+            name="password"
             id="password"
             className="form-control"
-            placeholder="Enter your password" 
-            value={form.password} 
-            onChange={handleChange} 
-            required 
+            placeholder="Enter your password"
+            value={form.password}
+            onChange={handleChange}
+            required
           />
         </div>
         <button type="submit" className="btn-primary">Login</button>
