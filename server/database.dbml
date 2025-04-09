@@ -1,9 +1,10 @@
 Table user{
-  id integer [primary key]
+  id uuid [primary key]
+  password hash
   first_name string
   last_name string
   rank string 
-  email string 
+  email string [unique, not null]
   phone string 
   organization string
   crew string
@@ -12,11 +13,34 @@ Table user{
   created_at timestamp
 }
 
-Table Events {
-  id integer [primary key]
-  user_id integer
+Table events {
+  id uuid [primary key]
+  user_id integer [ref: > user.id]
   dummy data
   created_at timestamp
 }
 
-Ref: "user"."id" < "Events"."user_id"
+Table chats {
+  id uuid [primary key]
+  is_group    boolean [default: false]
+  name        string
+  created_at timestamp
+}
+
+Table chat_members {
+  id uuid [primary key]
+  chat_id    uuid [ref: > chats.id]
+  user_id    uuid [ref: > user.id]
+  joined_at  timestamp
+  created_at timestamp
+}
+
+Table messages {
+  id uuid [primary key]
+  chat_id     uuid [ref: > chats.id]
+  sender_id   uuid [ref: > user.id]
+  content     text
+  created_at  timestamp 
+  edited_at   timestamp
+  deleted     boolean [default: false]
+}

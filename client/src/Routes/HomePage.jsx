@@ -2,12 +2,12 @@ import React from 'react';
 import Schedule from '../Components/Schedule';
 import '../styles/HomePage.css';
 
-function HomePage() {
+function HomePage({ theme }) {
   return (
     <div>
         <div>
             <div className='schedule-container'>
-                <Schedule />
+                <Schedule theme={theme} />
             </div>
         </div>
     </div>
