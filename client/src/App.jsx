@@ -11,6 +11,7 @@ import UserData from "./UserData/UserData";
 import Schedule from "./Components/Schedule";
 import HomePage from "./Routes/HomePage";
 import UserBadge from "./Components/UserBadge";
+import NotFound from "./Components/NotFound";
 
 export default function App() {
 	const sampleUser = {
@@ -59,6 +60,7 @@ export default function App() {
 					<Route path="/register" element={<RegisterPage />} />
 					<Route path="/profile" element={<UserData />} />
 					<Route path="/admin" element={<Admin />} />
+					<Route path="*" element={<NotFound />} />
 				</Routes>
 			</AuthProvider>
 		</div>
