@@ -17,6 +17,10 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
 
 dayjs.extend(isBetween);
 
@@ -34,7 +38,15 @@ export default function Schedule({ theme }) {
 		description: ""
 	});
 
-	const themeMode = 'light'
+	
+	const descriptionTypes = [
+		{ value: "Work", color: "#4caf50" }, // Green
+		{ value: "Leave", color: "#2196f3" }, // Blue
+		{ value: "Appointment", color: "#f44336" }, // Red
+		{ value: "Training", color: "#ff9800" }, // Orange
+		{ value: "TDY", color: "#9c27b0" }, // Purple
+		{ value: "Deployment", color: "#00bcd4" } // Cyan
+	];
 
 	useEffect(() => {
 		fetchEvents();
@@ -53,12 +65,27 @@ export default function Schedule({ theme }) {
 				throw new Error(`HTTP error! status: ${response.status}`);
 			}
 			const data = await response.json();
-			setSchedulerData(data);
+
+			const dataWithColors = data.map(person => ({
+				...person,
+				data: person.data.map(event => ({
+					...event,
+					bgColor: getEventColor(event.description)
+				}))
+			}));
+			setSchedulerData(dataWithColors);
 		} catch (error) {
 			console.error("Error fetching data:", error);
 		} finally {
 			setIsLoading(false);
 		}
+	};
+
+	const getEventColor = (description) => {
+		if (!description) return "#000000"; 
+		
+		const type = descriptionTypes.find(type => type.value === description);
+		return type ? type.color : "#000000"; 
 	};
 
 	const [range, setRange] = useState({
@@ -130,12 +157,11 @@ export default function Schedule({ theme }) {
 		
 		try {
 			const response = await fetch(`http://localhost:3001/events/${selectedTile.id}`, {
-				method: 'PUT',
+				method: 'PATCH',
 				headers: {
 					'Content-Type': 'application/json',
 				},
 				body: JSON.stringify({
-					...selectedTile,
 					title: editForm.title,
 					startDate: editForm.startDate,
 					endDate: editForm.endDate,
@@ -192,16 +218,14 @@ export default function Schedule({ theme }) {
 
 	return (
 		<div>
-			{console.log("Current theme passed to Scheduler:", theme)}
 			<section className="schedule-container">
 				<Scheduler
 					key={theme}
-					toggleTheme={theme}
 					data={filteredSchedulerData}
 					isLoading={isLoading}
 					onRangeChange={handleRangeChange}
 					onTileClick={(clickedResource) => {handleOpenDetailsDialog(clickedResource); console.log(clickedResource)}}
-					onItemClick={(item) => { handleOpenDetailsDialog(item); console.log(item); }}
+					onItemClick={(item) => { console.log(item); }}
 					onFilterData={() => {
 						setFilterButtonState(1);
 					}}
@@ -212,12 +236,10 @@ export default function Schedule({ theme }) {
 						zoom: 1,
 						filterButtonState,
 						showThemeToggle: false,
-						defaultTheme: theme === 'dark' ? 'dark' : 'light',
-
+						defaultTheme: theme === 'dark' ? 'dark' : 'light'
 					}}
 				/>
 			</section>
-
 
 			<Dialog 
 				open={openDialog} 
@@ -246,19 +268,14 @@ export default function Schedule({ theme }) {
 							<Divider sx={{ my: 2 }} />
 							<Box sx={{ mb: 2 }}>
 								<Typography variant="subtitle1" color="text.secondary">
+									<strong>Description:</strong> {selectedTile.description || "Not specified"}
+								</Typography>
+								<Typography variant="subtitle1" color="text.secondary">
 									<strong>Start:</strong> {dayjs(selectedTile.startDate).format('MMMM D, YYYY h:mm A')}
 								</Typography>
 								<Typography variant="subtitle1" color="text.secondary">
 									<strong>End:</strong> {dayjs(selectedTile.endDate).format('MMMM D, YYYY h:mm A')}
 								</Typography>
-								{selectedTile.description && (
-									<Typography variant="body1" sx={{ mt: 2 }}>
-										<strong>Description:</strong>
-										<Box sx={{ mt: 1 }}>
-											{selectedTile.description}
-										</Box>
-									</Typography>
-								)}
 							</Box>
 						</Box>
 					)}
@@ -280,13 +297,12 @@ export default function Schedule({ theme }) {
 					>
 						Delete
 					</Button>
-
 				</DialogActions>
 			</Dialog>
 
-
-			{/* <Dialog open={openEditDialog} onClose={handleCloseEditDialog}>
-				<DialogTitle>Edit Event</DialogTitle>
+			{/* Edit Dialog */}
+			<Dialog open={openEditDialog} onClose={handleCloseEditDialog}>
+				<DialogTitle>Edit</DialogTitle>
 				<DialogContent>
 					<TextField
 						autoFocus
@@ -298,6 +314,54 @@ export default function Schedule({ theme }) {
 						value={editForm.title}
 						onChange={handleInputChange}
 					/>
+					<FormControl fullWidth margin="dense">
+						<InputLabel id="description-label">Description</InputLabel>
+						<Select
+							labelId="description-label"
+							name="description"
+							value={editForm.description}
+							label="Description"
+							onChange={handleInputChange}
+						>
+							<MenuItem value="">
+								<em>None</em>
+							</MenuItem>
+							{descriptionTypes.map((type) => (
+								<MenuItem key={type.value} value={type.value}>
+									<Box sx={{ display: 'flex', alignItems: 'center' }}>
+										<Box 
+											sx={{ 
+												width: 16, 
+												height: 16, 
+												bgcolor: type.color, 
+												borderRadius: '50%', 
+												mr: 1 
+											}} 
+										/>
+										{type.value}
+									</Box>
+								</MenuItem>
+							))}
+						</Select>
+					</FormControl>
+					{editForm.description === "custom" && (
+						<TextField
+							margin="dense"
+							name="customDescription"
+							label="Custom Description"
+							type="text"
+							fullWidth
+							multiline
+							rows={4}
+							value={editForm.customDescription || ""}
+							onChange={(e) => {
+								setEditForm({
+									...editForm,
+									description: e.target.value
+								});
+							}}
+						/>
+					)}
 					<TextField
 						margin="dense"
 						name="startDate"
@@ -322,23 +386,12 @@ export default function Schedule({ theme }) {
 							shrink: true,
 						}}
 					/>
-					<TextField
-						margin="dense"
-						name="description"
-						label="Description"
-						type="text"
-						fullWidth
-						multiline
-						rows={4}
-						value={editForm.description}
-						onChange={handleInputChange}
-					/>
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={handleCloseEditDialog}>Cancel</Button>
 					<Button onClick={handleUpdateEvent} color="primary">Save</Button>
 				</DialogActions>
-			</Dialog> */}
+			</Dialog>
 		</div>
 	);
 }
