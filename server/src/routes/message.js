@@ -1,21 +1,13 @@
 const express = require("express");
+const knex = require("knex")(require("../../knexfile")["development"]);
 const router = express.Router();
 
-// GET all messages (for example, from DB)
-router.get("/", async (req, res) => {
-	// Simulated DB response
-	const fakeMessages = [
-		{ id: 1, text: "Hello" },
-		{ id: 2, text: "Hi!" },
-	];
-	res.json(fakeMessages);
-});
-
-// POST a new message
-router.post("/", async (req, res) => {
-	const { text } = req.body;
-	// Here you'd save to DB
-	res.status(201).json({ success: true, text });
+router.get("/:user_id", async (req, res) => {
+	knex("chat_members")
+		.select()
+		.where("user_id", req.params.user_id)
+		.join("messages", "chat_members.chat_id", "messages.chat_id")
+		.then((messages) => res.status(200).json(messages));
 });
 
 module.exports = router;
