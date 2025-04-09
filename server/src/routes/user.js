@@ -41,10 +41,6 @@ router.get("/:id", (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-	const user = await knex("users").where(req.body.email).first();
-	if (user) {
-		return res.status(409).json({ error: "User already exists" });
-	}
 	const {
 		password,
 		first_name,
@@ -57,6 +53,10 @@ router.post("/", async (req, res) => {
 		position,
 		permissions,
 	} = req.body;
+	const user = await knex("users").where("email", email).first();
+	if (user) {
+		return res.status(409).json({ error: "User already exists" });
+	}
 	const hashedPassword = await argon2.hash(password);
 	knex("users")
 		.insert({
