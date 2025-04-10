@@ -7,7 +7,7 @@ import { AuthProvider, useAuth } from "./Context/AuthContext";
 import "./styles/index.css";
 import "./styles/Form.css";
 import UserData from "./UserData/UserData";
-import Schedule from "./Components/Schedule";
+import Schedule from "./Components/Schedule/Schedule";
 import HomePage from "./Routes/HomePage";
 import UserBadge from "./Components/UserBadge";
 import NotFound from "./Components/NotFound";
