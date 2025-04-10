@@ -82,7 +82,8 @@ export default function App() {
 
 			<AuthProvider>
 				<Routes>
-					<Route path="/" element={<HomePage theme={theme} />} />
+					<Route path="/" element={<LoginPage />}/>
+					<Route path="/home" element={<HomePage theme={theme} />} />
 					<Route path="/login" element={<LoginPage />} />
 					<Route path="/register" element={<RegisterPage />} />
 					<Route path="/profile" element={<UserData />} />
