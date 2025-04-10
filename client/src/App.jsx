@@ -11,13 +11,13 @@ import Schedule from "./Components/Schedule";
 import HomePage from "./Routes/HomePage";
 import UserBadge from "./Components/UserBadge";
 import NotFound from "./Components/NotFound";
-import Switch from '@mui/material/Switch';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Box from '@mui/material/Box';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
-import LightModeIcon from '@mui/icons-material/LightMode';
+import Switch from "@mui/material/Switch";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Box from "@mui/material/Box";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
 import Logo from "./Components/Logo.jsx";
-
+import Chat from "./Components/Chat.jsx";
 
 export default function App() {
 	const sampleUser = {
@@ -47,26 +47,38 @@ export default function App() {
 					<Logo theme={theme} />
 				</div>
 				<div className="navbar-center">
-					<Link to="/" className="nav-link">Home</Link>
-					<Link to="/login" className="nav-link">Login</Link>
-					<Link to="/register" className="nav-link">Register</Link>
-					<Link to="/profile" className="nav-link">Profile</Link>
+					<Link to="/" className="nav-link">
+						Home
+					</Link>
+					<Link to="/login" className="nav-link">
+						Login
+					</Link>
+					<Link to="/register" className="nav-link">
+						Register
+					</Link>
+					<Link to="/profile" className="nav-link">
+						Profile
+					</Link>
 				</div>
 				<div className="navbar-right">
-					<Box sx={{ 
-						display: 'flex', 
-						alignItems: 'center',
-						gap: 2
-					}}>
-						<Box sx={{ 
-							display: 'flex', 
-							alignItems: 'center'
-						}}>
+					<Box
+						sx={{
+							display: "flex",
+							alignItems: "center",
+							gap: 2,
+						}}
+					>
+						<Box
+							sx={{
+								display: "flex",
+								alignItems: "center",
+							}}
+						>
 							<LightModeIcon sx={{ mr: 1 }} />
 							<FormControlLabel
 								control={
 									<Switch
-										checked={theme === 'dark'}
+										checked={theme === "dark"}
 										onChange={toggleTheme}
 										color="primary"
 									/>
@@ -75,7 +87,7 @@ export default function App() {
 							/>
 							<DarkModeIcon sx={{ ml: -2 }} />
 						</Box>
-						<UserBadge user={sampleUser} />
+						<UserBadge wh={"40px"} />
 					</Box>
 				</div>
 			</nav>

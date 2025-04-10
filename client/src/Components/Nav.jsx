@@ -1,188 +1,53 @@
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
-import React from "react";
-
-const pages = [
-	{ name: "Home", route: "/home" },
-	{ name: "Admin", route: "/admin" },
-];
-const settings = [
-	{ name: "Logout", route: "" },
-	{ name: "Profile", route: "profile" },
-];
-
-function ResponsiveAppBar() {
-	const [anchorElNav, setAnchorElNav] = React.useState(null);
-	const [anchorElUser, setAnchorElUser] = React.useState(null);
-
-	const handleOpenNavMenu = (event) => {
-		setAnchorElNav(event.currentTarget);
-	};
-	const handleOpenUserMenu = (event) => {
-		setAnchorElUser(event.currentTarget);
-	};
-
-	const handleCloseNavMenu = () => {
-		setAnchorElNav(null);
-	};
-
-	const handleCloseUserMenu = () => {
-		setAnchorElUser(null);
-	};
-
+export default function Nav() {
 	return (
-		<AppBar position="static">
-			<Container maxWidth="xl">
-				<Toolbar disableGutters>
-					<Typography
-						variant="h6"
-						noWrap
-						component="a"
-						href="#app-bar-with-responsive-menu"
-						sx={{
-							mr: 2,
-							display: { xs: "none", md: "flex" },
-							fontFamily: "monospace",
-							fontWeight: 700,
-							letterSpacing: ".3rem",
-							color: "inherit",
-							textDecoration: "none",
-						}}
-					>
-						Fall In
-					</Typography>
-
+		<nav className="navbar">
+			<div className="navbar-left">
+				<Logo theme={theme} />
+			</div>
+			<div className="navbar-center">
+				<Link to="/" className="nav-link">
+					Home
+				</Link>
+				<Link to="/login" className="nav-link">
+					Login
+				</Link>
+				<Link to="/register" className="nav-link">
+					Register
+				</Link>
+				<Link to="/profile" className="nav-link">
+					Profile
+				</Link>
+			</div>
+			<div className="navbar-right">
+				<Box
+					sx={{
+						display: "flex",
+						alignItems: "center",
+						gap: 2,
+					}}
+				>
 					<Box
 						sx={{
-							flexGrow: 1,
-							display: { xs: "flex", md: "none" },
+							display: "flex",
+							alignItems: "center",
 						}}
 					>
-						<IconButton
-							size="large"
-							aria-label="account of current user"
-							aria-controls="menu-appbar"
-							aria-haspopup="true"
-							onClick={handleOpenNavMenu}
-							color="inherit"
-						>
-							<MenuIcon />
-						</IconButton>
-						<Menu
-							id="menu-appbar"
-							anchorEl={anchorElNav}
-							anchorOrigin={{
-								vertical: "bottom",
-								horizontal: "left",
-							}}
-							keepMounted
-							transformOrigin={{
-								vertical: "top",
-								horizontal: "left",
-							}}
-							open={Boolean(anchorElNav)}
-							onClose={handleCloseNavMenu}
-							sx={{ display: { xs: "block", md: "none" } }}
-						>
-							{pages.map((page) => (
-								<MenuItem
-									key={page.name}
-									onClick={handleCloseNavMenu}
-								>
-									<Typography sx={{ textAlign: "center" }}>
-										{page.name}
-									</Typography>
-								</MenuItem>
-							))}
-						</Menu>
-					</Box>
-					<Typography
-						variant="h5"
-						noWrap
-						component="a"
-						href="#app-bar-with-responsive-menu"
-						sx={{
-							mr: 2,
-							display: { xs: "flex", md: "none" },
-							flexGrow: 1,
-							fontFamily: "monospace",
-							fontWeight: 700,
-							letterSpacing: ".3rem",
-							color: "inherit",
-							textDecoration: "none",
-						}}
-					>
-						Fall In
-					</Typography>
-					<Box
-						sx={{
-							flexGrow: 1,
-							display: { xs: "none", md: "flex" },
-						}}
-					>
-						{pages.map((page) => (
-							<Button
-								key={page.name}
-								onClick={handleCloseNavMenu}
-								sx={{ my: 2, color: "white", display: "block" }}
-							>
-								{page.name}
-							</Button>
-						))}
-					</Box>
-					<Box sx={{ flexGrow: 0 }}>
-						<Tooltip title="Open settings">
-							<IconButton
-								onClick={handleOpenUserMenu}
-								sx={{ p: 0 }}
-							>
-								<Avatar
-									alt="Remy Sharp"
-									src="/static/images/avatar/2.jpg"
+						<LightModeIcon sx={{ mr: 1 }} />
+						<FormControlLabel
+							control={
+								<Switch
+									checked={theme === "dark"}
+									onChange={toggleTheme}
+									color="primary"
 								/>
-							</IconButton>
-						</Tooltip>
-						<Menu
-							sx={{ mt: "45px" }}
-							id="menu-appbar"
-							anchorEl={anchorElUser}
-							anchorOrigin={{
-								vertical: "top",
-								horizontal: "right",
-							}}
-							keepMounted
-							transformOrigin={{
-								vertical: "top",
-								horizontal: "right",
-							}}
-							open={Boolean(anchorElUser)}
-							onClose={handleCloseUserMenu}
-						>
-							{settings.map((setting) => (
-								<MenuItem
-									key={setting}
-									onClick={handleCloseUserMenu}
-								>
-									<Typography sx={{ textAlign: "center" }}>
-										{setting}
-									</Typography>
-								</MenuItem>
-							))}
-						</Menu>
+							}
+							label=""
+						/>
+						<DarkModeIcon sx={{ ml: -2 }} />
 					</Box>
-				</Toolbar>
-			</Container>
-		</AppBar>
+					<UserBadge user={sampleUser} />
+				</Box>
+			</div>
+		</nav>
 	);
 }
-export default ResponsiveAppBar;
