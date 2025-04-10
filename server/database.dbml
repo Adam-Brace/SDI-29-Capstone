@@ -1,4 +1,4 @@
-Table user{
+Table users{
   id uuid [primary key]
   password hash
   first_name string
@@ -15,8 +15,14 @@ Table user{
 
 Table events {
   id uuid [primary key]
-  user_id integer [ref: > user.id]
-  dummy data
+  user_id integer [ref: > users.id]
+  chat_id integer [ref:> chats.id]
+  start_date date
+  end_data date
+  title string 
+  description string
+  color string
+  status string [default: "pending"]
   created_at timestamp
 }
 
@@ -30,17 +36,14 @@ Table chats {
 Table chat_members {
   id uuid [primary key]
   chat_id    uuid [ref: > chats.id]
-  user_id    uuid [ref: > user.id]
-  joined_at  timestamp
+  user_id    uuid [ref: > users.id]
   created_at timestamp
 }
 
 Table messages {
   id uuid [primary key]
   chat_id     uuid [ref: > chats.id]
-  sender_id   uuid [ref: > user.id]
+  sender_id   uuid [ref: > users.id]
   content     text
   created_at  timestamp 
-  edited_at   timestamp
-  deleted     boolean [default: false]
 }
