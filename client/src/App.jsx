@@ -3,6 +3,7 @@ import { Routes, Route, Link } from "react-router-dom";
 import LoginPage from "./Routes/LoginPage";
 import RegisterPage from "./Routes/RegisterPage";
 import Admin from "./Routes/Admin.jsx";
+import MyRequests from "./Routes/MyRequests.jsx";
 import { AuthProvider } from "./Context/AuthContext";
 import "./styles/index.css";
 import "./styles/Form.css";
@@ -51,15 +52,17 @@ export default function App() {
 					<Link to="/login" className="nav-link">Login</Link>
 					<Link to="/register" className="nav-link">Register</Link>
 					<Link to="/profile" className="nav-link">Profile</Link>
+					<Link to="/admin" className="nav-link">Admin</Link>
+					<Link to="/MyRequests" className="nav-link">My Requests</Link>
 				</div>
 				<div className="navbar-right">
-					<Box sx={{ 
-						display: 'flex', 
+					<Box sx={{
+						display: 'flex',
 						alignItems: 'center',
 						gap: 2
 					}}>
-						<Box sx={{ 
-							display: 'flex', 
+						<Box sx={{
+							display: 'flex',
 							alignItems: 'center'
 						}}>
 							<LightModeIcon sx={{ mr: 1 }} />
@@ -87,6 +90,7 @@ export default function App() {
 					<Route path="/register" element={<RegisterPage />} />
 					<Route path="/profile" element={<UserData />} />
 					<Route path="/admin" element={<Admin />} />
+					<Route path="/MyRequests" element={<MyRequests />} />
 					<Route path="*" element={<NotFound />} />
 				</Routes>
 			</AuthProvider>
