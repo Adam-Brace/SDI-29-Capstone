@@ -33,6 +33,7 @@ function RegisterForm() {
 			.then((res) => res.json())
 			.then((data) => {
 				if (data.message === "User created") {
+					alert('Account Creation Successful!')
 					login(data.user);
 					navigate("/");
 				} else {

@@ -3,7 +3,7 @@ import { Routes, Route, Link } from "react-router-dom";
 import LoginPage from "./Routes/LoginPage";
 import RegisterPage from "./Routes/RegisterPage";
 import Admin from "./Routes/Admin.jsx";
-import { AuthProvider } from "./Context/AuthContext";
+import { AuthProvider, useAuth } from "./Context/AuthContext";
 import "./styles/index.css";
 import "./styles/Form.css";
 import UserData from "./UserData/UserData";
@@ -19,7 +19,12 @@ import LightModeIcon from '@mui/icons-material/LightMode';
 import Logo from "./Components/Logo.jsx";
 
 
+
 export default function App() {
+
+	const {logout} = useAuth()
+	const {user} = useAuth()
+
 	const sampleUser = {
 		rank: "Capt",
 		firstName: "Jane",
@@ -53,13 +58,13 @@ export default function App() {
 					<Link to="/profile" className="nav-link">Profile</Link>
 				</div>
 				<div className="navbar-right">
-					<Box sx={{ 
-						display: 'flex', 
+					<Box sx={{
+						display: 'flex',
 						alignItems: 'center',
 						gap: 2
 					}}>
-						<Box sx={{ 
-							display: 'flex', 
+						<Box sx={{
+							display: 'flex',
 							alignItems: 'center'
 						}}>
 							<LightModeIcon sx={{ mr: 1 }} />
@@ -75,12 +80,11 @@ export default function App() {
 							/>
 							<DarkModeIcon sx={{ ml: -2 }} />
 						</Box>
-						<UserBadge user={sampleUser} />
+						<UserBadge/>
 					</Box>
+					<button onClick={logout}>Log Out</button>
 				</div>
 			</nav>
-
-			<AuthProvider>
 				<Routes>
 					<Route path="/" element={<HomePage theme={theme} />} />
 					<Route path="/login" element={<LoginPage />} />
@@ -89,7 +93,6 @@ export default function App() {
 					<Route path="/admin" element={<Admin />} />
 					<Route path="*" element={<NotFound />} />
 				</Routes>
-			</AuthProvider>
 		</div>
 	);
 }
