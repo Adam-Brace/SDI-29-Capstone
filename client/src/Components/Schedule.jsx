@@ -8,6 +8,7 @@ import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import CloseIcon from "@mui/icons-material/Close";
+import AddIcon from "@mui/icons-material/Add";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -29,8 +30,16 @@ export default function Schedule({ theme }) {
 	const [SchedulerData, setSchedulerData] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const [selectedTile, setSelectedTile] = useState(null);
+	const [selectedUser, setSelectedUser] = useState(null);
 	const [openDialog, setOpenDialog] = useState(false);
 	const [openEditDialog, setOpenEditDialog] = useState(false);
+	const [openUsersDialog, setOpenUsersDialog] = useState(false);
+	const [createForm, setCreateForm] = useState({
+		title: "",
+		startDate: "",
+		endDate: "",
+		description: ""
+	});
 	const [editForm, setEditForm] = useState({
 		title: "",
 		startDate: "",
@@ -38,7 +47,7 @@ export default function Schedule({ theme }) {
 		description: ""
 	});
 
-	
+	// DESCRIPTION TYPES AND COLORS
 	const descriptionTypes = [
 		{ value: "Work", color: "#4caf50" }, // Green
 		{ value: "Leave", color: "#2196f3" }, // Blue
@@ -52,6 +61,7 @@ export default function Schedule({ theme }) {
 		fetchEvents();
 	}, []);
 
+	// FETCHES EVENTS FROM SERVER
 	const fetchEvents = async () => {
 		setIsLoading(true);
 		try {
@@ -66,6 +76,7 @@ export default function Schedule({ theme }) {
 			}
 			const data = await response.json();
 
+			//ADDS COLOR TO EVENTS BASED ON DESCRIPTION
 			const dataWithColors = data.map(person => ({
 				...person,
 				data: person.data.map(event => ({
@@ -81,6 +92,7 @@ export default function Schedule({ theme }) {
 		}
 	};
 
+	// SETS DEFAULT COLOR FOR EVENTS TO BLACK
 	const getEventColor = (description) => {
 		if (!description) return "#000000"; 
 		
@@ -97,6 +109,7 @@ export default function Schedule({ theme }) {
 		setRange(range);
 	}, []);
 
+	//DELETE EVENT
 	const handleDeleteEvent = async () => {
 		if (!selectedTile || !selectedTile.id) return;
 		
@@ -116,13 +129,14 @@ export default function Schedule({ theme }) {
 				// Close the details dialog
 				setOpenDialog(false);
 			} else {
-				console.error('Failed to delete event:', response.statusText);
+				console.error('Failed to delete:', response.statusText);
 			}
 		} catch (error) {
-			console.error('Error deleting event:', error);
+			console.error('Error deleting:', error);
 		}
 	};
 
+	//EDIT EVENT DETAILS
 	const handleOpenEditDialog = () => {
 		if (!selectedTile) return;
 		
@@ -152,6 +166,15 @@ export default function Schedule({ theme }) {
 		});
 	};
 
+	const handleCreateInputChange = (e) => {
+		const { name, value } = e.target;
+		setCreateForm({
+			...createForm,
+			[name]: value
+		});
+	};
+
+	//UPDATES EVENT
 	const handleUpdateEvent = async () => {
 		if (!selectedTile || !selectedTile.id) return;
 		
@@ -183,10 +206,50 @@ export default function Schedule({ theme }) {
 					description: editForm.description
 				});
 			} else {
-				console.error('Failed to update event:', response.statusText);
+				console.error('Failed to update:', response.statusText);
 			}
 		} catch (error) {
-			console.error('Error updating event:', error);
+			console.error('Error updating:', error);
+		}
+	};
+
+	//CREATES NEW EVENT
+	const handleCreateEvent = async () => {
+		if (!selectedUser) return;
+		
+		try {
+			const response = await fetch("http://localhost:3001/events/", {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					user_id: selectedUser.id,
+					title: createForm.title,
+					startDate: createForm.startDate,
+					endDate: createForm.endDate,
+					description: createForm.description,
+					bgColor: getEventColor(createForm.description)
+				})
+			});
+			
+			if (response.ok) {
+				// Refresh the events after creation
+				fetchEvents();
+				// Reset the create form
+				setCreateForm({
+					title: "",
+					startDate: "",
+					endDate: "",
+					description: ""
+				});
+				// Close the create dialog
+				setOpenUsersDialog(false);
+			} else {
+				console.error('Failed to create:', response.statusText);
+			}
+		} catch (error) {
+			console.error('Error creating:', error);
 		}
 	};
 
@@ -197,6 +260,28 @@ export default function Schedule({ theme }) {
 
 	const handleCloseDetailsDialog = () => {
 		setOpenDialog(false);
+	};
+
+	const handleOpenUsersDialog = (user) => {
+		setSelectedUser(user);
+		
+		// Set default dates to current date/time
+		const now = dayjs();
+		const oneHourLater = now.add(1, 'hour');
+		
+		setCreateForm({
+			title: "",
+			startDate: now.format('YYYY-MM-DDTHH:mm'),
+			endDate: oneHourLater.format('YYYY-MM-DDTHH:mm'),
+			description: ""
+		});
+		
+		setOpenUsersDialog(true);
+	};
+
+	const handleCloseUsersDialog = () => {
+		setOpenUsersDialog(false);
+		setSelectedUser(null);
 	};
 
 	const filteredSchedulerData = SchedulerData.map((person) => ({
@@ -225,18 +310,14 @@ export default function Schedule({ theme }) {
 					isLoading={isLoading}
 					onRangeChange={handleRangeChange}
 					onTileClick={(clickedResource) => {handleOpenDetailsDialog(clickedResource); console.log(clickedResource)}}
-					onItemClick={(item) => { console.log(item); }}
-					onFilterData={() => {
-						setFilterButtonState(1);
-					}}
-					onClearFilterData={() => {
-						setFilterButtonState(0);
-					}}
+					onItemClick={(item) => { handleOpenUsersDialog(item); console.log(item); }}
+
 					config={{
 						zoom: 1,
-						filterButtonState,
+						filterButtonState: -1,
 						showThemeToggle: false,
-						defaultTheme: theme === 'dark' ? 'dark' : 'light'
+						defaultTheme: theme === 'dark' ? 'dark' : 'light',
+						showTooltip: false
 					}}
 				/>
 			</section>
@@ -390,6 +471,102 @@ export default function Schedule({ theme }) {
 				<DialogActions>
 					<Button onClick={handleCloseEditDialog}>Cancel</Button>
 					<Button onClick={handleUpdateEvent} color="primary">Save</Button>
+				</DialogActions>
+			</Dialog>
+
+			{/* User Event Creation Dialog */}
+			<Dialog open={openUsersDialog} onClose={handleCloseUsersDialog}>
+				<DialogTitle>Add Event for {selectedUser?.name || 'User'}</DialogTitle>
+				<DialogContent>
+					<TextField
+						autoFocus
+						margin="dense"
+						name="title"
+						label="Title"
+						type="text"
+						fullWidth
+						value={createForm.title}
+						onChange={handleCreateInputChange}
+					/>
+					<FormControl fullWidth margin="dense">
+						<InputLabel id="create-description-label">Description</InputLabel>
+						<Select
+							labelId="create-description-label"
+							name="description"
+							value={createForm.description}
+							label="Description"
+							onChange={handleCreateInputChange}
+						>
+							<MenuItem value="">
+								<em>None</em>
+							</MenuItem>
+							{descriptionTypes.map((type) => (
+								<MenuItem key={type.value} value={type.value}>
+									<Box sx={{ display: 'flex', alignItems: 'center' }}>
+										<Box 
+											sx={{ 
+												width: 16, 
+												height: 16, 
+												bgcolor: type.color, 
+												borderRadius: '50%', 
+												mr: 1 
+											}} 
+										/>
+										{type.value}
+									</Box>
+								</MenuItem>
+							))}
+							<MenuItem value="custom">
+								<em>Custom...</em>
+							</MenuItem>
+						</Select>
+					</FormControl>
+					{createForm.description === "custom" && (
+						<TextField
+							margin="dense"
+							name="customDescription"
+							label="Custom Description"
+							type="text"
+							fullWidth
+							multiline
+							rows={4}
+							value={createForm.customDescription || ""}
+							onChange={(e) => {
+								setCreateForm({
+									...createForm,
+									description: e.target.value
+								});
+							}}
+						/>
+					)}
+					<TextField
+						margin="dense"
+						name="startDate"
+						label="Start Date & Time"
+						type="datetime-local"
+						fullWidth
+						value={createForm.startDate}
+						onChange={handleCreateInputChange}
+						InputLabelProps={{
+							shrink: true,
+						}}
+					/>
+					<TextField
+						margin="dense"
+						name="endDate"
+						label="End Date & Time"
+						type="datetime-local"
+						fullWidth
+						value={createForm.endDate}
+						onChange={handleCreateInputChange}
+						InputLabelProps={{
+							shrink: true,
+						}}
+					/>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleCloseUsersDialog}>Cancel</Button>
+					<Button onClick={handleCreateEvent} color="primary">Create</Button>
 				</DialogActions>
 			</Dialog>
 		</div>
