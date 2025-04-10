@@ -1,3 +1,10 @@
+
+:root {
+	--navy: #101d32;
+	--white: #ffffff;
+	--teal: #00d4ff;
+  }
+
 body,
 html {
 	font-family: Arial, sans-serif;
@@ -13,18 +20,46 @@ html {
 }
 
 /* Navigation styles */
-nav {
-	margin-bottom: 20px;
+.navbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0.5rem 2rem;
+	background-color: var(--nav-bg);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	position: sticky;
+	top: 0;
+	z-index: 1000;
 }
 
-nav a {
-	margin-right: 15px;
+.navbar-left {
+	display: flex;
+	align-items: center;
+}
+
+.navbar-center {
+	display: flex;
+	align-items: center;
+	gap: 1.5rem;
+}
+
+.navbar-right {
+	display: flex;
+	align-items: center;
+}
+
+.nav-link {
+	color: var(--link-color);
 	text-decoration: none;
-	color: #333;
+	font-weight: 500;
+	padding: 0.5rem 1rem;
+	border-radius: 4px;
+	transition: all 0.2s ease-in-out;
 }
 
-nav a:hover {
-	text-decoration: underline;
+.nav-link:hover {
+	background-color: rgba(0, 0, 0, 0.05);
+	text-decoration: none;
 }
 
 input,
@@ -43,15 +78,15 @@ button {
 	--bg-color: #ffffff;
 	--text-color: #000000;
 	--link-color: #333333;
-	--nav-bg: #f0f0f0;
+	--nav-bg: #ffffff;
 }
 
 /* Dark Theme */
 .dark-theme {
-	--bg-color: #121212;
+	--bg-color: var(--navy);
 	--text-color: #ffffff;
 	--link-color: #dddddd;
-	--nav-bg: #1f1f1f;
+	--nav-bg: var(--navy);
 }
 
 /* Use CSS variables across the app */
@@ -61,17 +96,9 @@ body.dark-theme {
 	color: var(--text-color);
 }
 
-nav {
-	background-color: var(--nav-bg);
-	padding: 10px;
-}
-
-nav a {
-	color: var(--link-color);
-}
-
 .container {
 	background-color: var(--bg-color);
 	color: var(--text-color);
 	width: 100vw;
+	min-height: 100vh;
 }
