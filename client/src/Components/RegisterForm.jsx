@@ -27,30 +27,31 @@ function RegisterForm() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        fetch("http://localhost:3001/user", {
-            method: "POST",
-            mode: "cors",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(form),
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                if (data.message === "User created") {
-                    login(data.user);
-                    navigate("/");
-                } else {
-                    console.log(data);
-                    setError(data.error || "Registration failed.");
-                }
-            })
-            .catch((err) => {
-                console.error("Registration error:", err);
-                setError("Registration failed.");
-            });
-    };
+		fetch("http://localhost:3001/user", {
+			method: "POST",
+			mode: "cors",
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(form),
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				if (data.message === "User created") {
+					alert('Account Creation Successful!')
+					login(data.user);
+					navigate("/");
+				} else {
+					console.log(data);
+					setError(data.error || "Registration failed.");
+				}
+			})
+			.catch((err) => {
+				console.error("Registration error:", err);
+				setError("Registration failed.");
+			});
+	};
 
     return (
         <div className="auth-container">
