@@ -1,0 +1,11 @@
+
+// DESCRIPTION TYPES AND COLORS
+export const descriptionTypes = [
+  { value: "Work", color: "#4caf50" }, // Green
+  { value: "Leave", color: "#2196f3" }, // Blue
+  { value: "Appointment", color: "#f44336" }, // Red
+  { value: "Training", color: "#ff9800" }, // Orange
+  { value: "TDY", color: "#9c27b0" }, // Purple
+  { value: "Deployment", color: "#00bcd4" } // Cyan
+];
+

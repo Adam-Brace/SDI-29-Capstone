@@ -3,11 +3,11 @@ import { Routes, Route, Link } from "react-router-dom";
 import LoginPage from "./Routes/LoginPage";
 import RegisterPage from "./Routes/RegisterPage";
 import Admin from "./Routes/Admin.jsx";
-import { AuthProvider } from "./Context/AuthContext";
+import { AuthProvider, useAuth } from "./Context/AuthContext";
 import "./styles/index.css";
 import "./styles/Form.css";
 import UserData from "./UserData/UserData";
-import Schedule from "./Components/Schedule";
+import Schedule from "./Components/Schedule/Schedule";
 import HomePage from "./Routes/HomePage";
 import UserBadge from "./Components/UserBadge";
 import NotFound from "./Components/NotFound";
@@ -20,6 +20,9 @@ import Logo from "./Components/Logo.jsx";
 import Chat from "./Components/Chat.jsx";
 
 export default function App() {
+	const { logout } = useAuth();
+	const { user } = useAuth();
+
 	const sampleUser = {
 		rank: "Capt",
 		firstName: "Jane",
@@ -89,19 +92,18 @@ export default function App() {
 						</Box>
 						<UserBadge wh={"40px"} />
 					</Box>
+					<button onClick={logout}>Log Out</button>
 				</div>
 			</nav>
-
-			<AuthProvider>
-				<Routes>
-					<Route path="/" element={<HomePage theme={theme} />} />
-					<Route path="/login" element={<LoginPage />} />
-					<Route path="/register" element={<RegisterPage />} />
-					<Route path="/profile" element={<UserData />} />
-					<Route path="/admin" element={<Admin />} />
-					<Route path="*" element={<NotFound />} />
-				</Routes>
-			</AuthProvider>
+			<Routes>
+				<Route path="/" element={<LoginPage />} />
+				<Route path="/home" element={<HomePage theme={theme} />} />
+				<Route path="/login" element={<LoginPage />} />
+				<Route path="/register" element={<RegisterPage />} />
+				<Route path="/profile" element={<UserData />} />
+				<Route path="/admin" element={<Admin />} />
+				<Route path="*" element={<NotFound />} />
+			</Routes>
 		</div>
 	);
 }
