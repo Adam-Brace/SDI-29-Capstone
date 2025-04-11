@@ -13,7 +13,7 @@ function NotFound() {
       } else {
         navigate('/');
       }
-    }, 2000);
+    }, 1500);
 
     return () => clearTimeout(timer);
   }, [count, navigate]);

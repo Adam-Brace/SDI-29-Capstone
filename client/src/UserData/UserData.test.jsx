@@ -1,5 +1,12 @@
 import { render, screen, waitFor, within } from "@testing-library/react";
 import UserData from "./UserData";
+import { AuthProvider } from "../Context/AuthContext";
+
+vi.mock("../Context/AuthContext", () => ({
+  useAuth: () => ({
+    user: { id: 1 },
+  }),
+}));
 
 global.fetch = vi.fn(() =>
   Promise.resolve({
@@ -23,7 +30,11 @@ global.fetch = vi.fn(() =>
 
 describe("UserData", () => {
   test("renders a profile after fetch occurs", async () => {
-    render(<UserData />);
+    render(
+      // <AuthProvider>
+      <UserData />
+      // </AuthProvider>
+    );
 
     await waitFor(() =>
       screen.getByRole("heading", { name: "TSgt Doe's Profile" })
