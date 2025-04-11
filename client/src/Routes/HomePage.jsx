@@ -1,5 +1,5 @@
 import React from 'react';
-import Schedule from '../Components/Schedule';
+import Schedule from '../Components/Schedule/Schedule.jsx';
 import '../styles/HomePage.css';
 
 function HomePage({ theme }) {
