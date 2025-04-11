@@ -12,11 +12,11 @@ function RegisterForm() {
         email: "",
         password: "",
         rank: "",
-        duty_phone: "",
+        phone: "",
         organization: "",
         crew: "",
         position: "",
-        role: "",
+        permissions: "",
     });
     const [error, setError] = useState("");
 
@@ -39,8 +39,8 @@ function RegisterForm() {
 			.then((res) => res.json())
 			.then((data) => {
 				if (data.message === "User created") {
-					alert('Account Creation Successful!')
 					login(data.user);
+					alert('Account Creation Successful!');
 					navigate("/");
 				} else {
 					console.log(data);
@@ -134,16 +134,16 @@ function RegisterForm() {
                     />
                 </div>
                 <div className="form-group">
-                    <label className="form-label" htmlFor="duty_phone">
+                    <label className="form-label" htmlFor="phone">
                         Duty Phone#
                     </label>
                     <input
                         type="text"
-                        name="duty_phone"
-                        id="duty_phone"
+                        name="phone"
+                        id="phone"
                         className="form-control"
                         placeholder="Enter your duty phone number"
-                        value={form.duty_phone}
+                        value={form.phone}
                         onChange={handleChange}
                         required
                     />
@@ -194,16 +194,16 @@ function RegisterForm() {
                     />
                 </div>
                 <div className="form-group">
-                    <label className="form-label" htmlFor="role">
+                    <label className="form-label" htmlFor="permissions">
                         Role
                     </label>
                     <input
                         type="text"
-                        name="role"
-                        id="role"
+                        name="permissions"
+                        id="permissions"
                         className="form-control"
                         placeholder="Enter your role"
-                        value={form.role}
+                        value={form.permissions}
                         onChange={handleChange}
                         required
                     />
