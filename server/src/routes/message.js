@@ -33,4 +33,11 @@ router.get("/:user_id", async (req, res) => {
 		});
 });
 
+router.post("/", async (req, res) => {
+	knex("messages")
+		.insert(req.body)
+		.then(() => res.status(200).json({ message: "Message added" }))
+		.catch((err) => res.status(500).json({ error: err.message }));
+});
+
 module.exports = router;

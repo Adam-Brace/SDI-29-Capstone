@@ -1,26 +1,49 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import Box from "@mui/material/Box";
 import { useAuth } from "../Context/AuthContext";
 
-function UserBadge({ wh }) {
+function UserBadge({ wh, id }) {
 	const { user } = useAuth();
+	const [badgeUser, setBadgeUser] = useState(null);
 
-	const tooltipContent = user && (
+	useEffect(() => {
+		if (!id) {
+			setBadgeUser(user);
+		} else {
+			fetch(`http://localhost:3001/user/${id}`)
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error(
+							`HTTP error! status: ${response.status}`
+						);
+					}
+					return response.json();
+				})
+				.then((data) => {
+					setBadgeUser(data[0]);
+				})
+				.catch((error) => {
+					console.error("Error fetching user data:", error);
+				});
+		}
+	}, [id, user]);
+
+	const tooltipContent = badgeUser && (
 		<Box sx={{ p: 1 }}>
 			<div style={{ fontWeight: "bold", fontSize: "0.875rem" }}>
-				{`${user.rank} ${user.first_name} ${user.last_name}`}
+				{`${badgeUser.rank} ${badgeUser.first_name} ${badgeUser.last_name}`}
 			</div>
 		</Box>
 	);
 
 	return (
 		<>
-			{user ? (
+			{badgeUser ? (
 				<Tooltip title={tooltipContent} arrow>
 					<Avatar alt="User" sx={{ width: wh, height: wh }}>
-						{user.last_name[0]}
+						{badgeUser.last_name[0]}
 					</Avatar>
 				</Tooltip>
 			) : (

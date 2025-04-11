@@ -17,7 +17,6 @@ import Box from "@mui/material/Box";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import Logo from "./Components/Logo.jsx";
-import Chat from "./Components/Chat.jsx";
 
 export default function App() {
 	const { logout } = useAuth();
