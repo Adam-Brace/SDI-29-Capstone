@@ -50,7 +50,7 @@ export default function App() {
 					<Logo theme={theme} />
 				</div>
 				<div className="navbar-center">
-					<Link to="/" className="nav-link">
+					<Link to="/home" className="nav-link">
 						Home
 					</Link>
 					<Link to="/login" className="nav-link">
