@@ -11,12 +11,12 @@ function RegisterForm() {
         last_name: "",
         email: "",
         password: "",
+        confirmPassword: "",
         rank: "",
         phone: "",
         organization: "",
         crew: "",
         position: "",
-        permissions: "",
     });
     const [error, setError] = useState("");
 
@@ -27,31 +27,36 @@ function RegisterForm() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-		fetch("http://localhost:3001/user", {
-			method: "POST",
-			mode: "cors",
-			headers: {
-				Accept: "application/json",
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(form),
-		})
-			.then((res) => res.json())
-			.then((data) => {
-				if (data.message === "User created") {
-					login(data.user);
-					alert('Account Creation Successful!');
-					navigate("/");
-				} else {
-					console.log(data);
-					setError(data.error || "Registration failed.");
-				}
-			})
-			.catch((err) => {
-				console.error("Registration error:", err);
-				setError("Registration failed.");
-			});
-	};
+        if (form.password !== form.confirmPassword) {
+            setError("Passwords do not match. Please try again.");
+            return;
+        }
+
+        fetch("http://localhost:3001/user", {
+            method: "POST",
+            mode: "cors",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(form),
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.message === "User created") {
+                    login(data.user);
+                    alert("Account Creation Successful!");
+                    navigate("/");
+                } else {
+                    console.log(data);
+                    setError(data.error || "Registration failed.");
+                }
+            })
+            .catch((err) => {
+                console.error("Registration error:", err);
+                setError("Registration failed.");
+            });
+    };
 
     return (
         <div className="auth-container">
@@ -114,6 +119,21 @@ function RegisterForm() {
                         className="form-control"
                         placeholder="Enter your password"
                         value={form.password}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+                <div className="form-group">
+                    <label className="form-label" htmlFor="confirmPassword">
+                        Confirm Password
+                    </label>
+                    <input
+                        type="password"
+                        name="confirmPassword"
+                        id="confirmPassword"
+                        className="form-control"
+                        placeholder="Re-enter your password"
+                        value={form.confirmPassword}
                         onChange={handleChange}
                         required
                     />
@@ -189,21 +209,6 @@ function RegisterForm() {
                         className="form-control"
                         placeholder="Enter your position"
                         value={form.position}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-                <div className="form-group">
-                    <label className="form-label" htmlFor="permissions">
-                        Role
-                    </label>
-                    <input
-                        type="text"
-                        name="permissions"
-                        id="permissions"
-                        className="form-control"
-                        placeholder="Enter your role"
-                        value={form.permissions}
                         onChange={handleChange}
                         required
                     />
