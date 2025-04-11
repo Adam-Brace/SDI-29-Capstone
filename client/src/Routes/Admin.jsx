@@ -36,14 +36,10 @@ export default function Admin() {
     setSelectedUser(user);
   };
 
-  const closeEditPanel = () => {
-    setSelectedUser(null);
-  };
-
   return (
     <div className="admin-container">
       <aside className="admin-sidebar">
-        <h2>Users</h2>
+        <h2 className="admin-seperate-section-header">Users</h2>
         <input
           type="text"
           className="admin-search-bar"
@@ -74,14 +70,20 @@ export default function Admin() {
         </ul>
       </aside>
 
-      {selectedUser && (
-        <div className="admin-edit-panel">
-          <Edit id={selectedUser.id} currentData={selectedUser} />
-          <button className="admin-close-btn" onClick={closeEditPanel}>
-            Close
-          </button>
-        </div>
-      )}
+      <main className="admin-main">
+        {selectedUser ? (
+          <div className="admin-user-details">
+            <h1>
+              {selectedUser.rank} {selectedUser.first_name}{" "} {selectedUser.last_name}'s Options:
+            </h1>
+            <Edit id={selectedUser.id} currentData={selectedUser} />
+          </div>
+        ) : (
+          <div className="admin-placeholder">
+            <p>Click a user's<b> '≡' </b>to edit their details</p>
+          </div>
+        )}
+      </main>
     </div>
   );
 }

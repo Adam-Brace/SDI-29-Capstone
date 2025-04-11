@@ -3,7 +3,8 @@ import { Routes, Route, Link } from "react-router-dom";
 import LoginPage from "./Routes/LoginPage";
 import RegisterPage from "./Routes/RegisterPage";
 import Admin from "./Routes/Admin.jsx";
-import { AuthProvider, useAuth } from "./Context/AuthContext";
+import {useAuth} from "./Context/AuthContext";
+import MyRequests from "./Routes/MyRequests.jsx";
 import "./styles/index.css";
 import "./styles/Form.css";
 import UserData from "./UserData/UserData";
@@ -49,6 +50,7 @@ export default function App() {
 					<Logo theme={theme} />
 				</div>
 				<div className="navbar-center">
+
 					<Link to="/home" className="nav-link">
 						Home
 					</Link>
@@ -76,6 +78,7 @@ export default function App() {
 								alignItems: "center",
 							}}
 						>
+
 							<LightModeIcon sx={{ mr: 1 }} />
 							<FormControlLabel
 								control={

@@ -7,6 +7,7 @@
   background-color: #f8f9fa;
   padding: 20px;
   border-right: 1px solid #ddd;
+  height: calc(100vh - 130px); /* Change pixel count whenever header height changes */
 }
 
 .admin-sidebar h2 {
@@ -50,20 +51,6 @@
   background-color: #f0f0f0;
 }
 
-.admin-close-btn {
-  margin-top: 20px;
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 10px 15px;
-  cursor: pointer;
-}
-
-.admin-close-btn:hover {
-  background-color: #c82333;
-}
-
 .admin-search-bar {
   width: 300px;
   padding: 10px;
@@ -77,4 +64,26 @@
   margin: 0;
   inline-size: 245px;
   overflow-wrap: break-word;
+}
+
+.admin-main {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  background-color: #f0f0f0;
+  padding: 20px;
+}
+
+.admin-user-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.admin-seperate-section-header {
+  background-color: #B3B3B3;
+  padding: 13px;
+  margin: -20px;
+  text-align: center;
 }
