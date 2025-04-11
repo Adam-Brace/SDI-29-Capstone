@@ -31,7 +31,7 @@ function LoginForm() {
         if (data.user) {
 
           login(data.user);
-          navigate(data.user?.permissions === 'admin' ? '/admin' : '/');
+          navigate(data.user?.permissions === 'admin' ? '/admin' : '/home');
         } else {
           setError(data.error || 'Login failed.');
         }

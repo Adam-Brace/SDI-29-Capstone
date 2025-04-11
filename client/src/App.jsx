@@ -47,7 +47,7 @@ export default function App() {
 					<Logo theme={theme} />
 				</div>
 				<div className="navbar-center">
-					<Link to="/" className="nav-link">Home</Link>
+					<Link to="/home" className="nav-link">Home</Link>
 					<Link to="/login" className="nav-link">Login</Link>
 					<Link to="/register" className="nav-link">Register</Link>
 					<Link to="/profile" className="nav-link">Profile</Link>
