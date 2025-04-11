@@ -3,11 +3,41 @@ const knex = require("knex")(require("../../knexfile")["development"]);
 const router = express.Router();
 
 router.get("/:user_id", async (req, res) => {
+	let items = [];
 	knex("chat_members")
-		.select()
+		.select("chat_id")
 		.where("user_id", req.params.user_id)
-		.join("messages", "chat_members.chat_id", "messages.chat_id")
-		.then((messages) => res.status(200).json(messages));
+		.then((chatIds) => {
+			chatIds = chatIds.map((chat) => {
+				knex("chats")
+					.select()
+					.where("id", chat.chat_id)
+					.then((chat) => {
+						knex("messages")
+							.select()
+							.where("chat_id", chat[0].id)
+							.then((messages) => {
+								items.push({
+									id: chat[0].id,
+									name: chat[0].name,
+									is_group: chat[0].is_group,
+									messages: messages,
+								});
+							})
+							.then(() => res.status(200).json(items))
+							.catch((err) =>
+								res.status(500).json({ error: err.message })
+							);
+					});
+			});
+		});
+});
+
+router.post("/", async (req, res) => {
+	knex("messages")
+		.insert(req.body)
+		.then(() => res.status(200).json({ message: "Message added" }))
+		.catch((err) => res.status(500).json({ error: err.message }));
 });
 
 module.exports = router;

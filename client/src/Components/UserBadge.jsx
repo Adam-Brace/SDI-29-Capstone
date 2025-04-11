@@ -1,35 +1,60 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import Box from "@mui/material/Box";
+import { useAuth } from "../Context/AuthContext";
 
-function UserBadge({ user }) {
- 
-  const tooltipContent = (
-    <Box sx={{ p: 1 }}>
-      <div style={{ fontWeight: "bold", fontSize: "0.875rem" }}>
-        Rank: {user.rank}
-      </div>
-      <div style={{ fontSize: "0.875rem" }}>
-        First Name: {user.firstName}
-      </div>
-      <div style={{ fontSize: "0.875rem" }}>
-        Last Name: {user.lastName}
-      </div>
-    </Box>
-  );
+function UserBadge({ wh, id }) {
+	const { user } = useAuth();
+	const [badgeUser, setBadgeUser] = useState(null);
 
-  return (
-   
-    <Tooltip title={tooltipContent} arrow>
-      <Avatar
-        alt="User"
-        
-        src="https://dummyimage.com/40x40/cccccc/000000.png&text=User"
-        sx={{ width: 40, height: 40 }}
-      />
-    </Tooltip>
-  );
+	useEffect(() => {
+		if (!id) {
+			setBadgeUser(user);
+		} else {
+			fetch(`http://localhost:3001/user/${id}`)
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error(
+							`HTTP error! status: ${response.status}`
+						);
+					}
+					return response.json();
+				})
+				.then((data) => {
+					setBadgeUser(data[0]);
+				})
+				.catch((error) => {
+					console.error("Error fetching user data:", error);
+				});
+		}
+	}, [id, user]);
+
+	const tooltipContent = badgeUser && (
+		<Box sx={{ p: 1 }}>
+			<div style={{ fontWeight: "bold", fontSize: "0.875rem" }}>
+				{`${badgeUser.rank} ${badgeUser.first_name} ${badgeUser.last_name}`}
+			</div>
+		</Box>
+	);
+
+	return (
+		<>
+			{badgeUser ? (
+				<Tooltip title={tooltipContent} arrow>
+					<Avatar alt="User" sx={{ width: wh, height: wh }}>
+						{badgeUser.last_name[0]}
+					</Avatar>
+				</Tooltip>
+			) : (
+				<Avatar
+					alt="User"
+					src="https://dummyimage.com/40x40/cccccc/000000.png&text=User"
+					sx={{ width: wh, height: wh }}
+				/>
+			)}
+		</>
+	);
 }
 
 export default UserBadge;

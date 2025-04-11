@@ -3,24 +3,26 @@ import { Routes, Route, Link } from "react-router-dom";
 import LoginPage from "./Routes/LoginPage";
 import RegisterPage from "./Routes/RegisterPage";
 import Admin from "./Routes/Admin.jsx";
+import {useAuth} from "./Context/AuthContext";
 import MyRequests from "./Routes/MyRequests.jsx";
-import { AuthProvider } from "./Context/AuthContext";
 import "./styles/index.css";
 import "./styles/Form.css";
 import UserData from "./UserData/UserData";
-import Schedule from "./Components/Schedule";
+import Schedule from "./Components/Schedule/Schedule";
 import HomePage from "./Routes/HomePage";
 import UserBadge from "./Components/UserBadge";
 import NotFound from "./Components/NotFound";
-import Switch from '@mui/material/Switch';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Box from '@mui/material/Box';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
-import LightModeIcon from '@mui/icons-material/LightMode';
+import Switch from "@mui/material/Switch";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Box from "@mui/material/Box";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
 import Logo from "./Components/Logo.jsx";
 
-
 export default function App() {
+	const { logout } = useAuth();
+	const { user } = useAuth();
+
 	const sampleUser = {
 		rank: "Capt",
 		firstName: "Jane",
@@ -48,28 +50,40 @@ export default function App() {
 					<Logo theme={theme} />
 				</div>
 				<div className="navbar-center">
-					<Link to="/" className="nav-link">Home</Link>
-					<Link to="/login" className="nav-link">Login</Link>
-					<Link to="/register" className="nav-link">Register</Link>
-					<Link to="/profile" className="nav-link">Profile</Link>
-					<Link to="/admin" className="nav-link">Admin</Link>
-					<Link to="/MyRequests" className="nav-link">My Requests</Link>
+
+					<Link to="/home" className="nav-link">
+						Home
+					</Link>
+					<Link to="/login" className="nav-link">
+						Login
+					</Link>
+					<Link to="/register" className="nav-link">
+						Register
+					</Link>
+					<Link to="/profile" className="nav-link">
+						Profile
+					</Link>
 				</div>
 				<div className="navbar-right">
-					<Box sx={{
-						display: 'flex',
-						alignItems: 'center',
-						gap: 2
-					}}>
-						<Box sx={{
-							display: 'flex',
-							alignItems: 'center'
-						}}>
+					<Box
+						sx={{
+							display: "flex",
+							alignItems: "center",
+							gap: 2,
+						}}
+					>
+						<Box
+							sx={{
+								display: "flex",
+								alignItems: "center",
+							}}
+						>
+
 							<LightModeIcon sx={{ mr: 1 }} />
 							<FormControlLabel
 								control={
 									<Switch
-										checked={theme === 'dark'}
+										checked={theme === "dark"}
 										onChange={toggleTheme}
 										color="primary"
 									/>
@@ -78,22 +92,20 @@ export default function App() {
 							/>
 							<DarkModeIcon sx={{ ml: -2 }} />
 						</Box>
-						<UserBadge user={sampleUser} />
+						<UserBadge wh={"40px"} />
 					</Box>
+					<button onClick={logout}>Log Out</button>
 				</div>
 			</nav>
-
-			<AuthProvider>
-				<Routes>
-					<Route path="/" element={<HomePage theme={theme} />} />
-					<Route path="/login" element={<LoginPage />} />
-					<Route path="/register" element={<RegisterPage />} />
-					<Route path="/profile" element={<UserData />} />
-					<Route path="/admin" element={<Admin />} />
-					<Route path="/MyRequests" element={<MyRequests />} />
-					<Route path="*" element={<NotFound />} />
-				</Routes>
-			</AuthProvider>
+			<Routes>
+				<Route path="/" element={<LoginPage />} />
+				<Route path="/home" element={<HomePage theme={theme} />} />
+				<Route path="/login" element={<LoginPage />} />
+				<Route path="/register" element={<RegisterPage />} />
+				<Route path="/profile" element={<UserData />} />
+				<Route path="/admin" element={<Admin />} />
+				<Route path="*" element={<NotFound />} />
+			</Routes>
 		</div>
 	);
 }
