@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
-import LoginPage from "./Routes/LoginPage";
-import RegisterPage from "./Routes/RegisterPage";
-import Admin from "./Routes/Admin.jsx";
+import LoginPage from "./Routes/LoginPage/LoginPage";
+import RegisterPage from "./Routes/RegisterPage/RegisterPage";
+import Admin from "./Routes/Admin/Admin.jsx";
 import { useAuth } from "./Context/AuthContext";
 import MyRequests from "./Routes/MyRequests.jsx";
 import "./styles/Form.css";

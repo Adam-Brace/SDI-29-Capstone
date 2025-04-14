@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Edit from "../../UserData/Edit";
-import "../styles/Admin.css";
+import "../../styles/Admin.css";
 
 export default function Admin() {
   const [users, setUsers] = useState([]);
