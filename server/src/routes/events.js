@@ -20,10 +20,9 @@ router.get("/", async (req, res) => {
 				"events.description",
 				"events.color"
 			)
-			.where(events.status, "approved");
+			.where("events.status", "approved");
 
-		// Transform the data into the desired structure
-		const data = usersWithEvents.reduce((acc, row) => {
+		const transformedData = usersWithEvents.reduce((acc, row) => {
 			let user = acc.find((u) => u.id === row.user_id);
 			if (!user) {
 				user = {
@@ -49,47 +48,46 @@ router.get("/", async (req, res) => {
 			return acc;
 		}, []);
 
-		res.status(200).json(data);
+		res.status(200).json(transformedData);
 	} catch (err) {
 		res.status(500).json({ error: err.message });
 	}
 });
 
-router.get("/:id", (req, res) => {
-	let items = [];
-	knex("events")
-		.select()
-		.where("user_id", req.params.id)
-		.then((events) => {
-			events.map((event) => {
-				items.push({
-					id: event.id,
-					startDate: event.start_date,
-					endDate: event.end_date,
-					title: event.title,
-					description: event.description,
-					bgColor: event.color,
-				});
-			});
-		})
-		.then(() => {
-			knex("users")
-				.select()
-				.where("id", req.params.id)
-				.select()
-				.then((data) => {
-					let event = {
-						id: req.params.id,
-						label: {
-							title: `${data[0].rank} ${data[0].first_name} ${data[0].last_name}`,
-						},
-						data: items,
-					};
-					res.status(200).json(event);
-				})
-				.catch((err) => res.status(500).json({ error: err.message }));
-		})
-		.catch((err) => res.status(500).json({ error: err.message }));
+router.get("/:id", async (req, res) => {
+	try {
+		const events = await knex("events")
+			.select()
+			.where("user_id", req.params.id);
+
+		const user = await knex("users")
+			.select()
+			.where("id", req.params.id)
+			.first();
+
+		if (!user) {
+			return res.status(404).json({ error: "User not found" });
+		}
+
+		const response = {
+			id: req.params.id,
+			label: {
+				title: `${user.rank} ${user.first_name} ${user.last_name}`,
+			},
+			data: events.map((event) => ({
+				id: event.id,
+				startDate: event.start_date,
+				endDate: event.end_date,
+				title: event.title,
+				description: event.description,
+				bgColor: event.color,
+			})),
+		};
+
+		res.status(200).json(response);
+	} catch (err) {
+		res.status(500).json({ error: err.message });
+	}
 });
 
 router.post("/", async (req, res) => {
@@ -111,26 +109,28 @@ router.post("/", async (req, res) => {
 		res.status(201).json(newEvent);
 	} catch (err) {
 		res.status(500).json({ error: err.message });
+		console.error(err.message);
 	}
 });
 
-router.patch("/:user_id", async (req, res) => {
+router.patch("/:id", async (req, res) => {
 	try {
-		const { user_id } = req.params;
+		const { id } = req.params;
 		const { startDate, endDate, title, description, bgColor } = req.body;
 
-		const updatedEvent = await knex("events")
-			.where("id", id)
-			.update({
+		const [updatedEvent] = await knex("events").where("id", id).update(
+			{
 				start_date: startDate,
 				end_date: endDate,
 				title,
 				description,
 				color: bgColor,
-			})
-			.returning("*");
-		if (updatedEvent.length > 0) {
-			res.status(200).json(updatedEvent[0]);
+			},
+			"*"
+		);
+
+		if (updatedEvent) {
+			res.status(200).json(updatedEvent);
 		} else {
 			res.status(404).json({ error: "Event not found" });
 		}
@@ -154,22 +154,30 @@ router.delete("/:id", async (req, res) => {
 	}
 });
 
-router.get("/raw", (req, res) => {
-	knex("events")
-		.select()
-		.then((events) => {
-			res.status(200).json(events);
-		})
-		.catch((err) => res.status(500).json({ error: err.message }));
+router.get("/raw", async (req, res) => {
+	try {
+		const events = await knex("events").select();
+		res.status(200).json(events);
+	} catch (err) {
+		res.status(500).json({ error: err.message });
+	}
 });
-router.get("/raw/:id", (req, res) => {
-	knex("events")
-		.select()
-		.where("id", req.params.id)
-		.then((events) => {
-			res.status(200).json(events);
-		})
-		.catch((err) => res.status(500).json({ error: err.message }));
+
+router.get("/raw/:id", async (req, res) => {
+	try {
+		const event = await knex("events")
+			.select()
+			.where("id", req.params.id)
+			.first();
+
+		if (event) {
+			res.status(200).json(event);
+		} else {
+			res.status(404).json({ error: "Event not found" });
+		}
+	} catch (err) {
+		res.status(500).json({ error: err.message });
+	}
 });
 
 module.exports = router;

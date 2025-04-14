@@ -66,7 +66,6 @@ describe('User Routes', () => {
         .expect(200);
 
       expect(response.body).toHaveProperty('message', 'User updated');
-
       const updatedUser = await knex('users').where({ id: createdUserId }).first();
       expect(updatedUser.first_name).toBe('Updated');
     });
@@ -79,7 +78,6 @@ describe('User Routes', () => {
         .send({ email: testUser.email, password: testUser.password })
         .expect('Content-Type', /json/)
         .expect(200);
-
       expect(response.body).toHaveProperty('message', 'Login successful');
       expect(response.body.user).toHaveProperty('email', testUser.email);
     });
@@ -90,7 +88,6 @@ describe('User Routes', () => {
         .send({ email: testUser.email, password: 'wrongpassword' })
         .expect('Content-Type', /json/)
         .expect(401);
-
       expect(response.body).toHaveProperty('error', 'Incorrect password');
     });
   });
@@ -103,7 +100,6 @@ describe('User Routes', () => {
         .expect(200);
 
       expect(response.body).toHaveProperty('message', 'User deleted');
-
       const user = await knex('users').where({ id: createdUserId }).first();
       expect(user).toBeUndefined();
     });
