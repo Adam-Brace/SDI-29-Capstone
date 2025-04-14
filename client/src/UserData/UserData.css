@@ -3,8 +3,8 @@
 }
 
 .user-data-box {
-  background-color: #ffffff;
-  border: 1px solid #ddd;
+  background-color: #1b263b;
+  border: 1px solid #1b263b;
   border-radius: 16px;
   padding: 24px;
   max-width: 800px;
@@ -24,12 +24,14 @@
 }
 
 .user-card {
-  background-color: #f9f9f9;
-  border: 1px solid #e3e3e3;
+  /* background-color: #1b263b; */
+  /* border: 1px solid #1b263b; */
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 16px;
   transition: box-shadow 0.3s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
 }
 
 .user-card:hover {
