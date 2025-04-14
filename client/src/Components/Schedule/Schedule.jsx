@@ -47,6 +47,7 @@ export default function Schedule() {
 		console.log(`${API_URL}/events/`);
 		try {
 			const response = await fetch(`${API_URL}/events/`);
+
 			if (!response.ok) {
 				console.error(
 					"Server error:",
