@@ -38,8 +38,8 @@ export default function Edit({ id, currentData }) {
 				console.log("server response:", data);
 				console.log(data.message);
 				if (data.message) {
-					alert("Profile updated!");
-					window.location.reload();
+					//alert("Profile updated!");
+					closeModal();
 				} else {
 					alert("Failed to update");
 				}

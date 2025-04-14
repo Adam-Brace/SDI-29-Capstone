@@ -42,7 +42,7 @@ export default function App() {
 				<Route
 					path="/"
 					element={
-						<ProtectedRoute>
+						<ProtectedRoute admin={false}>
 							<HomePage />
 						</ProtectedRoute>
 					}
@@ -50,7 +50,7 @@ export default function App() {
 				<Route
 					path="/profile"
 					element={
-						<ProtectedRoute>
+						<ProtectedRoute admin={false}>
 							<UserData />
 						</ProtectedRoute>
 					}
@@ -58,7 +58,7 @@ export default function App() {
 				<Route
 					path="/admin"
 					element={
-						<ProtectedRoute>
+						<ProtectedRoute admin={true}>
 							<Admin />
 						</ProtectedRoute>
 					}
