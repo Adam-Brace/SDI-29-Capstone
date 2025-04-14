@@ -5,20 +5,19 @@
   <img src="client/public/README_Team.png" alt="Team Name" width="350" />
 </div>
 
-
 ## Problem Statement
 
 Currently, military units rely on outdated scheduling methods. This leads to miscommunication, schedule conflicts, and last minute changes. Leadership wants a centralized, user-friendly scheduling tool to streamline the scheduling process and keep unit order and discipline
 
 ## User-stories
 
-- As a Commander:
-   I want to view the finalized crew shift schedules and personnel availability.
-- As a Scheduler:
-   I want to assign members to shifts.
-- As a Member:
-   I want a user friendly calendar to view my schedule
-   so I can easily manage my work and personal time.
+-   As a Commander:
+    I want to view the finalized crew shift schedules and personnel availability.
+-   As a Scheduler:
+    I want to assign members to shifts.
+-   As a Member:
+    I want a user friendly calendar to view my schedule
+    so I can easily manage my work and personal time.
 
 ## Overview
 
@@ -26,19 +25,19 @@ Fall In is a comprehensive scheduling and event management application designed 
 
 ## Features
 
-- **Admin/User Authentication**: Admins maintain authority to manage the schedule
-- **Chat**:
-- **User Requests**:
-- **Interactive Calendar**: View events in a clean, intuitive calendar interface
-- **Schedule Management**: Create, edit, and delete events with ease
-- **Color-Coded Events**: Different event types are color-coded for easy identification
-- **Dark/Light Mode**: Toggle between dark and light themes for comfortable viewing
+-   **Admin/User Authentication**: Admins maintain authority to manage the schedule
+-   **Chat**:
+-   **User Requests**:
+-   **Interactive Calendar**: View events in a clean, intuitive calendar interface
+-   **Schedule Management**: Create, edit, and delete events with ease
+-   **Color-Coded Events**: Different event types are color-coded for easy identification
+-   **Dark/Light Mode**: Toggle between dark and light themes for comfortable viewing
 
 ## Technology Stack
 
-- **Frontend**: React, Material-UI, Day.js
-- **Backend**: Node.js, Express, Knex.js
-- **Database**: PostgreSQL
+-   **Frontend**: React, Material-UI, Day.js
+-   **Backend**: Node.js, Express, Knex.js
+-   **Database**: PostgreSQL
 
 ## Getting Started
 
@@ -145,34 +144,6 @@ This executes the following commands in order:
 -   `npx knex migrate:latest` → Runs all pending migrations
 -   `npx knex seed:run` → Populates the database with seed data
 
-### Creating Migrations and Seeds
-
-To generate new migration and seed files, run:
-
-```sh
-  ./knex.sh <migration_and_seed_name> [additional_migrations_and_seeds...]
-```
-
-For example:
-
-```sh
-  ./knex.sh roles users
-```
-
-This generates the following migration and seed files:
-
-```sh
-migrations/
-├── 00_20250320193622_roles.js
-├── 01_20250320193622_users.js
-
-seeds/
-├── 00_roles.js
-├── 01_users.js
-```
-
----
-
 ## 🛠 Common Issues
 
 When running `./setup.sh`, you may encounter one of these errors:
@@ -255,16 +226,16 @@ SDI-29-CAPSTONE/
 
 ## Acknowledgments
 
-- [React Scheduler](https://scheduler.bitnoise.pl/) for the calendar component
-- [Material-UI](https://mui.com/) for the UI components
+-   [React Scheduler](https://scheduler.bitnoise.pl/) for the calendar component
+-   [Material-UI](https://mui.com/) for the UI components
 
 ## Team npm install greatness
-- [Adam Brace](https://github.com/Adam-Brace)
-- [Omar Fattah](https://github.com/omarfattah44)
-- [Marques Johnson](https://github.com/marquesj85)
-- [Jessica Hunt](https://github.com/jessicaghunt)
-- [Lizmarie Mendez](https://github.com/liz-bytes)
-- [Joshua Gore](https://github.com/joshgore7)
-- [Jesse Baze](https://github.com/ABazing)
-- [Luke Larock](https://github.com/NoofleBot)
 
+-   [Adam Brace](https://github.com/Adam-Brace)
+-   [Omar Fattah](https://github.com/omarfattah44)
+-   [Marques Johnson](https://github.com/marquesj85)
+-   [Jessica Hunt](https://github.com/jessicaghunt)
+-   [Lizmarie Mendez](https://github.com/liz-bytes)
+-   [Joshua Gore](https://github.com/joshgore7)
+-   [Jesse Baze](https://github.com/ABazing)
+-   [Luke Larock](https://github.com/NoofleBot)

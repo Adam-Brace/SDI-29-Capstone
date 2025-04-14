@@ -3,8 +3,9 @@ import { io } from "socket.io-client";
 import UserBadge from "./UserBadge";
 import { Stack, Chip, Typography, Box, TextField, Button } from "@mui/material";
 import { useAuth } from "../Context/AuthContext";
+const API_URL = import.meta.env.VITE_API_URL;
 
-const socket = io("http://localhost:3001");
+const socket = io(API_URL);
 
 export default function Chat() {
 	const { user } = useAuth();
@@ -14,7 +15,7 @@ export default function Chat() {
 	useEffect(() => {
 		if (!user) return;
 		// Fetch initial chat data
-		fetch(`http://localhost:3001/message/${user.id}`)
+		fetch(`API_URL/message/${user.id}`)
 			.then((response) => response.json())
 			.then((data) => {
 				setChats(data);
