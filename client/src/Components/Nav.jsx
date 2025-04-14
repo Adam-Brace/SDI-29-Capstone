@@ -27,12 +27,16 @@ export default function Nav() {
 				<Logo />
 			</div>
 			<div className="navbar-center">
-				<Link to="/home" className="nav-link">
-					Home
-				</Link>
-				<Link to="/requests" className="nav-link">
-					Requests
-				</Link>
+				{user && (
+					<Link to="/" className="nav-link">
+						Home
+					</Link>
+				)}
+				{user && (
+					<Link to="/requests" className="nav-link">
+						Requests
+					</Link>
+				)}
 				{user?.permissions === "admin" && (
 					<Link to="/admin" className="nav-link">
 						Admin
