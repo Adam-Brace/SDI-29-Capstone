@@ -1,6 +1,6 @@
 import Admin from "./Admin";
 import { render, screen, waitFor, within } from "@testing-library/react";
-import { AuthProvider } from "../Context/AuthContext";
+import { AuthProvider } from "../../Context/AuthContext";
 import { MemoryRouter } from "react-router-dom";
 import { fireEvent } from "@testing-library/react";
 

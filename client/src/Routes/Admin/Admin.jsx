@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Edit from "../UserData/Edit";
+import Edit from "../../UserData/Edit";
 import "../styles/Admin.css";
 const API_URL = import.meta.env.VITE_API_URL;
 

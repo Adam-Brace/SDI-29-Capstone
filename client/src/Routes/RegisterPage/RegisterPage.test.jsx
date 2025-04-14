@@ -1,7 +1,7 @@
 import RegisterPage from "./RegisterPage";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { AuthProvider } from "../Context/AuthContext";
+import { AuthProvider } from "../../Context/AuthContext";
 
 describe("RegisterPage", () => {
   test("shows the registration page correctly", () => {
