@@ -7,9 +7,11 @@ import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
+import { useTheme } from "../Context/ThemeContex.jsx";
 
-export default function Nav({ theme }) {
+export default function Nav() {
 	const { user, logout } = useAuth();
+	const { theme, applyTheme } = useTheme();
 
 	return (
 		<nav className="navbar">
@@ -57,7 +59,11 @@ export default function Nav({ theme }) {
 							control={
 								<Switch
 									checked={theme === "dark"}
-									onChange={toggleTheme}
+									onChange={() =>
+										applyTheme(
+											theme === "light" ? "dark" : "light"
+										)
+									}
 									color="primary"
 								/>
 							}

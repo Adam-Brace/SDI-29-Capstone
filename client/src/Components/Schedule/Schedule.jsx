@@ -8,13 +8,13 @@ import "../../styles/HomePage.css";
 import EventDetailsDialog from "./Dialog Components/EventDetailsDialog";
 import EditEventDialog from "./Dialog Components/EditEventDialog";
 import CreateEventDialog from "./Dialog Components/CreateEventDialog";
-
+import { useTheme } from "../../Context/ThemeContex.jsx";
 import { getEventColor, getDefaultDates } from "./utilityFunctions"; //
-
 
 dayjs.extend(isBetween);
 
-export default function Schedule({ theme }) {
+export default function Schedule() {
+	const { theme } = useTheme();
 	const [filterButtonState, setFilterButtonState] = useState(0);
 	const [SchedulerData, setSchedulerData] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
@@ -27,13 +27,13 @@ export default function Schedule({ theme }) {
 		title: "",
 		startDate: "",
 		endDate: "",
-		description: ""
+		description: "",
 	});
 	const [editForm, setEditForm] = useState({
 		title: "",
 		startDate: "",
 		endDate: "",
-		description: ""
+		description: "",
 	});
 
 	useEffect(() => {
@@ -56,12 +56,12 @@ export default function Schedule({ theme }) {
 			const data = await response.json();
 
 			//ADDS COLOR TO EVENTS BASED ON DESCRIPTION
-			const dataWithColors = data.map(person => ({
+			const dataWithColors = data.map((person) => ({
 				...person,
-				data: person.data.map(event => ({
+				data: person.data.map((event) => ({
 					...event,
-					bgColor: getEventColor(event.description)
-				}))
+					bgColor: getEventColor(event.description),
+				})),
 			}));
 			setSchedulerData(dataWithColors);
 		} catch (error) {
@@ -83,15 +83,18 @@ export default function Schedule({ theme }) {
 	//DELETE EVENT
 	const handleDeleteEvent = async () => {
 		if (!selectedTile || !selectedTile.id) return;
-		
+
 		try {
-			const response = await fetch(`http://localhost:3001/events/${selectedTile.id}`, {
-				method: 'DELETE',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			});
-			
+			const response = await fetch(
+				`http://localhost:3001/events/${selectedTile.id}`,
+				{
+					method: "DELETE",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			);
+
 			if (response.ok) {
 				// Refresh the events after deletion
 				fetchEvents();
@@ -100,28 +103,30 @@ export default function Schedule({ theme }) {
 				// Close the details dialog
 				setOpenDialog(false);
 			} else {
-				console.error('Failed to delete:', response.statusText);
+				console.error("Failed to delete:", response.statusText);
 			}
 		} catch (error) {
-			console.error('Error deleting:', error);
+			console.error("Error deleting:", error);
 		}
 	};
 
 	//EDIT EVENT DETAILS
 	const handleOpenEditDialog = () => {
 		if (!selectedTile) return;
-		
+
 		// Format dates for the form
-		const startDate = dayjs(selectedTile.startDate).format('YYYY-MM-DDTHH:mm');
-		const endDate = dayjs(selectedTile.endDate).format('YYYY-MM-DDTHH:mm');
-		
+		const startDate = dayjs(selectedTile.startDate).format(
+			"YYYY-MM-DDTHH:mm"
+		);
+		const endDate = dayjs(selectedTile.endDate).format("YYYY-MM-DDTHH:mm");
+
 		setEditForm({
 			title: selectedTile.title || "",
 			startDate: startDate,
 			endDate: endDate,
-			description: selectedTile.description || ""
+			description: selectedTile.description || "",
 		});
-		
+
 		setOpenEditDialog(true);
 	};
 
@@ -133,7 +138,7 @@ export default function Schedule({ theme }) {
 		const { name, value } = e.target;
 		setEditForm({
 			...editForm,
-			[name]: value
+			[name]: value,
 		});
 	};
 
@@ -141,28 +146,31 @@ export default function Schedule({ theme }) {
 		const { name, value } = e.target;
 		setCreateForm({
 			...createForm,
-			[name]: value
+			[name]: value,
 		});
 	};
 
 	//UPDATES EVENT
 	const handleUpdateEvent = async () => {
 		if (!selectedTile || !selectedTile.id) return;
-		
+
 		try {
-			const response = await fetch(`http://localhost:3001/events/${selectedTile.id}`, {
-				method: 'PATCH',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					title: editForm.title,
-					startDate: editForm.startDate,
-					endDate: editForm.endDate,
-					description: editForm.description
-				})
-			});
-			
+			const response = await fetch(
+				`http://localhost:3001/events/${selectedTile.id}`,
+				{
+					method: "PATCH",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						title: editForm.title,
+						startDate: editForm.startDate,
+						endDate: editForm.endDate,
+						description: editForm.description,
+					}),
+				}
+			);
+
 			if (response.ok) {
 				// Refresh the events after update
 				fetchEvents();
@@ -174,25 +182,25 @@ export default function Schedule({ theme }) {
 					title: editForm.title,
 					startDate: editForm.startDate,
 					endDate: editForm.endDate,
-					description: editForm.description
+					description: editForm.description,
 				});
 			} else {
-				console.error('Failed to update:', response.statusText);
+				console.error("Failed to update:", response.statusText);
 			}
 		} catch (error) {
-			console.error('Error updating:', error);
+			console.error("Error updating:", error);
 		}
 	};
 
 	//CREATES NEW EVENT
 	const handleCreateEvent = async () => {
 		if (!selectedUser) return;
-		
+
 		try {
 			const response = await fetch("http://localhost:3001/events/", {
-				method: 'POST',
+				method: "POST",
 				headers: {
-					'Content-Type': 'application/json',
+					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
 					user_id: selectedUser.id,
@@ -200,10 +208,10 @@ export default function Schedule({ theme }) {
 					startDate: createForm.startDate,
 					endDate: createForm.endDate,
 					description: createForm.description,
-					bgColor: getEventColor(createForm.description)
-				})
+					bgColor: getEventColor(createForm.description),
+				}),
 			});
-			
+
 			if (response.ok) {
 				// Refresh the events after creation
 				fetchEvents();
@@ -212,15 +220,15 @@ export default function Schedule({ theme }) {
 					title: "",
 					startDate: "",
 					endDate: "",
-					description: ""
+					description: "",
 				});
 				// Close the create dialog
 				setOpenUsersDialog(false);
 			} else {
-				console.error('Failed to create:', response.statusText);
+				console.error("Failed to create:", response.statusText);
 			}
 		} catch (error) {
-			console.error('Error creating:', error);
+			console.error("Error creating:", error);
 		}
 	};
 
@@ -235,17 +243,17 @@ export default function Schedule({ theme }) {
 
 	const handleOpenUsersDialog = (user) => {
 		setSelectedUser(user);
-		
+
 		// Set default dates to current date/time
 		const defaultDates = getDefaultDates();
-		
+
 		setCreateForm({
 			title: "",
 			startDate: defaultDates.startDate,
 			endDate: defaultDates.endDate,
-			description: ""
+			description: "",
 		});
-		
+
 		setOpenUsersDialog(true);
 	};
 
@@ -279,15 +287,20 @@ export default function Schedule({ theme }) {
 					data={filteredSchedulerData}
 					isLoading={isLoading}
 					onRangeChange={handleRangeChange}
-					onTileClick={(clickedResource) => {handleOpenDetailsDialog(clickedResource); console.log(clickedResource)}}
-					onItemClick={(item) => { handleOpenUsersDialog(item); console.log(item); }}
-
+					onTileClick={(clickedResource) => {
+						handleOpenDetailsDialog(clickedResource);
+						console.log(clickedResource);
+					}}
+					onItemClick={(item) => {
+						handleOpenUsersDialog(item);
+						console.log(item);
+					}}
 					config={{
 						zoom: 1,
 						filterButtonState: -1,
 						showThemeToggle: false,
-						defaultTheme: theme === 'dark' ? 'dark' : 'light',
-						showTooltip: false
+						defaultTheme: theme === "dark" ? "dark" : "light",
+						showTooltip: false,
 					}}
 				/>
 			</section>

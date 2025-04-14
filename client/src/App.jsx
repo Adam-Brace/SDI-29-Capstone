@@ -5,7 +5,6 @@ import RegisterPage from "./Routes/RegisterPage";
 import Admin from "./Routes/Admin.jsx";
 import { useAuth } from "./Context/AuthContext";
 import MyRequests from "./Routes/MyRequests.jsx";
-import "./styles/index.css";
 import "./styles/Form.css";
 import UserData from "./UserData/UserData";
 import Schedule from "./Components/Schedule/Schedule";
@@ -45,17 +44,17 @@ export default function App() {
 	};
 
 	return (
-		<div className={`container ${theme}-theme`}>
-			<Nav theme={theme} />
+		<>
+			<Nav />
 			<Routes>
 				<Route path="/" element={<LoginPage />} />
-				<Route path="/home" element={<HomePage theme={theme} />} />
+				<Route path="/home" element={<HomePage />} />
 				<Route path="/login" element={<LoginPage />} />
 				<Route path="/register" element={<RegisterPage />} />
 				<Route path="/profile" element={<UserData />} />
 				<Route path="/admin" element={<Admin />} />
 				<Route path="*" element={<NotFound />} />
 			</Routes>
-		</div>
+		</>
 	);
 }
