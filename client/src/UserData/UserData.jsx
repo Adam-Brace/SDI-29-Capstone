@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import Edit from './Edit'
 import './UserData.css';
 import { useAuth } from '../Context/AuthContext';
+import '../styles/Form.css';
+
 
 
 export default function UserData() {
@@ -27,7 +29,7 @@ export default function UserData() {
     <>
     <h1 className="user-name">{userdata.length > 0 ? `${userdata[0].rank} ${userdata[0].last_name}'s Profile` : "Loading..."}</h1>
 
-    <div className="user-data-box">
+    <div className="auth-container">
         <ul className="user-list">
           {userdata.length == 0 ? (
             <li className="error-message">Error. No User Data Found</li>
