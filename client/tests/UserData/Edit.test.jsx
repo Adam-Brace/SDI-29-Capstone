@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, queryByText } from "@testing-library/react";
-import Edit from "../src/UserData/Edit";
+import Edit from "../../src/UserData/Edit";
 
 //Dummy data for currentData
 const dummyCurrentData = {

@@ -1,8 +1,8 @@
 import { render, screen, waitFor, within } from "@testing-library/react";
-import UserData from "../src/UserData/UserData.jsx";
-import { AuthProvider } from "../src/Context/AuthContext";
+import UserData from "../../src/UserData/UserData.jsx";
+import { AuthProvider } from "../../src/Context/AuthContext.jsx";
 
-vi.mock("../src/Context/AuthContext", () => ({
+vi.mock("../../src/Context/AuthContext", () => ({
   useAuth: () => ({
     user: { id: 1 },
   }),
