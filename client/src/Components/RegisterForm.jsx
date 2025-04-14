@@ -4,35 +4,35 @@ import { useAuth } from "../Context/AuthContext";
 import "../styles/Form.css";
 
 function RegisterForm() {
-    const { login } = useAuth();
-    const navigate = useNavigate();
-    const [form, setForm] = useState({
-        first_name: "",
-        last_name: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-        rank: "",
-        phone: "",
-        organization: "",
-        crew: "",
-        position: "",
-    });
-    const [error, setError] = useState("");
+	const { login } = useAuth();
+	const navigate = useNavigate();
+	const [form, setForm] = useState({
+		first_name: "",
+		last_name: "",
+		email: "",
+		password: "",
+		rank: "",
+		phone: "",
+		organization: "",
+		crew: "",
+		position: "",
+		permissions: "",
+	});
+	const [error, setError] = useState("");
 
-    const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+	const handleChange = (e) => {
+		setForm({ ...form, [e.target.name]: e.target.value });
+	};
 
+	const handleSubmit = (e) => {
+		e.preventDefault();
         if (form.password !== form.confirmPassword) {
             setError("Passwords do not match. Please try again.");
             return;
         }
 
-        fetch("http://localhost:3001/user", {
+    fetch(`${API_URL}/user`, {
             method: "POST",
             mode: "cors",
             headers: {
@@ -219,6 +219,7 @@ function RegisterForm() {
             </form>
         </div>
     );
+
 }
 
 export default RegisterForm;
