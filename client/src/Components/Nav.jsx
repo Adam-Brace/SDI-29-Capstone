@@ -11,12 +11,12 @@ import { useTheme } from "../Context/ThemeContex.jsx";
 
 export default function Nav() {
 	const { user, logout } = useAuth();
-	const { theme, applyTheme } = useTheme();
+	const { theme, toggleTheme } = useTheme();
 
 	return (
 		<nav className="navbar">
 			<div className="navbar-left">
-				<Logo theme={theme} />
+				<Logo />
 			</div>
 			<div className="navbar-center">
 				<Link to="/" className="nav-link">
@@ -58,12 +58,10 @@ export default function Nav() {
 						<FormControlLabel
 							control={
 								<Switch
-									checked={theme === "dark"}
-									onChange={() =>
-										applyTheme(
-											theme === "light" ? "dark" : "light"
-										)
-									}
+									checked={theme === "light"}
+									onChange={() => {
+										toggleTheme();
+									}}
 									color="primary"
 								/>
 							}

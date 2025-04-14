@@ -20,7 +20,7 @@ router.get("/", async (req, res) => {
 				"events.description",
 				"events.color"
 			)
-			.where(events.status, "approved");
+			.where("events.status", "approved");
 
 		// Transform the data into the desired structure
 		const data = usersWithEvents.reduce((acc, row) => {
@@ -111,6 +111,7 @@ router.post("/", async (req, res) => {
 		res.status(201).json(newEvent);
 	} catch (err) {
 		res.status(500).json({ error: err.message });
+		console.error(err.message);
 	}
 });
 

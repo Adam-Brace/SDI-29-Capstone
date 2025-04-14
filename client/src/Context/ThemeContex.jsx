@@ -11,35 +11,36 @@ const themeContext = createContext();
 export const ThemeProvider = ({ children }) => {
 	const [theme, setTheme] = useState("dark");
 
-	const updateBodyClass = (themeData) => {
-		if (!["light", "dark"].includes(themeData)) {
-			console.error("Invalid themeData:", themeData);
+	const updateBodyClass = () => {
+		if (!["light", "dark"].includes(theme)) {
+			console.error("Invalid themeData:", theme);
 			return;
 		}
-		console.log("Before update:", document.body.classList);
+		//console.log("Updating body class to:", theme);
 		document.body.classList.remove("light-theme", "dark-theme");
-		document.body.classList.add(`${themeData}-theme`);
-		console.log("After update:", document.body.classList);
-		Cookies.set("theme", themeData, { expires: 30 });
+		document.body.classList.add(`${theme}-theme`);
+		Cookies.set("theme", theme, { expires: 30 });
 	};
 
 	useLayoutEffect(() => {
 		const themeData = Cookies.get("theme");
 		if (themeData) {
 			setTheme(themeData);
-			updateBodyClass(themeData);
+			updateBodyClass();
 		} else {
+			setTheme("dark");
 			updateBodyClass("dark");
 		}
 	}, []);
 
-	const applyTheme = (themeData) => {
-		setTheme(themeData);
-		updateBodyClass(themeData);
+	const toggleTheme = () => {
+		console.log("Updating body class to:", theme);
+		setTheme(theme === "light" ? "dark" : "light");
+		updateBodyClass();
 	};
 
 	return (
-		<themeContext.Provider value={{ theme, applyTheme }}>
+		<themeContext.Provider value={{ theme, toggleTheme }}>
 			{children}
 		</themeContext.Provider>
 	);
