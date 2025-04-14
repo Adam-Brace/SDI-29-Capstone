@@ -6,7 +6,7 @@ import { useTheme } from "../Context/ThemeContex.jsx";
 export default function Logo() {
 	const { theme } = useTheme();
 
-	const logoSrc = theme === "light" ? "/Fall-In.png" : "/Fall-In-Light.png";
+	const logoSrc = theme === "dark" ? "/Fall-In.png" : "/Fall-In-Light.png";
 
 	return (
 		<Box sx={{ display: "flex", alignItems: "center" }}>

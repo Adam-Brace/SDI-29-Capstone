@@ -1,9 +1,4 @@
-import React, {
-	createContext,
-	useState,
-	useContext,
-	useLayoutEffect,
-} from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
 import Cookies from "js-cookie";
 
 const themeContext = createContext();
@@ -11,32 +6,30 @@ const themeContext = createContext();
 export const ThemeProvider = ({ children }) => {
 	const [theme, setTheme] = useState("dark");
 
-	const updateBodyClass = () => {
-		if (!["light", "dark"].includes(theme)) {
-			console.error("Invalid themeData:", theme);
+	const updateBodyClass = (themeData) => {
+		setTheme(themeData);
+		if (!["light", "dark"].includes(themeData)) {
+			console.error("Invalid themeData:", themeData);
 			return;
 		}
-		//console.log("Updating body class to:", theme);
+		console.log("Updating body class to:", themeData);
 		document.body.classList.remove("light-theme", "dark-theme");
-		document.body.classList.add(`${theme}-theme`);
-		Cookies.set("theme", theme, { expires: 30 });
+		document.body.classList.add(`${themeData}-theme`);
+		Cookies.set("theme", themeData, { expires: 30 });
 	};
 
-	useLayoutEffect(() => {
+	useEffect(() => {
 		const themeData = Cookies.get("theme");
 		if (themeData) {
-			setTheme(themeData);
-			updateBodyClass();
+			console.log("Theme data from cookies:", themeData);
+			updateBodyClass(themeData);
 		} else {
-			setTheme("dark");
 			updateBodyClass("dark");
 		}
 	}, []);
 
 	const toggleTheme = () => {
-		console.log("Updating body class to:", theme);
-		setTheme(theme === "light" ? "dark" : "light");
-		updateBodyClass();
+		updateBodyClass(theme === "light" ? "dark" : "light");
 	};
 
 	return (

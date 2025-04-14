@@ -19,7 +19,7 @@ export default function Nav() {
 				<Logo />
 			</div>
 			<div className="navbar-center">
-				<Link to="/home" className="nav-link">
+				<Link to="/" className="nav-link">
 					Home
 				</Link>
 				<Link to="/login" className="nav-link">
@@ -58,7 +58,7 @@ export default function Nav() {
 						<FormControlLabel
 							control={
 								<Switch
-									checked={theme === "light"}
+									checked={theme === "dark"}
 									onChange={() => {
 										toggleTheme();
 									}}
