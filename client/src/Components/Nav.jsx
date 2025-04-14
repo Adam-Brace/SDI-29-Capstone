@@ -1,17 +1,25 @@
 import { useAuth } from "../Context/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Logo from "./Logo.jsx";
 import UserBadge from "./UserBadge";
 import { Box } from "@mui/material";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
-import FormControlLabel from "@mui/material/FormControlLabel";
+import { FormControlLabel, Menu, MenuItem } from "@mui/material";
 import Switch from "@mui/material/Switch";
 import { useTheme } from "../Context/ThemeContex.jsx";
+import { useState } from "react";
 
 export default function Nav() {
 	const { user, logout } = useAuth();
 	const { theme, toggleTheme } = useTheme();
+	const [anchorEl, setAnchorEl] = useState(null);
+
+	const navigate = useNavigate();
+
+	const handleClose = () => {
+		setAnchorEl(null);
+	};
 
 	return (
 		<nav className="navbar">
@@ -19,22 +27,13 @@ export default function Nav() {
 				<Logo />
 			</div>
 			<div className="navbar-center">
-				<Link to="/" className="nav-link">
+				<Link to="/home" className="nav-link">
 					Home
-				</Link>
-				<Link to="/login" className="nav-link">
-					Login
-				</Link>
-				<Link to="/register" className="nav-link">
-					Register
-				</Link>
-				<Link to="/profile" className="nav-link">
-					Profile
 				</Link>
 				<Link to="/requests" className="nav-link">
 					Requests
 				</Link>
-				{user?.permissions == "admin" && (
+				{user?.permissions === "admin" && (
 					<Link to="/admin" className="nav-link">
 						Admin
 					</Link>
@@ -59,17 +58,58 @@ export default function Nav() {
 							control={
 								<Switch
 									checked={theme === "dark"}
-									onChange={() => {
-										toggleTheme();
-									}}
+									onChange={toggleTheme}
 									color="primary"
 								/>
 							}
 							label=""
+							sx={{
+								marginRight: 0,
+							}}
 						/>
-						<DarkModeIcon sx={{ ml: -2 }} />
+						<DarkModeIcon sx={{ ml: 1 }} />
 					</Box>
-					<UserBadge wh={"40px"} />
+					<UserBadge
+						id={null}
+						wh={"40px"}
+						onClick={(event) => {
+							user
+								? setAnchorEl(event.currentTarget)
+								: navigate("/login");
+						}}
+					/>
+					<Menu
+						id="menu-appbar"
+						anchorEl={anchorEl}
+						anchorOrigin={{
+							vertical: "bottom",
+							horizontal: "center",
+						}}
+						keepMounted
+						transformOrigin={{
+							vertical: "top",
+							horizontal: "center",
+						}}
+						open={Boolean(anchorEl)}
+						onClose={handleClose}
+					>
+						<MenuItem
+							onClick={() => {
+								handleClose();
+								navigate("/profile");
+							}}
+						>
+							Profile
+						</MenuItem>
+						<MenuItem
+							onClick={() => {
+								handleClose();
+								logout();
+							}}
+						>
+							Logout
+						</MenuItem>
+					</Menu>
 				</Box>
 			</div>
 		</nav>

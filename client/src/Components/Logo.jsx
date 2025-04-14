@@ -10,7 +10,7 @@ export default function Logo() {
 
 	return (
 		<Box sx={{ display: "flex", alignItems: "center" }}>
-			<Link to="/" style={{ textDecoration: "none" }}>
+			<Link to="/home" style={{ textDecoration: "none" }}>
 				<img
 					src={logoSrc}
 					alt="Fall-In Logo"
