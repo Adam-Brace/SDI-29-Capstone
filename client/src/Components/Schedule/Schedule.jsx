@@ -8,12 +8,13 @@ import "../../styles/HomePage.css";
 import EventDetailsDialog from "./Dialog Components/EventDetailsDialog";
 import EditEventDialog from "./Dialog Components/EditEventDialog";
 import CreateEventDialog from "./Dialog Components/CreateEventDialog";
-
+import { useTheme } from "../../Context/ThemeContex.jsx";
 import { getEventColor, getDefaultDates } from "./utilityFunctions"; //
 
 dayjs.extend(isBetween);
 
-export default function Schedule({ theme }) {
+export default function Schedule() {
+	const { theme } = useTheme();
 	const [filterButtonState, setFilterButtonState] = useState(0);
 	const [SchedulerData, setSchedulerData] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);

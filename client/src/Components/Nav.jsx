@@ -1,8 +1,22 @@
+import { useAuth } from "../Context/AuthContext";
+import { Link } from "react-router-dom";
+import Logo from "./Logo.jsx";
+import UserBadge from "./UserBadge";
+import { Box } from "@mui/material";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
+import { useTheme } from "../Context/ThemeContex.jsx";
+
 export default function Nav() {
+	const { user, logout } = useAuth();
+	const { theme, toggleTheme } = useTheme();
+
 	return (
 		<nav className="navbar">
 			<div className="navbar-left">
-				<Logo theme={theme} />
+				<Logo />
 			</div>
 			<div className="navbar-center">
 				<Link to="/" className="nav-link">
@@ -17,6 +31,14 @@ export default function Nav() {
 				<Link to="/profile" className="nav-link">
 					Profile
 				</Link>
+				<Link to="/requests" className="nav-link">
+					Requests
+				</Link>
+				{user?.permissions == "admin" && (
+					<Link to="/admin" className="nav-link">
+						Admin
+					</Link>
+				)}
 			</div>
 			<div className="navbar-right">
 				<Box
@@ -37,7 +59,9 @@ export default function Nav() {
 							control={
 								<Switch
 									checked={theme === "dark"}
-									onChange={toggleTheme}
+									onChange={() => {
+										toggleTheme();
+									}}
 									color="primary"
 								/>
 							}
@@ -45,7 +69,7 @@ export default function Nav() {
 						/>
 						<DarkModeIcon sx={{ ml: -2 }} />
 					</Box>
-					<UserBadge user={sampleUser} />
+					<UserBadge wh={"40px"} />
 				</Box>
 			</div>
 		</nav>

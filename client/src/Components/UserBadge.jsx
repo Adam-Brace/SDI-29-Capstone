@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import Box from "@mui/material/Box";
+import PersonIcon from "@mui/icons-material/Person";
 import { useAuth } from "../Context/AuthContext";
 
 function UserBadge({ wh, id }) {
@@ -47,11 +48,7 @@ function UserBadge({ wh, id }) {
 					</Avatar>
 				</Tooltip>
 			) : (
-				<Avatar
-					alt="User"
-					src="https://dummyimage.com/40x40/cccccc/000000.png&text=User"
-					sx={{ width: wh, height: wh }}
-				/>
+				<PersonIcon alt="User" sx={{ width: "30px", height: "30" }} />
 			)}
 		</>
 	);
