@@ -1,27 +1,38 @@
-import { useEffect, useState } from 'react';
-import Edit from './Edit'
-import './UserData.css';
+
+import { useEffect, useState } from "react";
+import Edit from "./Edit";
+import "./UserData.css";
+const API_URL = import.meta.env.VITE_API_URL;
+
 import { useAuth } from '../Context/AuthContext';
 import '../styles/Form.css';
 
 
+import { useAuth } from "../Context/AuthContext";
 
 export default function UserData() {
-  const [userdata, setUserdata] = useState([]);
-  const {user} = useAuth()
+	const [userdata, setUserdata] = useState([]);
+	const { user } = useAuth();
 
+	useEffect(() => {
+		if (!user || !user.id) return;
+		fetch(`${API_URL}/user/${user.id}`)
+			.then((res) => res.json())
+			.then((data) => {
+				// console.log('fetched data:', data)
+				// console.log(user.id)
+				setUserdata(data);
+			})
+			.catch((err) => console.error(err));
+	}, [user]);
 
-  useEffect(() => {
-    if (!user || !user.id) return;
-    fetch(`http://localhost:3001/user/${user.id}`)
-      .then(res=>res.json())
-      .then(data => {
-        // console.log('fetched data:', data)
-        // console.log(user.id)
-        setUserdata(data)
-  })
-      .catch(err=>console.error(err))
-  }, [user])
+	return (
+		<>
+			<h1 className="user-name">
+				{userdata.length > 0
+					? `${userdata[0].rank} ${userdata[0].last_name}'s Profile`
+					: "Loading..."}
+			</h1>
 
 
 
@@ -57,3 +68,4 @@ export default function UserData() {
     </>
   )
 }
+

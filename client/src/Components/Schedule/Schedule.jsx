@@ -4,6 +4,7 @@ import { Scheduler } from "@bitnoi.se/react-scheduler";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import "../../styles/HomePage.css";
+const API_URL = import.meta.env.VITE_API_URL;
 
 import EventDetailsDialog from "./Dialog Components/EventDetailsDialog";
 import EditEventDialog from "./Dialog Components/EditEventDialog";
@@ -43,8 +44,10 @@ export default function Schedule() {
 	// FETCHES EVENTS FROM SERVER
 	const fetchEvents = async () => {
 		setIsLoading(true);
+		console.log(`${API_URL}/events/`);
 		try {
-			const response = await fetch("http://localhost:3001/events");
+			const response = await fetch(`${API_URL}/events/`);
+
 			if (!response.ok) {
 				console.error(
 					"Server error:",
@@ -86,7 +89,7 @@ export default function Schedule() {
 
 		try {
 			const response = await fetch(
-				`http://localhost:3001/events/${selectedTile.id}`,
+				`${API_URL}/events/${selectedTile.id}`,
 				{
 					method: "DELETE",
 					headers: {
@@ -156,7 +159,7 @@ export default function Schedule() {
 
 		try {
 			const response = await fetch(
-				`http://localhost:3001/events/${selectedTile.id}`,
+				`${API_URL}/events/${selectedTile.id}`,
 				{
 					method: "PATCH",
 					headers: {
@@ -197,7 +200,7 @@ export default function Schedule() {
 		if (!selectedUser) return;
 
 		try {
-			const response = await fetch("http://localhost:3001/events/", {
+			const response = await fetch(`${API_URL}/events/`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
