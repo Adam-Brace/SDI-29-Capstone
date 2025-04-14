@@ -30,6 +30,7 @@ Table chats {
   id uuid [primary key]
   is_group    boolean [default: false]
   name        string
+  status string
   created_at timestamp
 }
 
