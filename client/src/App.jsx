@@ -12,6 +12,7 @@ import UserData from "./UserData/UserData";
 import NotFound from "./Components/NotFound";
 import HomePage from "./Routes/HomePage";
 import Nav from "./Components/Nav.jsx";
+import MyRequests from "./Routes/MyRequests.jsx"
 
 export default function App() {
   const { logout } = useAuth();
@@ -68,6 +69,7 @@ export default function App() {
 				/>
 				<Route path="/login" element={<LoginPage />} />
 				<Route path="/register" element={<RegisterPage />} />
+				<Route path="/myrequests" element={<MyRequests/>} />
 				<Route path="*" element={<NotFound />} />
 			</Routes>
 		</>
