@@ -5,7 +5,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
 	const [user, setUser] = useState(null);
-
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		const userData = Cookies.get("user");
@@ -17,6 +17,7 @@ export const AuthProvider = ({ children }) => {
 				Cookies.remove("user");
 			}
 		}
+		setLoading(false);
 	}, []);
 
 	const login = (userData) => {
@@ -30,7 +31,7 @@ export const AuthProvider = ({ children }) => {
 	};
 
 	return (
-		<AuthContext.Provider value={{ user, login, logout, setUser }}>
+		<AuthContext.Provider value={{ user, login, logout, setUser, loading }}>
 			{children}
 		</AuthContext.Provider>
 	);
