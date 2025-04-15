@@ -1,6 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const knex = require("knex")(require("../../knexfile")["development"]);
+var PORT = process.env.SERVER_PORT;
+
+if (!PORT) {
+	dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+	PORT = process.env.SERVER_PORT;
+}
 
 router.get("/", async (req, res) => {
 	try {
@@ -18,9 +24,9 @@ router.get("/", async (req, res) => {
 				"events.end_date",
 				"events.title",
 				"events.description",
-				"events.color"
-			)
-			.where("events.status", "approved");
+				"events.color",
+				"events.status"
+			);
 
 		const transformedData = usersWithEvents.reduce((acc, row) => {
 			let user = acc.find((u) => u.id === row.user_id);
@@ -30,12 +36,13 @@ router.get("/", async (req, res) => {
 					label: {
 						title: `${row.rank} ${row.first_name} ${row.last_name}`,
 						subtitle: `${row.crew} ${row.position}`,
+						icon: `http://localhost:${PORT}/user/generate-image/${row.user_id}`,
 					},
 					data: [],
 				};
 				acc.push(user);
 			}
-			if (row.event_id) {
+			if (row.event_id && row.status === "approved") {
 				user.data.push({
 					id: row.event_id,
 					startDate: row.start_date,
@@ -154,24 +161,80 @@ router.delete("/:id", async (req, res) => {
 	}
 });
 
-router.get("/raw", async (req, res) => {
+// Update user message
+router.post("/:id/user-message", async (req, res) => {
 	try {
-		const events = await knex("events").select();
-		res.status(200).json(events);
+		const { id } = req.params;
+		const { message } = req.body;
+
+		const [updatedEvent] = await knex("events").where("id", id).update(
+			{
+				user_message: message,
+			},
+			["id", "user_message"]
+		);
+
+		if (updatedEvent) {
+			res.status(200).json(updatedEvent);
+		} else {
+			res.status(404).json({ error: "Event not found" });
+		}
 	} catch (err) {
 		res.status(500).json({ error: err.message });
 	}
 });
 
-router.get("/raw/:id", async (req, res) => {
+// Update admin message
+router.post("/:id/admin-message", async (req, res) => {
 	try {
-		const event = await knex("events")
-			.select()
-			.where("id", req.params.id)
-			.first();
+		const { id } = req.params;
+		const { message } = req.body;
 
-		if (event) {
-			res.status(200).json(event);
+		const [updatedEvent] = await knex("events").where("id", id).update(
+			{
+				admin_message: message,
+			},
+			["id", "admin_message"]
+		);
+
+		if (updatedEvent) {
+			res.status(200).json(updatedEvent);
+		} else {
+			res.status(404).json({ error: "Event not found" });
+		}
+	} catch (err) {
+		res.status(500).json({ error: err.message });
+	}
+});
+
+// Delete user message
+router.delete("/:id/user-message", async (req, res) => {
+	try {
+		const { id } = req.params;
+		const updated = await knex("events")
+			.where("id", id)
+			.update({ user_message: null });
+
+		if (updated) {
+			res.status(200).json({ message: "User message cleared" });
+		} else {
+			res.status(404).json({ error: "Event not found" });
+		}
+	} catch (err) {
+		res.status(500).json({ error: err.message });
+	}
+});
+
+// Delete admin message
+router.delete("/:id/admin-message", async (req, res) => {
+	try {
+		const { id } = req.params;
+		const updated = await knex("events")
+			.where("id", id)
+			.update({ admin_message: null });
+
+		if (updated) {
+			res.status(200).json({ message: "Admin message cleared" });
 		} else {
 			res.status(404).json({ error: "Event not found" });
 		}

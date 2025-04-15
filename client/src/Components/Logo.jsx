@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Box from "@mui/material/Box";
-import { useTheme } from "../Context/ThemeContex.jsx";
+import { useTheme } from "../Context/ThemeContext.jsx";
 
 export default function Logo() {
 	const { theme } = useTheme();

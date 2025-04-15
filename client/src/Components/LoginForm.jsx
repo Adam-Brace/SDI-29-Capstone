@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
-import "../styles/Form.css";
+import { TextField, Button, Box, Typography, Alert } from "@mui/material";
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 function LoginForm() {
@@ -44,45 +45,51 @@ function LoginForm() {
 	};
 
 	return (
-		<div className="auth-container">
-			<h2>Login</h2>
-			{error && <div className="alert">{error}</div>}
+		<Box
+			sx={{
+				maxWidth: 400,
+				margin: "auto",
+				padding: 3,
+				boxShadow: 3,
+				borderRadius: 2,
+			}}
+		>
+			<Typography variant="h4" gutterBottom>
+				Login
+			</Typography>
+			{error && <Alert severity="error">{error}</Alert>}
 			<form onSubmit={handleSubmit}>
-				<div className="form-group">
-					<label className="form-label" htmlFor="email">
-						Email
-					</label>
-					<input
-						type="email"
-						name="email"
-						id="email"
-						className="form-control"
-						placeholder="Enter your email"
-						value={form.email}
-						onChange={handleChange}
-						required
-					/>
-				</div>
-				<div className="form-group">
-					<label className="form-label" htmlFor="password">
-						Password
-					</label>
-					<input
-						type="password"
-						name="password"
-						id="password"
-						className="form-control"
-						placeholder="Enter your password"
-						value={form.password}
-						onChange={handleChange}
-						required
-					/>
-				</div>
-				<button type="submit" className="btn-primary">
+				<TextField
+					fullWidth
+					margin="normal"
+					label="Email"
+					name="email"
+					type="email"
+					value={form.email}
+					onChange={handleChange}
+					required
+				/>
+				<TextField
+					fullWidth
+					margin="normal"
+					label="Password"
+					name="password"
+					type="password"
+					value={form.password}
+					onChange={handleChange}
+					required
+				/>
+				<Button
+					type="submit"
+					variant="contained"
+					color="primary"
+					fullWidth
+					sx={{ marginTop: 2 }}
+				>
 					Login
-				</button>
+				</Button>
 			</form>
-		</div>
+		</Box>
 	);
 }
 

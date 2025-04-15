@@ -4,13 +4,14 @@ import { Routes, Route, Link } from "react-router-dom";
 import LoginPage from "./Routes/LoginPage/LoginPage";
 import RegisterPage from "./Routes/RegisterPage/RegisterPage";
 import Admin from "./Routes/Admin/Admin.jsx";
-
+import HomePage from "./Routes/HomePage.jsx";
 import { useAuth } from "./Context/AuthContext";
 import ProtectedRoute from "./Context/ProtectedRoute.jsx";
 import "./styles/Form.css";
 import UserData from "./UserData/UserData";
 import NotFound from "./Components/NotFound";
 import Nav from "./Components/Nav.jsx";
+import MyRequests from "./Routes/MyRequests.jsx"
 
 export default function App() {
 	const { logout } = useAuth();
@@ -59,13 +60,14 @@ export default function App() {
 				<Route
 					path="/admin"
 					element={
-						<ProtectedRoute admin={true}>
+						<ProtectedRoute admin={false}>
 							<Admin />
 						</ProtectedRoute>
 					}
 				/>
 				<Route path="/login" element={<LoginPage />} />
 				<Route path="/register" element={<RegisterPage />} />
+				<Route path="/myrequests" element={<MyRequests/>} />
 				<Route path="*" element={<NotFound />} />
 			</Routes>
 		</>

@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
+import { ThemeProvider as Theme, createTheme } from "@mui/material/styles";
 import Cookies from "js-cookie";
 
 const themeContext = createContext();
@@ -32,7 +33,9 @@ export const ThemeProvider = ({ children }) => {
 
 	return (
 		<themeContext.Provider value={{ theme, toggleTheme }}>
-			{children}
+			<Theme theme={createTheme({ palette: { mode: theme } })}>
+				{children}
+			</Theme>
 		</themeContext.Provider>
 	);
 };
