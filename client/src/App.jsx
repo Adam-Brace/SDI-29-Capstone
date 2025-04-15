@@ -5,7 +5,6 @@ import LoginPage from "./Routes/LoginPage/LoginPage";
 import RegisterPage from "./Routes/RegisterPage/RegisterPage";
 import Admin from "./Routes/Admin/Admin.jsx";
 import HomePage from "./Routes/HomePage.jsx";
-
 import { useAuth } from "./Context/AuthContext";
 import ProtectedRoute from "./Context/ProtectedRoute.jsx";
 import "./styles/Form.css";

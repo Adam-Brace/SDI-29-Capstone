@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
+const API_URL = import.meta.env.VITE_API_URL;
 import "../styles/Form.css";
 
 function RegisterForm() {
