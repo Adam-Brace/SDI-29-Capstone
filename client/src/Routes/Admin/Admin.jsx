@@ -1,14 +1,35 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
+import Box from "@mui/material/Box";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import TextField from "@mui/material/TextField";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
+import Avatar from "@mui/material/Avatar";
+import ListItemText from "@mui/material/ListItemText";
+import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
 import Edit from "../../UserData/Edit";
+import UserBadge from "../../Components/UserBadge";
+import { useAuth } from "../../Context/AuthContext";
 import "../../styles/Admin.css";
+
 const API_URL = import.meta.env.VITE_API_URL;
 
-
 export default function Admin() {
+	const { user } = useAuth();
 	const [users, setUsers] = useState([]);
+	const [events, setEvents] = useState([]);
+	const [selectedEvent, setSelectedEvent] = useState(null);
 	const [filteredUsers, setFilteredUsers] = useState([]);
 	const [searchTerm, setSearchTerm] = useState("");
 	const [selectedUser, setSelectedUser] = useState(null);
+	const [tabValue, setTabValue] = useState(0);
+
+	const handleTabChange = (event, newValue) => {
+		setTabValue(newValue);
+	};
 
 	useEffect(() => {
 		fetch(`${API_URL}/user`)
@@ -20,76 +41,206 @@ export default function Admin() {
 			.catch((err) => console.error("Error fetching users:", err));
 	}, []);
 
+	useEffect(() => {
+		fetch(`${API_URL}/events/raw`)
+			.then((res) => res.json())
+			.then((data) => {
+				setEvents(data);
+			})
+			.catch((err) => console.error("Error fetching users:", err));
+	}, []);
+
 	const handleSearchChange = (event) => {
 		const term = event.target.value.toLowerCase();
 		setSearchTerm(term);
 		setFilteredUsers(
 			users.filter(
-				(user) =>
-					user.first_name.toLowerCase().includes(term) ||
-					user.last_name.toLowerCase().includes(term) ||
-					user.rank.toLowerCase().includes(term) ||
-					user.email.toLowerCase().includes(term)
+				(userFilter) =>
+					userFilter.first_name.toLowerCase().includes(term) ||
+					userFilter.last_name.toLowerCase().includes(term) ||
+					userFilter.rank.toLowerCase().includes(term) ||
+					userFilter.email.toLowerCase().includes(term)
 			)
 		);
 	};
 
-	const handleEditClick = (user) => {
-		setSelectedUser(user);
-	};
-
 	return (
-		<div className="admin-container">
-			<aside className="admin-sidebar">
-				<h2 className="admin-seperate-section-header">Users</h2>
-				<input
-					type="text"
-					className="admin-search-bar"
-					placeholder="Search users by name, rank, or email"
-					value={searchTerm}
-					onChange={handleSearchChange}
-				/>
-				<ul className="admin-user-list">
-					{filteredUsers.map((user) => (
-						<li key={user.id} className="admin-user-card">
-							<div>
-								<p>
-									<strong>
-										{user.rank} {user.first_name}{" "}
-										{user.last_name}
-									</strong>
-								</p>
-								<p>{user.email}</p>
-							</div>
-
-							<button
-								className="admin-dropdown-btn"
-								onClick={() => handleEditClick(user)}
-							>
-								≡
-							</button>
-						</li>
-					))}
-				</ul>
-			</aside>
-
-			<main className="admin-main">
-				{selectedUser ? (
-					<div className="admin-user-details">
-						<h1>
-							{selectedUser.rank} {selectedUser.first_name}{" "}
-							{selectedUser.last_name}'s Options:
-						</h1>
-						<Edit id={selectedUser.id} currentData={selectedUser} />
-					</div>
-				) : (
-					<div className="admin-placeholder">
-						<p>
-							Click a user's<b> '≡' </b>to edit their details
-						</p>
-					</div>
+		<Box sx={{ display: "flex", flexDirection: "row", height: "100vh" }}>
+			{/* Sidebar */}
+			<Box
+				sx={{
+					width: "30%",
+					borderRight: 1,
+					borderColor: "divider",
+					padding: 2,
+				}}
+			>
+				<Tabs
+					value={tabValue}
+					onChange={handleTabChange}
+					aria-label="Admin Tabs"
+					centered
+				>
+					<Tab label="My Requests"></Tab>
+					{user.permissions == "admin" && <Tab label="Requests" />}
+					{user.permissions == "admin" && <Tab label="Users" />}
+				</Tabs>
+				<Divider sx={{ marginY: 2 }} />
+				{tabValue === 0 && (
+					<List>
+						{events.map((userEvent) =>
+							user.id == userEvent.user_id ? (
+								<ListItem
+									key={userEvent.id}
+									onClick={() => setSelectedEvent(userEvent)} // Edit on click
+									button // Makes the ListItem clickable
+								>
+									<ListItemText
+										primary={userEvent.title}
+										secondary={userEvent.description}
+									/>
+								</ListItem>
+							) : (
+								userEvent.length > 0 && (
+									<ListItem key={0}>
+										<ListItemText
+											primary={"No requests Found"}
+										/>
+									</ListItem>
+								)
+							)
+						)}
+					</List>
 				)}
-			</main>
-		</div>
+				{tabValue === 1 && (
+					<List>
+						{events.map((userEvent) => (
+							<ListItem
+								key={userEvent.id}
+								onClick={() => setSelectedEvent(userEvent)} // Edit on click
+								button // Makes the ListItem clickable
+							>
+								<ListItemText
+									primary={userEvent.title}
+									secondary={userEvent.description}
+								/>
+							</ListItem>
+						))}
+					</List>
+				)}
+				{tabValue === 2 && (
+					<>
+						<TextField
+							fullWidth
+							variant="outlined"
+							label="Search Users"
+							placeholder="Search by name, rank, or email"
+							value={searchTerm}
+							onChange={handleSearchChange}
+							sx={{ marginBottom: 2 }}
+						/>
+						<List>
+							{filteredUsers.map((userMap) => (
+								<ListItem
+									key={userMap.id}
+									onClick={() => {
+										setSelectedUser(userMap);
+									}}
+									button
+								>
+									<ListItemAvatar>
+										<UserBadge id={userMap.id} />
+									</ListItemAvatar>
+									<ListItemText
+										primary={`${userMap.rank} ${userMap.first_name} ${userMap.last_name}`}
+										secondary={userMap.email}
+									/>
+								</ListItem>
+							))}
+						</List>
+					</>
+				)}
+			</Box>
+
+			{/* Main Content */}
+			<Box
+				sx={{
+					flex: 1,
+					padding: 3,
+					overflowY: "auto",
+				}}
+			>
+				{(tabValue === 0 || tabValue === 1) &&
+					(selectedEvent ? (
+						<Box>
+							<Typography variant="h4" gutterBottom>
+								{selectedEvent.title}
+							</Typography>
+							<Typography variant="body1">
+								{selectedEvent.description}
+							</Typography>
+							<Typography variant="body2" color="textSecondary">
+								Start Date: {selectedEvent.start_date}
+							</Typography>
+							<Typography variant="body2" color="textSecondary">
+								End Date: {selectedEvent.end_date}
+							</Typography>
+							<Typography variant="body2" color="textSecondary">
+								Color: {selectedEvent.color}
+							</Typography>
+						</Box>
+					) : (
+						<Typography variant="h6" color="textSecondary">
+							Select a event to view.
+						</Typography>
+					))}
+				{tabValue === 2 &&
+					(selectedUser ? (
+						<Box>
+							<Typography variant="h4" gutterBottom>
+								{selectedUser.rank} {selectedUser.first_name}{" "}
+								{selectedUser.last_name}'s Details
+							</Typography>
+							<Box>
+								<Typography variant="body2" gutterBottom>
+									First Name: {selectedUser.first_name}
+								</Typography>
+								<Typography variant="body2" gutterBottom>
+									Last Name: {selectedUser.last_name}
+								</Typography>
+								<Typography variant="body2" gutterBottom>
+									Rank: {selectedUser.rank}
+								</Typography>
+								<Typography variant="body2" gutterBottom>
+									Email: {selectedUser.email}
+								</Typography>
+								<Typography variant="body2" gutterBottom>
+									Duty Phone: {selectedUser.phone}
+								</Typography>
+								<Typography variant="body2" gutterBottom>
+									Organization: {selectedUser.organization}
+								</Typography>
+								<Typography variant="body2" gutterBottom>
+									Crew: {selectedUser.crew}
+								</Typography>
+								<Typography variant="body2" gutterBottom>
+									Position: {selectedUser.position}
+								</Typography>
+								<Typography variant="body2" gutterBottom>
+									Role: {selectedUser.permissions}
+								</Typography>
+							</Box>
+							<Edit
+								id={selectedUser.id}
+								currentData={selectedUser}
+							/>
+						</Box>
+					) : (
+						<Typography variant="h6" color="textSecondary">
+							Select a user to view and edit their details.
+						</Typography>
+					))}
+			</Box>
+		</Box>
 	);
 }

@@ -4,7 +4,7 @@ import { Routes, Route, Link } from "react-router-dom";
 import LoginPage from "./Routes/LoginPage/LoginPage";
 import RegisterPage from "./Routes/RegisterPage/RegisterPage";
 import Admin from "./Routes/Admin/Admin.jsx";
-
+import HomePage from "./Routes/HomePage.jsx";
 import { useAuth } from "./Context/AuthContext";
 import ProtectedRoute from "./Context/ProtectedRoute.jsx";
 import "./styles/Form.css";
@@ -37,38 +37,39 @@ export default function App() {
     document.body.className = newTheme + "-theme";
   };
 
-  return (
-    <>
-      <Nav />
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute admin={false}>
-              <HomePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute admin={false}>
-              <UserData />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute admin={true}>
-              <Admin />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </>
-  );
+
+	return (
+		<>
+			<Nav />
+			<Routes>
+				<Route
+					path="/"
+					element={
+						<ProtectedRoute admin={false}>
+							<HomePage />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/profile"
+					element={
+						<ProtectedRoute admin={false}>
+							<UserData />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/admin"
+					element={
+						<ProtectedRoute admin={false}>
+							<Admin />
+						</ProtectedRoute>
+					}
+				/>
+				<Route path="/login" element={<LoginPage />} />
+				<Route path="/register" element={<RegisterPage />} />
+				<Route path="*" element={<NotFound />} />
+			</Routes>
+		</>
+	);
 }

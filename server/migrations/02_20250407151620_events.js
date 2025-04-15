@@ -15,6 +15,8 @@ exports.up = function (knex) {
 		table.string("description");
 		table.string("color");
 		table.string("status").defaultTo("pending");
+		table.string("user_message");
+		table.string("admin_message");
 		table.timestamps(true, true);
 	});
 };
