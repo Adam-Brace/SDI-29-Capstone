@@ -46,7 +46,7 @@ export default function Schedule() {
 		setIsLoading(true);
 		console.log(`${API_URL}/events/`);
 		try {
-			const response = await fetch(`${API_URL}/events/`);
+			const response = await fetch(`${API_URL}/events/schedule/`);
 
 			if (!response.ok) {
 				console.error(
@@ -89,7 +89,7 @@ export default function Schedule() {
 
 		try {
 			const response = await fetch(
-				`${API_URL}/events/${selectedTile.id}`,
+				`${API_URL}/events/schedule/${selectedTile.id}`,
 				{
 					method: "DELETE",
 					headers: {

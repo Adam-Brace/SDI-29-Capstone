@@ -42,7 +42,7 @@ export default function Admin() {
 	}, []);
 
 	useEffect(() => {
-		fetch(`${API_URL}/events`)
+		fetch(`${API_URL}/events/raw`)
 			.then((res) => res.json())
 			.then((data) => {
 				setEvents(data);
@@ -184,13 +184,13 @@ export default function Admin() {
 								{selectedEvent.description}
 							</Typography>
 							<Typography variant="body2" color="textSecondary">
-								Start Date: {selectedEvent.startDate}
+								Start Date: {selectedEvent.start_date}
 							</Typography>
 							<Typography variant="body2" color="textSecondary">
-								End Date: {selectedEvent.endDate}
+								End Date: {selectedEvent.end_date}
 							</Typography>
 							<Typography variant="body2" color="textSecondary">
-								Color: {selectedEvent.bgColor}
+								Color: {selectedEvent.color}
 							</Typography>
 						</Box>
 					) : (

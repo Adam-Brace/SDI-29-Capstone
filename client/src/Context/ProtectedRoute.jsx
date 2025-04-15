@@ -7,9 +7,11 @@ const ProtectedRoute = ({ children, admin }) => {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		if (!user) {
-			navigate("/login", { replace: true });
-		}
+		setTimeout(() => {
+			if (!user) {
+				navigate("/login", { replace: true });
+			}
+		}, 1000);
 	}, [user, navigate]);
 
 	// Only render children

@@ -1,8 +1,10 @@
+const argon2 = require("argon2");
+
 exports.seed = async function (knex) {
 	await knex("users").del();
 	await knex("users").insert([
 		{
-			password: ";lasfgkuasbf;kjsbdvoszscakjsvcjkasvc;kJBljh",
+			password: await argon2.hash("1"),
 			first_name: "John",
 			last_name: "Jacob",
 			rank: "Sgt",
