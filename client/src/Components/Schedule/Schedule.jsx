@@ -248,8 +248,8 @@ export default function Schedule() {
 	};
 
 	const handleOpenUsersDialog = (selectedUser) => {
-		// Only open the dialog if the selected user matches the logged-in user
-		if (selectedUser.id === user.id) {
+		// Allow admins to create events for any user, but regular users can only create events for themselves
+		if (user.permissions === "admin" || selectedUser.id === user.id) {
 			setSelectedUser(selectedUser);
 
 			// Set default dates to current date/time
