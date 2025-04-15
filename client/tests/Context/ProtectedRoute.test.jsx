@@ -1,39 +1,71 @@
 import ProtectedRoute from "../../src/Context/ProtectedRoute";
-import { render, screen } from "@testing-library/react";
-import { AuthProvider } from "../../src/Context/AuthContext";
+import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { AuthContext } from "../../src/Context/AuthContext";
+import { describe, test, expect, vi, beforeEach } from "vitest";
+
+const navigateMock = vi.fn();
+
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual("react-router-dom");
+  return {
+    ...actual,
+    useNavigate: () => navigateMock,
+  };
+});
 
 describe("ProtectedRoute", () => {
-  const MockComponent = () => <div>Protected Content</div>;
-
-  test("redirects to login when user is not authenticated", () => {
-    render(
-      <AuthProvider>
-        <MemoryRouter initialEntries={["/protected"]}>
-          <ProtectedRoute>
-            <MockComponent />
-          </ProtectedRoute>
-        </MemoryRouter>
-      </AuthProvider>
-    );
-
-    expect(screen.queryByText("Protected Content")).not.toBeInTheDocument();
+  beforeEach(() => {
+    vi.resetModules();
+    navigateMock.mockClear();
   });
 
-  //   test("renders children when user is authenticated", () => {
-  //     const mockUser = { permissions: "user" };
+  test("redirects to login when user is not authenticated", async () => {
+    vi.doMock("../../src/Context/AuthContext", async () => {
+      const actual = await import("../../src/Context/AuthContext");
+      return {
+        ...actual,
+        useAuth: () => ({ user: null }),
+      };
+    });
 
-  //     render(
-  //       <AuthContext.Provider value={{ user: mockUser }}>
-  //         <MemoryRouter initialEntries={["/protected"]}>
-  //           <ProtectedRoute>
-  //             <MockComponent />
-  //           </ProtectedRoute>
-  //         </MemoryRouter>
-  //       </AuthContext.Provider>
-  //     );
+    const { default: ProtectedRoute } = await import(
+      "../../src/Context/ProtectedRoute"
+    );
 
-  //     expect(screen.getByText("Protected Content")).toBeInTheDocument();
-  //   });
+    render(
+      <MemoryRouter initialEntries={["/protected"]}>
+        <ProtectedRoute>
+          <div>Protected Content</div>
+        </ProtectedRoute>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(navigateMock).toHaveBeenCalledWith("/login", { replace: true });
+    });
+  });
+
+  test("renders children when user is authenticated", async () => {
+    vi.doMock("../../src/Context/AuthContext", async () => {
+      const actual = await import("../../src/Context/AuthContext");
+      return {
+        ...actual,
+        useAuth: () => ({ user: { permissions: "user" } }),
+      };
+    });
+
+    const { default: ProtectedRoute } = await import(
+      "../../src/Context/ProtectedRoute"
+    );
+
+    render(
+      <MemoryRouter initialEntries={["/protected"]}>
+        <ProtectedRoute>
+          <div>Protected Content</div>
+        </ProtectedRoute>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText("Protected Content")).toBeInTheDocument();
+  });
 });
