@@ -1,6 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const knex = require("knex")(require("../../knexfile")["development"]);
+var PORT = process.env.SERVER_PORT;
+
+if (!PORT) {
+	dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+	PORT = process.env.SERVER_PORT;
+}
 
 router.get("/", async (req, res) => {
 	try {
@@ -30,6 +36,7 @@ router.get("/", async (req, res) => {
 					label: {
 						title: `${row.rank} ${row.first_name} ${row.last_name}`,
 						subtitle: `${row.crew} ${row.position}`,
+						icon: `http://localhost:${PORT}/user/generate-image/${row.user_id}`,
 					},
 					data: [],
 				};

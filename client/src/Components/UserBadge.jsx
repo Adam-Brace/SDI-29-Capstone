@@ -11,47 +11,27 @@ function UserBadge({ wh, id, onClick }) {
 	const [badgeUser, setBadgeUser] = useState(null);
 
 	useEffect(() => {
-		if (!id) {
-			setBadgeUser(user);
-		} else {
-			fetch(`${API_URL}/user/${id}`)
-				.then((response) => {
-					if (!response.ok) {
-						throw new Error(
-							`HTTP error! status: ${response.status}`
-						);
-					}
-					return response.json();
-				})
-				.then((data) => {
+		const userId = id || user?.id; // Use the provided id or fallback to the logged-in user's id
+		if (!userId) return;
+
+		fetch(`${API_URL}/user/${userId}`)
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
+				return response.json();
+			})
+			.then((data) => {
+				if (data && data.length > 0) {
 					setBadgeUser(data[0]);
-				})
-				.catch((error) => {
-					console.error("Error fetching user data:", error);
-				});
-		}
+				} else {
+					console.warn("No user data found for id:", userId);
+				}
+			})
+			.catch((error) => {
+				console.error("Error fetching user data:", error);
+			});
 	}, [id, user]);
-
-	// Generate a color based on the crew name
-	const generateColorFromSeed = (seed) => {
-		if (!seed) return "#9E9E9E"; // Default color if no crew is provided
-		let hash = 0;
-		for (let i = 0; i < seed.length; i++) {
-			hash = seed.charCodeAt(i) + ((hash << 5) - hash);
-		}
-		const color = `#${((hash >> 24) & 0xff)
-			.toString(16)
-			.padStart(2, "0")}${((hash >> 16) & 0xff)
-			.toString(16)
-			.padStart(2, "0")}${((hash >> 8) & 0xff)
-			.toString(16)
-			.padStart(2, "0")}`;
-		return color;
-	};
-
-	const badgeColor = badgeUser
-		? generateColorFromSeed(badgeUser.crew)
-		: "#9E9E9E"; // Default color if no user or crew is available
 
 	const tooltipContent = badgeUser ? (
 		<Box sx={{ p: 1 }}>
@@ -70,23 +50,30 @@ function UserBadge({ wh, id, onClick }) {
 	return (
 		<div onClick={onClick}>
 			<Tooltip title={tooltipContent} arrow>
-				{badgeUser ? (
+				{badgeUser && badgeUser.icon ? (
 					<Avatar
-						alt="User"
+						alt={`${badgeUser.first_name} ${badgeUser.last_name}`}
 						sx={{
 							width: wh,
 							height: wh,
-							backgroundColor: badgeColor, // Apply generated color
-							color: "#fff", // Ensure text is visible
+						}}
+						src={badgeUser.icon} // Use the icon URL from the server
+					/>
+				) : (
+					<Avatar
+						sx={{
+							width: wh,
+							height: wh,
+							backgroundColor: "#9E9E9E", // Default background color
+							color: "#FFFFFF", // Default text color
 						}}
 					>
-						{badgeUser.last_name[0]}
+						{badgeUser?.last_name ? (
+							badgeUser.last_name[0].toUpperCase()
+						) : (
+							<PersonIcon />
+						)}
 					</Avatar>
-				) : (
-					<PersonIcon
-						alt="User"
-						sx={{ width: "30px", height: "30px" }}
-					/>
 				)}
 			</Tooltip>
 		</div>
