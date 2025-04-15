@@ -18,9 +18,9 @@ router.get("/", async (req, res) => {
 				"events.end_date",
 				"events.title",
 				"events.description",
-				"events.color"
-			)
-			.where("events.status", "approved");
+				"events.color",
+				"events.status"
+			);
 
 		const transformedData = usersWithEvents.reduce((acc, row) => {
 			let user = acc.find((u) => u.id === row.user_id);
@@ -35,7 +35,7 @@ router.get("/", async (req, res) => {
 				};
 				acc.push(user);
 			}
-			if (row.event_id) {
+			if (row.event_id && row.status === 'approved') {
 				user.data.push({
 					id: row.event_id,
 					startDate: row.start_date,
