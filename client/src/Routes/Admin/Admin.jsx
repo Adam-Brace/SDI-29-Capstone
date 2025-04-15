@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Edit from "../../UserData/Edit";
-import UserBadge from "../Components/UserBadge";
+import UserBadge from "../../Components/UserBadge";
 import "../../styles/Admin.css";
 import { Margin } from "@mui/icons-material";
 const API_URL = import.meta.env.VITE_API_URL;
