@@ -10,12 +10,14 @@ import EventDetailsDialog from "./Dialog Components/EventDetailsDialog";
 import EditEventDialog from "./Dialog Components/EditEventDialog";
 import CreateEventDialog from "./Dialog Components/CreateEventDialog";
 import { useTheme } from "../../Context/ThemeContext.jsx";
+import { useAuth } from "../../Context/AuthContext";
 import { getEventColor, getDefaultDates } from "./utilityFunctions"; //
 
 dayjs.extend(isBetween);
 
 export default function Schedule() {
 	const { theme } = useTheme();
+	const { user } = useAuth();
 	const [filterButtonState, setFilterButtonState] = useState(0);
 	const [SchedulerData, setSchedulerData] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
@@ -196,7 +198,7 @@ export default function Schedule() {
 	};
 
 	//CREATES NEW EVENT
-	const handleCreateEvent = async () => {
+	const handleCreateEvent = async (userMessage) => {
 		if (!selectedUser) return;
 
 		try {
@@ -212,6 +214,7 @@ export default function Schedule() {
 					endDate: createForm.endDate,
 					description: createForm.description,
 					bgColor: getEventColor(createForm.description),
+					user_message: userMessage || null,
 				}),
 			});
 
@@ -244,20 +247,23 @@ export default function Schedule() {
 		setOpenDialog(false);
 	};
 
-	const handleOpenUsersDialog = (user) => {
-		setSelectedUser(user);
+	const handleOpenUsersDialog = (selectedUser) => {
+		// Only open the dialog if the selected user matches the logged-in user
+		if (selectedUser.id === user.id) {
+			setSelectedUser(selectedUser);
 
-		// Set default dates to current date/time
-		const defaultDates = getDefaultDates();
+			// Set default dates to current date/time
+			const defaultDates = getDefaultDates();
 
-		setCreateForm({
-			title: "",
-			startDate: defaultDates.startDate,
-			endDate: defaultDates.endDate,
-			description: "",
-		});
+			setCreateForm({
+				title: "",
+				startDate: defaultDates.startDate,
+				endDate: defaultDates.endDate,
+				description: "",
+			});
 
-		setOpenUsersDialog(true);
+			setOpenUsersDialog(true);
+		}
 	};
 
 	const handleCloseUsersDialog = () => {
