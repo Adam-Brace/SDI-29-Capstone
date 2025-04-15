@@ -11,7 +11,7 @@ const ProtectedRoute = ({ children, admin }) => {
 			navigate("/login", { replace: true });
 		}
 	}, [user, navigate]);
-	console.log(user && admin);
+
 	// Only render children
 	return user && ((user && !admin) || (admin && user.permissions == "admin"))
 		? children

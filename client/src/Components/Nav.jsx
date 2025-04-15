@@ -7,7 +7,7 @@ import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import { FormControlLabel, Menu, MenuItem } from "@mui/material";
 import Switch from "@mui/material/Switch";
-import { useTheme } from "../Context/ThemeContex.jsx";
+import { useTheme } from "../Context/ThemeContext.jsx";
 import { useState } from "react";
 
 export default function Nav() {
@@ -32,14 +32,14 @@ export default function Nav() {
 						Home
 					</Link>
 				)}
-				{user && (
-					<Link to="/requests" className="nav-link">
-						Requests
-					</Link>
-				)}
 				{user?.permissions === "admin" && (
 					<Link to="/admin" className="nav-link">
 						Admin
+					</Link>
+				)}
+				{user?.permissions !== "admin" && (
+					<Link to="/admin" className="nav-link">
+						My Requests
 					</Link>
 				)}
 			</div>

@@ -9,7 +9,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 import EventDetailsDialog from "./Dialog Components/EventDetailsDialog";
 import EditEventDialog from "./Dialog Components/EditEventDialog";
 import CreateEventDialog from "./Dialog Components/CreateEventDialog";
-import { useTheme } from "../../Context/ThemeContex.jsx";
+import { useTheme } from "../../Context/ThemeContext.jsx";
 import { getEventColor, getDefaultDates } from "./utilityFunctions"; //
 
 dayjs.extend(isBetween);
