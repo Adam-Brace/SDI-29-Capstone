@@ -1,8 +1,10 @@
 import { useState } from "react";
 import "./Edit.css";
 const API_URL = import.meta.env.VITE_API_URL;
+import { useAuth } from "../Context/AuthContext";
 
 export default function Edit({ id, currentData }) {
+	const { user } = useAuth();
 	const [formData, setFormData] = useState({
 		first_name: "",
 		last_name: "",
@@ -12,6 +14,7 @@ export default function Edit({ id, currentData }) {
 		organization: "",
 		crew: "",
 		position: "",
+		permissions: "",
 	});
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -59,6 +62,7 @@ export default function Edit({ id, currentData }) {
 			organization: currentData.organization || "",
 			crew: currentData.crew || "",
 			position: currentData.position || "",
+			permissions: currentData.permissions || "",
 		});
 		setIsModalOpen(true);
 	};
@@ -167,6 +171,19 @@ export default function Edit({ id, currentData }) {
 									onChange={handleInputChange}
 								/>
 							</div>
+							{user.permissions == "admin" && (
+								<div>
+									<label htmlFor="position">Role:</label>
+									<br />
+									<input
+										type="text"
+										id="position"
+										name="position"
+										value={formData.permissions}
+										onChange={handleInputChange}
+									/>
+								</div>
+							)}
 
 							<button type="button" onClick={handleEdit}>
 								Submit

@@ -4,6 +4,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Box from "@mui/material/Box";
 import PersonIcon from "@mui/icons-material/Person";
 import { useAuth } from "../Context/AuthContext";
+const API_URL = import.meta.env.VITE_API_URL;
 
 function UserBadge({ wh, id, onClick }) {
 	const { user } = useAuth();
