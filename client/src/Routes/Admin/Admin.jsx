@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -11,6 +11,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import Edit from "../../UserData/Edit";
+import UserBadge from "../../Components/UserBadge";
 import { useAuth } from "../../Context/AuthContext";
 import "../../styles/Admin.css";
 
@@ -19,6 +20,8 @@ const API_URL = import.meta.env.VITE_API_URL;
 export default function Admin() {
 	const { user } = useAuth();
 	const [users, setUsers] = useState([]);
+	const [events, setEvents] = useState([]);
+	const [selectedEvent, setSelectedEvent] = useState(null);
 	const [filteredUsers, setFilteredUsers] = useState([]);
 	const [searchTerm, setSearchTerm] = useState("");
 	const [selectedUser, setSelectedUser] = useState(null);
@@ -38,6 +41,15 @@ export default function Admin() {
 			.catch((err) => console.error("Error fetching users:", err));
 	}, []);
 
+	useEffect(() => {
+		fetch(`${API_URL}/events`)
+			.then((res) => res.json())
+			.then((data) => {
+				setEvents(data);
+			})
+			.catch((err) => console.error("Error fetching users:", err));
+	}, []);
+
 	const handleSearchChange = (event) => {
 		const term = event.target.value.toLowerCase();
 		setSearchTerm(term);
@@ -50,10 +62,6 @@ export default function Admin() {
 					userFilter.email.toLowerCase().includes(term)
 			)
 		);
-	};
-
-	const handleEditClick = (userData) => {
-		setSelectedUser(userData);
 	};
 
 	return (
@@ -74,17 +82,57 @@ export default function Admin() {
 					centered
 				>
 					<Tab label="My Requests"></Tab>
-					{user.permissions == "admin" && <Tab label="Users" />}
 					{user.permissions == "admin" && <Tab label="Requests" />}
+					{user.permissions == "admin" && <Tab label="Users" />}
 				</Tabs>
 				<Divider sx={{ marginY: 2 }} />
 				{tabValue === 0 && (
-					<Typography variant="body1">
-						Requests functionality coming soon...
-					</Typography>
+					<List>
+						{events.map((userEvent) =>
+							user.id == userEvent.id
+								? userEvent.data.map((event) => (
+										<ListItem
+											key={event.id}
+											onClick={() =>
+												setSelectedEvent(event)
+											} // Edit on click
+											button // Makes the ListItem clickable
+										>
+											<ListItemText
+												primary={event.title}
+												secondary={event.description}
+											/>
+										</ListItem>
+								  ))
+								: userEvent.data.length > 0 && (
+										<ListItem key={0}>
+											<ListItemText
+												primary={"No requests Found"}
+											/>
+										</ListItem>
+								  )
+						)}
+					</List>
 				)}
-
 				{tabValue === 1 && (
+					<List>
+						{events.map((userEvent) =>
+							userEvent.data.map((event) => (
+								<ListItem
+									key={event.id}
+									onClick={() => setSelectedEvent(event)} // Edit on click
+									button // Makes the ListItem clickable
+								>
+									<ListItemText
+										primary={event.title}
+										secondary={event.description}
+									/>
+								</ListItem>
+							))
+						)}
+					</List>
+				)}
+				{tabValue === 2 && (
 					<>
 						<TextField
 							fullWidth
@@ -99,15 +147,13 @@ export default function Admin() {
 							{filteredUsers.map((userMap) => (
 								<ListItem
 									key={userMap.id}
-									onClick={() => handleEditClick(userMap)} // Edit on click
-									button // Correctly use the button prop
-									component="div" // Ensures it renders as a div instead of an li
+									onClick={() => {
+										setSelectedUser(userMap);
+									}}
+									button
 								>
 									<ListItemAvatar>
-										<Avatar>
-											{userMap.first_name[0]}
-											{userMap.last_name[0]}
-										</Avatar>
+										<UserBadge id={userMap.id} />
 									</ListItemAvatar>
 									<ListItemText
 										primary={`${userMap.rank} ${userMap.first_name} ${userMap.last_name}`}
@@ -117,11 +163,6 @@ export default function Admin() {
 							))}
 						</List>
 					</>
-				)}
-				{tabValue === 2 && (
-					<Typography variant="body1">
-						Requests functionality coming soon.
-					</Typography>
 				)}
 			</Box>
 
@@ -133,69 +174,66 @@ export default function Admin() {
 					overflowY: "auto",
 				}}
 			>
-				{tabValue === 1 &&
+				{(tabValue === 0 || tabValue === 1) &&
+					(selectedEvent ? (
+						<Box>
+							<Typography variant="h4" gutterBottom>
+								{selectedEvent.title}
+							</Typography>
+							<Typography variant="body1">
+								{selectedEvent.description}
+							</Typography>
+							<Typography variant="body2" color="textSecondary">
+								Start Date: {selectedEvent.startDate}
+							</Typography>
+							<Typography variant="body2" color="textSecondary">
+								End Date: {selectedEvent.endDate}
+							</Typography>
+							<Typography variant="body2" color="textSecondary">
+								Color: {selectedEvent.bgColor}
+							</Typography>
+						</Box>
+					) : (
+						<Typography variant="h6" color="textSecondary">
+							Select a event to view.
+						</Typography>
+					))}
+				{tabValue === 2 &&
 					(selectedUser ? (
 						<Box>
 							<Typography variant="h4" gutterBottom>
 								{selectedUser.rank} {selectedUser.first_name}{" "}
 								{selectedUser.last_name}'s Details
 							</Typography>
-							<List>
-								<ListItem>
-									<ListItemText
-										primary="First Name"
-										secondary={selectedUser.first_name}
-									/>
-								</ListItem>
-								<ListItem>
-									<ListItemText
-										primary="Last Name"
-										secondary={selectedUser.last_name}
-									/>
-								</ListItem>
-								<ListItem>
-									<ListItemText
-										primary="Rank"
-										secondary={selectedUser.rank}
-									/>
-								</ListItem>
-								<ListItem>
-									<ListItemText
-										primary="Email"
-										secondary={selectedUser.email}
-									/>
-								</ListItem>
-								<ListItem>
-									<ListItemText
-										primary="Duty Phone"
-										secondary={selectedUser.phone}
-									/>
-								</ListItem>
-								<ListItem>
-									<ListItemText
-										primary="Organization"
-										secondary={selectedUser.organization}
-									/>
-								</ListItem>
-								<ListItem>
-									<ListItemText
-										primary="Crew"
-										secondary={selectedUser.crew}
-									/>
-								</ListItem>
-								<ListItem>
-									<ListItemText
-										primary="Position"
-										secondary={selectedUser.position}
-									/>
-								</ListItem>
-								<ListItem>
-									<ListItemText
-										primary="Role"
-										secondary={selectedUser.permissions}
-									/>
-								</ListItem>
-							</List>
+							<Box>
+								<Typography variant="body2" gutterBottom>
+									First Name: {selectedUser.first_name}
+								</Typography>
+								<Typography variant="body2" gutterBottom>
+									Last Name: {selectedUser.last_name}
+								</Typography>
+								<Typography variant="body2" gutterBottom>
+									Rank: {selectedUser.rank}
+								</Typography>
+								<Typography variant="body2" gutterBottom>
+									Email: {selectedUser.email}
+								</Typography>
+								<Typography variant="body2" gutterBottom>
+									Duty Phone: {selectedUser.phone}
+								</Typography>
+								<Typography variant="body2" gutterBottom>
+									Organization: {selectedUser.organization}
+								</Typography>
+								<Typography variant="body2" gutterBottom>
+									Crew: {selectedUser.crew}
+								</Typography>
+								<Typography variant="body2" gutterBottom>
+									Position: {selectedUser.position}
+								</Typography>
+								<Typography variant="body2" gutterBottom>
+									Role: {selectedUser.permissions}
+								</Typography>
+							</Box>
 							<Edit
 								id={selectedUser.id}
 								currentData={selectedUser}
