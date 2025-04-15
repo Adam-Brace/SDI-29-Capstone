@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Edit from "../../UserData/Edit";
+import UserBadge from "../../Components/UserBadge";
 import "../../styles/Admin.css";
+import { Margin } from "@mui/icons-material";
 const API_URL = import.meta.env.VITE_API_URL;
-
 
 export default function Admin() {
 	const [users, setUsers] = useState([]);
@@ -52,6 +53,9 @@ export default function Admin() {
 				<ul className="admin-user-list">
 					{filteredUsers.map((user) => (
 						<li key={user.id} className="admin-user-card">
+							<div style={{ marginRight: "10px" }}>
+								<UserBadge wh={"40px"} id={user.id} />
+							</div>
 							<div>
 								<p>
 									<strong>
@@ -65,6 +69,9 @@ export default function Admin() {
 							<button
 								className="admin-dropdown-btn"
 								onClick={() => handleEditClick(user)}
+								style={{
+									marginLeft: "auto",
+								}}
 							>
 								≡
 							</button>
@@ -80,6 +87,36 @@ export default function Admin() {
 							{selectedUser.rank} {selectedUser.first_name}{" "}
 							{selectedUser.last_name}'s Options:
 						</h1>
+						<ul>
+							<li style={{ textAlign: "left" }}>
+								First Name: {selectedUser.first_name}
+							</li>
+							<li style={{ textAlign: "left" }}>
+								Last Name: {selectedUser.last_name}
+							</li>
+							<li style={{ textAlign: "left" }}>
+								Rank: {selectedUser.rank}
+							</li>
+							<li style={{ textAlign: "left" }}>
+								Email: {selectedUser.email}
+							</li>
+							<li style={{ textAlign: "left" }}>
+								Duty Phone: {selectedUser.duty_phone}
+							</li>
+							<li style={{ textAlign: "left" }}>
+								Organization: {selectedUser.organization}
+							</li>
+							<li style={{ textAlign: "left" }}>
+								Crew: {selectedUser.crew}
+							</li>
+							<li style={{ textAlign: "left" }}>
+								Position: {selectedUser.position}
+							</li>
+							<li style={{ textAlign: "left" }}>
+								Role: {selectedUser.permissions}
+							</li>
+						</ul>
+
 						<Edit id={selectedUser.id} currentData={selectedUser} />
 					</div>
 				) : (
