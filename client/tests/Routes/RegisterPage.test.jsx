@@ -1,4 +1,4 @@
-import RegisterPage from "../../src/Routes/RegisterPage";
+import RegisterPage from "../../src/Routes/RegisterPage/RegisterPage";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { AuthProvider } from "../../src/Context/AuthContext";
