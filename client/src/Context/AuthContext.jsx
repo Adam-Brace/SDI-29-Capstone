@@ -28,6 +28,7 @@ export const AuthProvider = ({ children }) => {
 	const logout = () => {
 		Cookies.remove("user");
 		setUser(null);
+		window.location.reload();
 	};
 
 	return (
