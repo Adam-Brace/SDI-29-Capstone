@@ -10,64 +10,65 @@ import ProtectedRoute from "./Context/ProtectedRoute.jsx";
 import "./styles/Form.css";
 import UserData from "./UserData/UserData";
 import NotFound from "./Components/NotFound";
+import HomePage from "./Routes/HomePage";
 import Nav from "./Components/Nav.jsx";
 
 export default function App() {
-	const { logout } = useAuth();
-	const { user } = useAuth();
+  const { logout } = useAuth();
+  const { user } = useAuth();
 
-	const sampleUser = {
-		rank: "Capt",
-		firstName: "Jane",
-		lastName: "Doe",
-	};
-	const [theme, setTheme] = useState("light");
+  const sampleUser = {
+    rank: "Capt",
+    firstName: "Jane",
+    lastName: "Doe",
+  };
+  const [theme, setTheme] = useState("light");
 
-	useEffect(() => {
-		const storedTheme = localStorage.getItem("theme") || "light";
-		setTheme(storedTheme);
-		document.body.className = storedTheme + "-theme";
-	}, []);
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme") || "light";
+    setTheme(storedTheme);
+    document.body.className = storedTheme + "-theme";
+  }, []);
 
-	const toggleTheme = () => {
-		const newTheme = theme === "light" ? "dark" : "light";
-		setTheme(newTheme);
-		localStorage.setItem("theme", newTheme);
-		document.body.className = newTheme + "-theme";
-	};
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    localStorage.setItem("theme", newTheme);
+    document.body.className = newTheme + "-theme";
+  };
 
-	return (
-		<>
-			<Nav />
-			<Routes>
-				<Route
-					path="/"
-					element={
-						<ProtectedRoute admin={false}>
-							<HomePage />
-						</ProtectedRoute>
-					}
-				/>
-				<Route
-					path="/profile"
-					element={
-						<ProtectedRoute admin={false}>
-							<UserData />
-						</ProtectedRoute>
-					}
-				/>
-				<Route
-					path="/admin"
-					element={
-						<ProtectedRoute admin={true}>
-							<Admin />
-						</ProtectedRoute>
-					}
-				/>
-				<Route path="/login" element={<LoginPage />} />
-				<Route path="/register" element={<RegisterPage />} />
-				<Route path="*" element={<NotFound />} />
-			</Routes>
-		</>
-	);
+  return (
+    <>
+      <Nav />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute admin={false}>
+              <HomePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute admin={false}>
+              <UserData />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute admin={true}>
+              <Admin />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </>
+  );
 }
