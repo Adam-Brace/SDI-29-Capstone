@@ -133,75 +133,79 @@ export default function Admin() {
 					overflowY: "auto",
 				}}
 			>
-				{selectedUser && tabValue === 1 ? (
-					<Box>
-						<Typography variant="h4" gutterBottom>
-							{selectedUser.rank} {selectedUser.first_name}{" "}
-							{selectedUser.last_name}'s Details
+				{tabValue === 1 &&
+					(selectedUser ? (
+						<Box>
+							<Typography variant="h4" gutterBottom>
+								{selectedUser.rank} {selectedUser.first_name}{" "}
+								{selectedUser.last_name}'s Details
+							</Typography>
+							<List>
+								<ListItem>
+									<ListItemText
+										primary="First Name"
+										secondary={selectedUser.first_name}
+									/>
+								</ListItem>
+								<ListItem>
+									<ListItemText
+										primary="Last Name"
+										secondary={selectedUser.last_name}
+									/>
+								</ListItem>
+								<ListItem>
+									<ListItemText
+										primary="Rank"
+										secondary={selectedUser.rank}
+									/>
+								</ListItem>
+								<ListItem>
+									<ListItemText
+										primary="Email"
+										secondary={selectedUser.email}
+									/>
+								</ListItem>
+								<ListItem>
+									<ListItemText
+										primary="Duty Phone"
+										secondary={selectedUser.phone}
+									/>
+								</ListItem>
+								<ListItem>
+									<ListItemText
+										primary="Organization"
+										secondary={selectedUser.organization}
+									/>
+								</ListItem>
+								<ListItem>
+									<ListItemText
+										primary="Crew"
+										secondary={selectedUser.crew}
+									/>
+								</ListItem>
+								<ListItem>
+									<ListItemText
+										primary="Position"
+										secondary={selectedUser.position}
+									/>
+								</ListItem>
+								<ListItem>
+									<ListItemText
+										primary="Role"
+										secondary={selectedUser.permissions}
+									/>
+								</ListItem>
+							</List>
+							<Edit
+								id={selectedUser.id}
+								currentData={selectedUser}
+							/>
+						</Box>
+					) : (
+						<Typography variant="h6" color="textSecondary">
+							Select a user to view and edit their details.
 						</Typography>
-						<List>
-							<ListItem>
-								<ListItemText
-									primary="First Name"
-									secondary={selectedUser.first_name}
-								/>
-							</ListItem>
-							<ListItem>
-								<ListItemText
-									primary="Last Name"
-									secondary={selectedUser.last_name}
-								/>
-							</ListItem>
-							<ListItem>
-								<ListItemText
-									primary="Rank"
-									secondary={selectedUser.rank}
-								/>
-							</ListItem>
-							<ListItem>
-								<ListItemText
-									primary="Email"
-									secondary={selectedUser.email}
-								/>
-							</ListItem>
-							<ListItem>
-								<ListItemText
-									primary="Duty Phone"
-									secondary={selectedUser.phone}
-								/>
-							</ListItem>
-							<ListItem>
-								<ListItemText
-									primary="Organization"
-									secondary={selectedUser.organization}
-								/>
-							</ListItem>
-							<ListItem>
-								<ListItemText
-									primary="Crew"
-									secondary={selectedUser.crew}
-								/>
-							</ListItem>
-							<ListItem>
-								<ListItemText
-									primary="Position"
-									secondary={selectedUser.position}
-								/>
-							</ListItem>
-							<ListItem>
-								<ListItemText
-									primary="Role"
-									secondary={selectedUser.permissions}
-								/>
-							</ListItem>
-						</List>
-						<Edit id={selectedUser.id} currentData={selectedUser} />
-					</Box>
-				) : (
-					<Typography variant="h6" color="textSecondary">
-						Select a user to view and edit their details.
-					</Typography>
-				)}
+					))}
 			</Box>
 		</Box>
 	);
