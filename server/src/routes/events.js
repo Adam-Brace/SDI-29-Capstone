@@ -123,7 +123,7 @@ router.get("/raw/:id", async (req, res) => {
 
 router.post("/", async (req, res) => {
 	try {
-		const { user_id, startDate, endDate, title, description, bgColor } =
+		const { user_id, startDate, endDate, title, description, bgColor, user_message } =
 			req.body;
 
 		const [newEvent] = await knex("events")
@@ -134,6 +134,7 @@ router.post("/", async (req, res) => {
 				title,
 				description,
 				color: bgColor,
+				user_message,
 			})
 			.returning("*");
 
