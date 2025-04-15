@@ -13,7 +13,7 @@ exports.seed = async function (knex) {
 			organization: "Delta 1",
 			crew: "Bravo",
 			position: "SVO",
-			permissions: "user",
+			permissions: "admin",
 		},
 		{
 			password: ";lasfgkuasbf;kjsbdvoszscakjsvcjkasvc;kJBljh",
