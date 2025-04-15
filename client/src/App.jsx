@@ -1,23 +1,16 @@
 import React, { useEffect, useState } from "react";
+
 import { Routes, Route, Link } from "react-router-dom";
-import LoginPage from "./Routes/LoginPage";
-import RegisterPage from "./Routes/RegisterPage";
-import Admin from "./Routes/Admin.jsx";
-import { AuthProvider, useAuth } from "./Context/AuthContext";
-import "./styles/index.css";
+import LoginPage from "./Routes/LoginPage/LoginPage";
+import RegisterPage from "./Routes/RegisterPage/RegisterPage";
+import Admin from "./Routes/Admin/Admin.jsx";
+
+import { useAuth } from "./Context/AuthContext";
+import ProtectedRoute from "./Context/ProtectedRoute.jsx";
 import "./styles/Form.css";
 import UserData from "./UserData/UserData";
-import Schedule from "./Components/Schedule/Schedule";
-import HomePage from "./Routes/HomePage";
-import UserBadge from "./Components/UserBadge";
 import NotFound from "./Components/NotFound";
-import Switch from "@mui/material/Switch";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Box from "@mui/material/Box";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
-import LightModeIcon from "@mui/icons-material/LightMode";
-import Logo from "./Components/Logo.jsx";
-import Chat from "./Components/Chat.jsx";
+import Nav from "./Components/Nav.jsx";
 
 export default function App() {
 	const { logout } = useAuth();
@@ -44,66 +37,37 @@ export default function App() {
 	};
 
 	return (
-		<div className={`container ${theme}-theme`}>
-			<nav className="navbar">
-				<div className="navbar-left">
-					<Logo theme={theme} />
-				</div>
-				<div className="navbar-center">
-					<Link to="/home" className="nav-link">
-						Home
-					</Link>
-					<Link to="/login" className="nav-link">
-						Login
-					</Link>
-					<Link to="/register" className="nav-link">
-						Register
-					</Link>
-					<Link to="/profile" className="nav-link">
-						Profile
-					</Link>
-				</div>
-				<div className="navbar-right">
-					<Box
-						sx={{
-							display: "flex",
-							alignItems: "center",
-							gap: 2,
-						}}
-					>
-						<Box
-							sx={{
-								display: "flex",
-								alignItems: "center",
-							}}
-						>
-							<LightModeIcon sx={{ mr: 1 }} />
-							<FormControlLabel
-								control={
-									<Switch
-										checked={theme === "dark"}
-										onChange={toggleTheme}
-										color="primary"
-									/>
-								}
-								label=""
-							/>
-							<DarkModeIcon sx={{ ml: -2 }} />
-						</Box>
-						<UserBadge wh={"40px"} />
-					</Box>
-					<button onClick={logout}>Log Out</button>
-				</div>
-			</nav>
+		<>
+			<Nav />
 			<Routes>
-				<Route path="/" element={<LoginPage />} />
-				<Route path="/home" element={<HomePage theme={theme} />} />
+				<Route
+					path="/"
+					element={
+						<ProtectedRoute admin={false}>
+							<HomePage />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/profile"
+					element={
+						<ProtectedRoute admin={false}>
+							<UserData />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/admin"
+					element={
+						<ProtectedRoute admin={true}>
+							<Admin />
+						</ProtectedRoute>
+					}
+				/>
 				<Route path="/login" element={<LoginPage />} />
 				<Route path="/register" element={<RegisterPage />} />
-				<Route path="/profile" element={<UserData />} />
-				<Route path="/admin" element={<Admin />} />
 				<Route path="*" element={<NotFound />} />
 			</Routes>
-		</div>
+		</>
 	);
 }

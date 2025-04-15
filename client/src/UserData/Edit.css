@@ -82,3 +82,27 @@
     width: 90%; /* Make modal take 90% of the screen width */
   }
 }
+
+.med-btn {
+  background-color: #6c757d; /* Grey color */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.med-btn:hover {
+  background-color: #5a6268; /* Darker grey on hover */
+}
+
+.med-btn:active {
+  background-color: #545b62; /* Even darker grey when clicked */
+}
+
+.med-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(108, 117, 125, 0.5); /* Focus ring */
+}

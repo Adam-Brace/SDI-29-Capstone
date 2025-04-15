@@ -1,6 +1,6 @@
 import React from 'react';
-import LoginForm from '../Components/LoginForm';
-import '../styles/Form.css';
+import LoginForm from '../../Components/LoginForm';
+import '../../styles/Form.css';
 
 function LoginPage() {
   return (

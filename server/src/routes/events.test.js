@@ -47,7 +47,6 @@ describe('Events Routes', () => {
 
         const user = await knex('users').where({ email: testUser.email }).first();
         createdUserId = user.id;
-
         await knex('events').insert(
             testEvents.map(event => ({
                 ...event,
@@ -127,7 +126,6 @@ describe('Events Routes', () => {
             });
 
             expect(response.body.data).toHaveLength(2);
-
             expect(response.body.data[0]).toMatchObject({
                 startDate: testEvents[0].start_date,
                 endDate: testEvents[0].end_date,
@@ -154,7 +152,6 @@ describe('Events Routes', () => {
                 .expect(500);
 
             expect(response.body).toHaveProperty('error');
-
             const hashedPassword = await argon2.hash(testUser.password);
             await knex('users').insert({
                 ...testUser,
