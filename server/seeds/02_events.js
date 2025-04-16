@@ -234,5 +234,7 @@ exports.seed = async function (knex) {
 			status: "approved",
 		},
 
+
+
 	]);
 };
