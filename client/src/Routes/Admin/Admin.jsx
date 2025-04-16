@@ -10,6 +10,8 @@ import Avatar from "@mui/material/Avatar";
 import ListItemText from "@mui/material/ListItemText";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
 import Edit from "../../UserData/Edit";
 import UserBadge from "../../Components/UserBadge";
 import { useAuth } from "../../Context/AuthContext";
@@ -29,6 +31,8 @@ export default function Admin() {
 
 	const handleTabChange = (event, newValue) => {
 		setTabValue(newValue);
+		setSelectedEvent(null);
+		setSelectedUser(null);
 	};
 
 	useEffect(() => {
@@ -46,6 +50,7 @@ export default function Admin() {
 			.then((res) => res.json())
 			.then((data) => {
 				setEvents(data);
+				console.log("Events data:", data);
 			})
 			.catch((err) => console.error("Error fetching users:", err));
 	}, []);
@@ -87,46 +92,114 @@ export default function Admin() {
 				</Tabs>
 				<Divider sx={{ marginY: 2 }} />
 				{tabValue === 0 && (
-					<List>
+					<Box>
 						{events.map((userEvent) =>
-							user.id == userEvent.user_id ? (
-								<ListItem
-									key={userEvent.id}
-									onClick={() => setSelectedEvent(userEvent)} // Edit on click
-									button // Makes the ListItem clickable
-								>
-									<ListItemText
-										primary={userEvent.title}
-										secondary={userEvent.description}
-									/>
-								</ListItem>
-							) : (
-								userEvent.length > 0 && (
-									<ListItem key={0}>
-										<ListItemText
-											primary={"No requests Found"}
-										/>
-									</ListItem>
-								)
-							)
+							user.id === userEvent.id
+								? userEvent.data.map((event) => (
+										<Card
+											key={event.id}
+											sx={{
+												marginBottom: 2,
+												cursor: "pointer",
+												"&:hover": {
+													boxShadow: 6,
+												},
+											}}
+											onClick={() =>
+												setSelectedEvent(event)
+											} // Edit on click
+										>
+											<CardContent>
+												<Typography
+													variant="h6"
+													gutterBottom
+												>
+													{event.title}
+												</Typography>
+												<Typography
+													variant="body2"
+													color="textSecondary"
+												>
+													{event.description}
+												</Typography>
+											</CardContent>
+										</Card>
+								  ))
+								: userEvent.data.length > 0 && (
+										<Card
+											key={0}
+											sx={{
+												marginBottom: 2,
+												cursor: "default",
+											}}
+										>
+											<CardContent>
+												<Typography
+													variant="body2"
+													color="textSecondary"
+												>
+													No requests found
+												</Typography>
+											</CardContent>
+										</Card>
+								  )
 						)}
-					</List>
+					</Box>
 				)}
 				{tabValue === 1 && (
-					<List>
-						{events.map((userEvent) => (
-							<ListItem
-								key={userEvent.id}
-								onClick={() => setSelectedEvent(userEvent)} // Edit on click
-								button // Makes the ListItem clickable
-							>
-								<ListItemText
-									primary={userEvent.title}
-									secondary={userEvent.description}
-								/>
-							</ListItem>
-						))}
-					</List>
+					<Box>
+						{events.map((userEvent) =>
+							user.id === userEvent.id
+								? userEvent.data.map((event) => (
+										<Card
+											key={event.id}
+											sx={{
+												marginBottom: 2,
+												cursor: "pointer",
+												"&:hover": {
+													boxShadow: 6,
+												},
+											}}
+											onClick={() =>
+												setSelectedEvent(event)
+											} // Edit on click
+										>
+											<CardContent>
+												<Typography
+													variant="h6"
+													gutterBottom
+												>
+													{event.title}
+												</Typography>
+												<Typography
+													variant="body2"
+													color="textSecondary"
+												>
+													{event.description}
+												</Typography>
+											</CardContent>
+										</Card>
+								  ))
+								: userEvent.data.length > 0 && (
+										<Card
+											key={0}
+											sx={{
+												marginBottom: 2,
+												cursor: "default",
+											}}
+										>
+											<CardContent>
+												<Typography
+													variant="body2"
+													color="textSecondary"
+												>
+													No requests found
+												</Typography>
+											</CardContent>
+										</Card>
+								  )
+						)}
+					</Box>
 				)}
 				{tabValue === 2 && (
 					<>
@@ -139,25 +212,41 @@ export default function Admin() {
 							onChange={handleSearchChange}
 							sx={{ marginBottom: 2 }}
 						/>
-						<List>
+						<Box>
 							{filteredUsers.map((userMap) => (
-								<ListItem
+								<Card
 									key={userMap.id}
-									onClick={() => {
-										setSelectedUser(userMap);
+									sx={{
+										marginBottom: 2,
+										cursor: "pointer",
+										"&:hover": {
+											boxShadow: 6,
+										},
 									}}
-									button
+									onClick={() => setSelectedUser(userMap)}
 								>
-									<ListItemAvatar>
+									<CardContent
+										sx={{
+											display: "flex",
+											alignItems: "center",
+										}}
+									>
 										<UserBadge id={userMap.id} />
-									</ListItemAvatar>
-									<ListItemText
-										primary={`${userMap.rank} ${userMap.first_name} ${userMap.last_name}`}
-										secondary={userMap.email}
-									/>
-								</ListItem>
+										<Box sx={{ marginLeft: 2 }}>
+											<Typography variant="h6">
+												{`${userMap.rank} ${userMap.first_name} ${userMap.last_name}`}
+											</Typography>
+											<Typography
+												variant="body2"
+												color="textSecondary"
+											>
+												{userMap.email}
+											</Typography>
+										</Box>
+									</CardContent>
+								</Card>
 							))}
-						</List>
+						</Box>
 					</>
 				)}
 			</Box>
