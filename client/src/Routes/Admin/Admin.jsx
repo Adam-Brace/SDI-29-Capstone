@@ -26,7 +26,7 @@ export default function Admin() {
 	const { user } = useAuth();
 	const [users, setUsers] = useState([]);
 	const [events, setEvents] = useState([]);
-	const [openDialog, setOpenDialog] = useState(false);
+	const [dialog, setDialog] = useState({ open: false });
 	const [selectedEvent, setSelectedEvent] = useState(null);
 	const [filteredUsers, setFilteredUsers] = useState([]);
 	const [searchTerm, setSearchTerm] = useState("");
@@ -43,6 +43,21 @@ export default function Admin() {
 		setTabValue(newValue);
 		setSelectedEvent(null);
 		setSelectedUser(null);
+	};
+
+	const formatTimestamp = (timestamp) => {
+		const date = new Date(timestamp);
+		const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+		return date.toLocaleString("en-US", {
+			year: "numeric",
+			month: "short",
+			day: "numeric",
+			hour: "2-digit",
+			minute: "2-digit",
+			hour12: false,
+			timeZone: timeZone,
+		});
 	};
 
 	useEffect(() => {
@@ -78,29 +93,41 @@ export default function Admin() {
 		);
 	};
 
-	const handleApproveDeny = async (id, status) => {
+	const handleApproveDeny = async (id, status, message) => {
+		console.log("handleApproveDeny called with:", id, status, message);
 		try {
 			const response = await fetch(`${API_URL}/events/${id}/status`, {
 				method: "PATCH",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ status }),
+				body: JSON.stringify({ status, admin_message: message }),
 			});
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				throw new Error(
+					`Failed to update event: ${response.statusText}`
+				);
 			}
 
 			const data = await response.json();
 			console.log("Event updated successfully:", data);
 			setEvents((prevEvents) =>
 				prevEvents.map((event) =>
-					event.id === id ? { ...event, status } : event
+					event.id === id
+						? { ...event, status, admin_message: message }
+						: event
 				)
 			);
+			setSelectedEvent((prevSelectedEvent) =>
+				prevSelectedEvent && prevSelectedEvent.id === id
+					? { ...prevSelectedEvent, status, admin_message: message }
+					: prevSelectedEvent
+			);
 		} catch (error) {
-			console.error("Error updating event:", error);
+			console.error("Error updating event:", error.message);
+		} finally {
+			setDialog({ open: false });
 		}
 	};
 
@@ -360,14 +387,16 @@ export default function Admin() {
 									color="textSecondary"
 									gutterBottom
 								>
-									Start Date: {selectedEvent.start_date}
+									Start Date:{" "}
+									{formatTimestamp(selectedEvent.start_date)}
 								</Typography>
 								<Typography
 									variant="body2"
 									color="textSecondary"
 									gutterBottom
 								>
-									End Date: {selectedEvent.end_date}
+									End Date:{" "}
+									{formatTimestamp(selectedEvent.end_date)}
 								</Typography>
 								<Typography
 									variant="body2"
@@ -389,10 +418,11 @@ export default function Admin() {
 										variant="contained"
 										color="success"
 										onClick={() =>
-											handleApproveDeny(
-												selectedEvent.id,
-												"approved"
-											)
+											setDialog({
+												open: true,
+												event: selectedEvent,
+												status: "approved",
+											})
 										}
 									>
 										Approve
@@ -401,10 +431,11 @@ export default function Admin() {
 										variant="contained"
 										color="error"
 										onClick={() =>
-											handleApproveDeny(
-												selectedEvent.id,
-												"denied"
-											)
+											setDialog({
+												open: true,
+												event: selectedEvent,
+												status: "denied",
+											})
 										}
 									>
 										Deny
@@ -479,16 +510,65 @@ export default function Admin() {
 							Select a user to view and edit their details.
 						</Typography>
 					))}
-				<Dialog open={openDialog} onClose={""}>
-					<DialogTitle>Edit</DialogTitle>
-					<DialogContent>test</DialogContent>
-					<DialogActions>
-						<Button onClick={""}>Cancel</Button>
-						<Button onClick={""} color="primary">
-							Save
-						</Button>
-					</DialogActions>
-				</Dialog>
+				{dialog.open && (
+					<Dialog
+						open={dialog.open}
+						onClose={() => setDialog({ open: false })}
+					>
+						<DialogTitle
+							sx={{ paddingBottom: "0px" }}
+						>{`${dialog.status.replace(/^./, (match) =>
+							match.toUpperCase()
+						)} - ${dialog.event.title}`}</DialogTitle>
+						<DialogContent sx={{ paddingBottom: "0px" }}>
+							<Typography variant="body2">
+								Leave a message for the user if needed:
+							</Typography>
+						</DialogContent>
+						<DialogContent sx={{ paddingBottom: "0px" }}>
+							<TextField
+								margin="dense"
+								name="admin_message"
+								label="Admin Message"
+								type="text"
+								fullWidth
+								multiline
+								rows={4}
+								value={dialog.event.admin_message || ""}
+								onChange={(e) =>
+									setDialog((prev) => ({
+										...prev,
+										event: {
+											...prev.event,
+											admin_message: e.target.value,
+										},
+									}))
+								}
+							/>
+						</DialogContent>
+						<DialogActions>
+							<Button
+								onClick={() => setDialog({ open: false })}
+								color="secondary"
+							>
+								Cancel
+							</Button>
+							<Button
+								onClick={() =>
+									handleApproveDeny(
+										dialog.event.id,
+										dialog.status,
+										dialog.event.admin_message
+									)
+								}
+								color="primary"
+								variant="contained"
+							>
+								Save
+							</Button>
+						</DialogActions>
+					</Dialog>
+				)}
 			</Box>
 		</Box>
 	);

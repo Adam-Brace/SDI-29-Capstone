@@ -183,12 +183,9 @@ router.patch("/:id/status", async (req, res) => {
 		const { id } = req.params;
 		const { status } = req.body;
 
-		const [updatedEvent] = await knex("events").where("id", id).update(
-			{
-				status,
-			},
-			"*"
-		);
+		const [updatedEvent] = await knex("events")
+			.where("id", id)
+			.update(req.body, "*");
 
 		if (updatedEvent) {
 			res.status(200).json(updatedEvent);
