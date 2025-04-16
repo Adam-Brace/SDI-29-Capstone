@@ -1,19 +1,30 @@
+import React, { useState } from "react";
 import { useAuth } from "../Context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "./Logo.jsx";
 import UserBadge from "./UserBadge";
-import { Box } from "@mui/material";
+import {
+	AppBar,
+	Toolbar,
+	Box,
+	IconButton,
+	Menu,
+	MenuItem,
+	Typography,
+	Switch,
+	FormControlLabel,
+	Button,
+} from "@mui/material";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
-import { FormControlLabel, Menu, MenuItem } from "@mui/material";
-import Switch from "@mui/material/Switch";
+import MenuIcon from "@mui/icons-material/Menu";
 import { useTheme } from "../Context/ThemeContext.jsx";
-import { useState } from "react";
 
 export default function Nav() {
 	const { user, logout } = useAuth();
 	const { theme, toggleTheme } = useTheme();
 	const [anchorEl, setAnchorEl] = useState(null);
+	const [mobileMenuAnchorEl, setMobileMenuAnchorEl] = useState(null);
 
 	const navigate = useNavigate();
 
@@ -21,29 +32,69 @@ export default function Nav() {
 		setAnchorEl(null);
 	};
 
+	const handleMobileMenuClose = () => {
+		setMobileMenuAnchorEl(null);
+	};
+
+	const handleMobileMenuOpen = (event) => {
+		setMobileMenuAnchorEl(event.currentTarget);
+	};
+
 	return (
-		<nav className="navbar">
-			<div className="navbar-left">
-				<Logo />
-			</div>
-			<div className="navbar-center">
-				{user && (
-					<Link to="/" className="nav-link">
-						Home
-					</Link>
-				)}
-				{user?.permissions === "admin" && (
-					<Link to="/admin" className="nav-link">
-						Admin
-					</Link>
-				)}
-				{user?.permissions !== "admin" && (
-					<Link to="/admin" className="nav-link">
-						My Requests
-					</Link>
-				)}
-			</div>
-			<div className="navbar-right">
+		<AppBar position="static" color="default" sx={{ boxShadow: 3 }}>
+			<Toolbar
+				sx={{
+					display: "flex",
+					justifyContent: "space-between",
+					alignItems: "center",
+				}}
+			>
+				{/* Left Section: Logo */}
+				<Box sx={{ display: "flex", alignItems: "center" }}>
+					<Logo />
+				</Box>
+
+				{/* Center Section: Links */}
+				<Box
+					sx={{
+						display: { xs: "none", md: "flex" },
+						gap: 2,
+						alignItems: "center",
+					}}
+				>
+					{user && (
+						<Button
+							component={Link}
+							to="/"
+							color="inherit"
+							sx={{ textTransform: "none" }}
+						>
+							Home
+						</Button>
+					)}
+					{user?.permissions === "admin" && (
+						<Button
+							component={Link}
+							to="/admin"
+							color="inherit"
+							sx={{ textTransform: "none" }}
+						>
+							Admin
+						</Button>
+					)}
+					{user?.permissions !== "admin" && (
+						<Button
+							component={Link}
+							to="/requests"
+							color="inherit"
+							sx={{ textTransform: "none" }}
+						>
+							My Requests
+						</Button>
+					)}
+				</Box>
+
+				{/* Right Section: Theme Toggle and User Menu */}
 				<Box
 					sx={{
 						display: "flex",
@@ -51,6 +102,7 @@ export default function Nav() {
 						gap: 2,
 					}}
 				>
+					{/* Theme Toggle */}
 					<Box
 						sx={{
 							display: "flex",
@@ -73,6 +125,8 @@ export default function Nav() {
 						/>
 						<DarkModeIcon sx={{ ml: 1 }} />
 					</Box>
+
+					{/* User Badge */}
 					<UserBadge
 						id={null}
 						wh={"40px"}
@@ -114,8 +168,65 @@ export default function Nav() {
 							Logout
 						</MenuItem>
 					</Menu>
+
+					{/* Mobile Menu Icon */}
+					<IconButton
+						edge="end"
+						color="inherit"
+						aria-label="menu"
+						sx={{ display: { xs: "flex", md: "none" } }}
+						onClick={handleMobileMenuOpen}
+					>
+						<MenuIcon />
+					</IconButton>
 				</Box>
-			</div>
-		</nav>
+			</Toolbar>
+
+			{/* Mobile Menu */}
+			<Menu
+				anchorEl={mobileMenuAnchorEl}
+				open={Boolean(mobileMenuAnchorEl)}
+				onClose={handleMobileMenuClose}
+				anchorOrigin={{
+					vertical: "top",
+					horizontal: "right",
+				}}
+				transformOrigin={{
+					vertical: "top",
+					horizontal: "right",
+				}}
+			>
+				{user && (
+					<MenuItem
+						onClick={() => {
+							handleMobileMenuClose();
+							navigate("/");
+						}}
+					>
+						Home
+					</MenuItem>
+				)}
+				{user?.permissions === "admin" && (
+					<MenuItem
+						onClick={() => {
+							handleMobileMenuClose();
+							navigate("/admin");
+						}}
+					>
+						Admin
+					</MenuItem>
+				)}
+				{user?.permissions !== "admin" && (
+					<MenuItem
+						onClick={() => {
+							handleMobileMenuClose();
+							navigate("/requests");
+						}}
+					>
+						My Requests
+					</MenuItem>
+				)}
+			</Menu>
+		</AppBar>
 	);
 }

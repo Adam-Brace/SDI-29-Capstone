@@ -42,7 +42,7 @@ export default function Admin() {
 	}, []);
 
 	useEffect(() => {
-		fetch(`${API_URL}/events`)
+		fetch(`${API_URL}/events/raw`)
 			.then((res) => res.json())
 			.then((data) => {
 				setEvents(data);
@@ -89,47 +89,43 @@ export default function Admin() {
 				{tabValue === 0 && (
 					<List>
 						{events.map((userEvent) =>
-							user.id == userEvent.id
-								? userEvent.data.map((event) => (
-										<ListItem
-											key={event.id}
-											onClick={() =>
-												setSelectedEvent(event)
-											} // Edit on click
-											button // Makes the ListItem clickable
-										>
-											<ListItemText
-												primary={event.title}
-												secondary={event.description}
-											/>
-										</ListItem>
-								  ))
-								: userEvent.data.length > 0 && (
-										<ListItem key={0}>
-											<ListItemText
-												primary={"No requests Found"}
-											/>
-										</ListItem>
-								  )
+							user.id == userEvent.user_id ? (
+								<ListItem
+									key={userEvent.id}
+									onClick={() => setSelectedEvent(userEvent)} // Edit on click
+									button // Makes the ListItem clickable
+								>
+									<ListItemText
+										primary={userEvent.title}
+										secondary={userEvent.description}
+									/>
+								</ListItem>
+							) : (
+								userEvent.length > 0 && (
+									<ListItem key={0}>
+										<ListItemText
+											primary={"No requests Found"}
+										/>
+									</ListItem>
+								)
+							)
 						)}
 					</List>
 				)}
 				{tabValue === 1 && (
 					<List>
-						{events.map((userEvent) =>
-							userEvent.data.map((event) => (
-								<ListItem
-									key={event.id}
-									onClick={() => setSelectedEvent(event)} // Edit on click
-									button // Makes the ListItem clickable
-								>
-									<ListItemText
-										primary={event.title}
-										secondary={event.description}
-									/>
-								</ListItem>
-							))
-						)}
+						{events.map((userEvent) => (
+							<ListItem
+								key={userEvent.id}
+								onClick={() => setSelectedEvent(userEvent)} // Edit on click
+								button // Makes the ListItem clickable
+							>
+								<ListItemText
+									primary={userEvent.title}
+									secondary={userEvent.description}
+								/>
+							</ListItem>
+						))}
 					</List>
 				)}
 				{tabValue === 2 && (
@@ -184,13 +180,13 @@ export default function Admin() {
 								{selectedEvent.description}
 							</Typography>
 							<Typography variant="body2" color="textSecondary">
-								Start Date: {selectedEvent.startDate}
+								Start Date: {selectedEvent.start_date}
 							</Typography>
 							<Typography variant="body2" color="textSecondary">
-								End Date: {selectedEvent.endDate}
+								End Date: {selectedEvent.end_date}
 							</Typography>
 							<Typography variant="body2" color="textSecondary">
-								Color: {selectedEvent.bgColor}
+								Color: {selectedEvent.color}
 							</Typography>
 						</Box>
 					) : (

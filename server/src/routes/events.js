@@ -8,7 +8,7 @@ if (!PORT) {
 	PORT = process.env.SERVER_PORT;
 }
 
-router.get("/", async (req, res) => {
+router.get("/schedule/", async (req, res) => {
 	try {
 		const usersWithEvents = await knex("users")
 			.leftJoin("events", "users.id", "events.user_id")
@@ -61,7 +61,7 @@ router.get("/", async (req, res) => {
 	}
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/schedule/:id", async (req, res) => {
 	try {
 		const events = await knex("events")
 			.select()
@@ -97,9 +97,33 @@ router.get("/:id", async (req, res) => {
 	}
 });
 
+router.get("/raw", async (req, res) => {
+	try {
+		const events = await knex("events").select();
+		res.status(200).json(events);
+	} catch (err) {
+		res.status(500).json({ error: err.message });
+	}
+});
+
+router.get("/raw/:id", async (req, res) => {
+	try {
+		const { id } = req.params;
+		const event = await knex("events").where("id", id).first();
+
+		if (event) {
+			res.status(200).json(event);
+		} else {
+			res.status(404).json({ error: "Event not found" });
+		}
+	} catch (err) {
+		res.status(500).json({ error: err.message });
+	}
+});
+
 router.post("/", async (req, res) => {
 	try {
-		const { user_id, startDate, endDate, title, description, bgColor } =
+		const { user_id, startDate, endDate, title, description, bgColor, user_message } =
 			req.body;
 
 		const [newEvent] = await knex("events")
@@ -110,6 +134,7 @@ router.post("/", async (req, res) => {
 				title,
 				description,
 				color: bgColor,
+				user_message,
 			})
 			.returning("*");
 

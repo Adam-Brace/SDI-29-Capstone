@@ -1,6 +1,6 @@
 import { render, screen, waitFor, within } from "@testing-library/react";
 import { AuthProvider } from "../../src/Context/AuthContext";
-import LoginPage from "../../src/Routes/LoginPage";
+import LoginPage from "../../src/Routes/LoginPage/LoginPage";
 import { MemoryRouter } from "react-router-dom";
 
 describe("LoginPage", () => {
