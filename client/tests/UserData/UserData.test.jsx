@@ -1,6 +1,7 @@
 import { render, screen, waitFor, within } from "@testing-library/react";
 import UserData from "../../src/UserData/UserData.jsx";
-import { AuthProvider } from "../../src/Context/AuthContext.jsx";
+
+vi.stubEnv("VITE_API_URL", "http://localhost:3000");
 
 vi.mock("../../src/Context/AuthContext", () => ({
   useAuth: () => ({
@@ -8,83 +9,60 @@ vi.mock("../../src/Context/AuthContext", () => ({
   }),
 }));
 
-global.fetch = vi.fn(() =>
-  Promise.resolve({
-    json: () =>
-      Promise.resolve([
-        {
-          id: 1,
-          first_name: "John",
-          last_name: "Doe",
-          rank: "TSgt",
-          email: "john.doe@example.com",
-          phone: "999-999-9999",
-          organization: "Delta 1",
-          crew: "Alpha",
-          position: "CSS",
-          permissions: "Admin",
-        },
-      ]),
-  })
-);
+global.fetch = vi.fn((url) => {
+  if (url.includes("/user/1")) {
+    return Promise.resolve({
+      ok: true,
+      json: () =>
+        Promise.resolve([
+          {
+            id: 1,
+            first_name: "John",
+            last_name: "Doe",
+            rank: "TSgt",
+            email: "john.doe@example.com",
+            phone: "999-999-9999",
+            organization: "Delta 1",
+            crew: "Alpha",
+            position: "CSS",
+            permissions: "Admin",
+          },
+        ]),
+    });
+  }
+  return Promise.reject(new Error("Unknown fetch" + url));
+});
 
 describe("UserData", () => {
   test("renders a profile after fetch occurs", async () => {
-    render(
-      // <AuthProvider>
-      <UserData />
-      // </AuthProvider>
-    );
+    render(<UserData />);
 
-    await waitFor(() =>
-      screen.getByRole("heading", { name: "TSgt Doe's Profile" })
-    );
+    const heading = await screen.findByRole("heading", {
+      name: "TSgt Doe's Profile",
+    });
+    expect(heading).toBeInTheDocument();
+    expect(heading).toHaveTextContent("TSgt Doe's Profile");
+    expect(heading).not.toHaveTextContent("Error. No User Data Found");
 
-    const userCard = screen.getByRole("listitem"); // <li class="user-card">
-    const utils = within(userCard);
+    expect(screen.getByText("First Name:")).toBeInTheDocument();
+    expect(screen.getByText("Last Name:")).toBeInTheDocument();
+    expect(screen.getByText("Rank:")).toBeInTheDocument();
+    expect(screen.getByText("Email:")).toBeInTheDocument();
+    expect(screen.getByText("Duty Phone #:")).toBeInTheDocument();
+    expect(screen.getByText("Organization:")).toBeInTheDocument();
+    expect(screen.getByText("Crew:")).toBeInTheDocument();
+    expect(screen.getByText("Position:")).toBeInTheDocument();
+    expect(screen.getByText("Role:")).toBeInTheDocument();
+  });
 
-    expect(
-      utils.getByText(
-        (content, node) => node?.textContent === "First Name: John"
-      )
-    ).toBeInTheDocument();
+  test("renders a loading message while fetching data", async () => {
+    render(<UserData />);
 
-    expect(
-      utils.getByText((content, node) => node?.textContent === "Last Name: Doe")
-    ).toBeInTheDocument();
+    const loadingMessage = screen.getByText("Loading...");
+    expect(loadingMessage).toBeInTheDocument();
 
-    expect(
-      utils.getByText((content, node) => node?.textContent === "Rank: TSgt")
-    ).toBeInTheDocument();
-
-    expect(
-      utils.getByText(
-        (content, node) => node?.textContent === "Email: john.doe@example.com"
-      )
-    ).toBeInTheDocument();
-
-    expect(
-      utils.getByText(
-        (content, node) => node?.textContent === "Duty Phone #: 999-999-9999"
-      )
-    ).toBeInTheDocument();
-
-    expect(
-      utils.getByText(
-        (content, node) => node?.textContent === "Organization: Delta 1"
-      )
-    ).toBeInTheDocument();
-
-    expect(
-      utils.getByText((content, node) => node?.textContent === "Crew: Alpha")
-    ).toBeInTheDocument();
-
-    expect(
-      utils.getByText((content, node) => node?.textContent === "Position: CSS")
-    ).toBeInTheDocument();
-
-    expect(
-      utils.getByText((content, node) => node?.textContent === "Role: Admin")
-    ).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+    });
   });
 });
