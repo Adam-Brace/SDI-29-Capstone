@@ -72,7 +72,6 @@ export default function Schedule() {
 		} catch (error) {
 			console.error("Error fetching data:", error);
 		} finally {
-			handleOpenEditDialog();
 			setIsLoading(false);
 		}
 	};
@@ -119,7 +118,6 @@ export default function Schedule() {
 	//EDIT EVENT DETAILS
 	const handleOpenEditDialog = () => {
 		if (!selectedTile) return;
-
 
 		if (user.permissions !== "admin") {
 			return;
