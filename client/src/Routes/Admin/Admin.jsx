@@ -26,6 +26,7 @@ export default function Admin() {
 	const { user } = useAuth();
 	const [users, setUsers] = useState([]);
 	const [events, setEvents] = useState([]);
+	const [filteredEvents, setFilteredEvents] = useState([]);
 	const [dialog, setDialog] = useState({ open: false });
 	const [selectedEvent, setSelectedEvent] = useState(null);
 	const [filteredUsers, setFilteredUsers] = useState([]);
@@ -43,6 +44,12 @@ export default function Admin() {
 		setTabValue(newValue);
 		setSelectedEvent(null);
 		setSelectedUser(null);
+		setSearchTerm("");
+		if (newValue === 1) {
+			setFilteredEvents(events);
+		} else if (newValue === 2) {
+			setFilteredUsers(users);
+		}
 	};
 
 	const formatTimestamp = (timestamp) => {
@@ -76,6 +83,7 @@ export default function Admin() {
 			.then((res) => res.json())
 			.then((data) => {
 				setEvents(data);
+				setFilteredEvents(data);
 			})
 			.catch((err) => console.error("Error fetching users:", err));
 	}, []);
@@ -93,15 +101,30 @@ export default function Admin() {
 	const handleSearchChange = (event) => {
 		const term = event.target.value.toLowerCase();
 		setSearchTerm(term);
-		setFilteredUsers(
-			users.filter(
-				(userFilter) =>
-					userFilter.first_name.toLowerCase().includes(term) ||
-					userFilter.last_name.toLowerCase().includes(term) ||
-					userFilter.rank.toLowerCase().includes(term) ||
-					userFilter.email.toLowerCase().includes(term)
-			)
-		);
+		
+		if (tabValue === 2) {
+			// Filter users
+			setFilteredUsers(
+				users.filter(
+					(userFilter) =>
+						userFilter.first_name.toLowerCase().includes(term) ||
+						userFilter.last_name.toLowerCase().includes(term) ||
+						userFilter.rank.toLowerCase().includes(term) ||
+						userFilter.email.toLowerCase().includes(term)
+				)
+			);
+		} else if (tabValue === 1) {
+			// Filter requests
+			const filtered = events.filter((event) => {
+				const user = getUserById(event.user_id);
+				return (
+					event.title.toLowerCase().includes(term) ||
+					event.description.toLowerCase().includes(term) ||
+					`${user.rank} ${user.first_name} ${user.last_name}`.toLowerCase().includes(term)
+				);
+			});
+			setFilteredEvents(filtered);
+		}
 	};
 
 	const getUser = (id) => {
@@ -204,7 +227,7 @@ export default function Admin() {
 				>
 					{tabValue === 0 && (
 						<Box>
-							{events
+							{filteredEvents
 								.sort(
 									(a, b) =>
 										statusOrder[a.status] -
@@ -279,77 +302,88 @@ export default function Admin() {
 						</Box>
 					)}
 					{tabValue === 1 && (
-						<Box>
-							{events
-								.sort(
-									(a, b) =>
-										statusOrder[a.status] -
-										statusOrder[b.status]
-								)
-								.map((userEvent) => (
-									<Badge
-										key={userEvent.id}
-										color={
-											userEvent.status === "approved"
-												? "success"
-												: userEvent.status === "denied"
-												? "error"
-												: "warning"
-										}
-										badgeContent=" "
-										sx={{ width: "100%" }}
-									>
-										<Card
+						<>
+							<TextField
+								fullWidth
+								variant="outlined"
+								label="Search Requests"
+								placeholder="Search by title or user"
+								value={searchTerm}
+								onChange={handleSearchChange}
+								sx={{ marginBottom: 2 }}
+							/>
+							<Box>
+								{filteredEvents
+									.sort(
+										(a, b) =>
+											statusOrder[a.status] -
+											statusOrder[b.status]
+									)
+									.map((userEvent) => (
+										<Badge
 											key={userEvent.id}
-											sx={{
-												width: "100%",
-												marginBottom: 2,
-												cursor: "pointer",
-												"&:hover": {
-													boxShadow: 6,
-												},
-											}}
-											onClick={() =>
-												setSelectedEvent(userEvent)
-											} // Edit on click
+											color={
+												userEvent.status === "approved"
+													? "success"
+													: userEvent.status === "denied"
+													? "error"
+													: "warning"
+											}
+											badgeContent=" "
+											sx={{ width: "100%" }}
 										>
-											<CardContent>
-												<Typography
-													variant="h6"
-													gutterBottom
-												>
-													{userEvent.title}
-												</Typography>
-												<Typography
-													variant="h7"
-													color="textSecondary"
-												>
-													{` Submitted By: ${
-														getUserById(
-															userEvent.user_id
-														).rank || "N/A"
-													} ${
-														getUserById(
-															userEvent.user_id
-														).first_name || "N/A"
-													} ${
-														getUserById(
-															userEvent.user_id
-														).last_name || "N/A"
-													}`}
-												</Typography>
-												<Typography
-													variant="body2"
-													color="textSecondary"
-													sx={{ paddingTop: "5px" }}
-												>
-													{userEvent.description}
-												</Typography>
-											</CardContent>
-										</Card>
-									</Badge>
-								))}
-						</Box>
+											<Card
+												key={userEvent.id}
+												sx={{
+													width: "100%",
+													marginBottom: 2,
+													cursor: "pointer",
+													"&:hover": {
+														boxShadow: 6,
+													},
+												}}
+												onClick={() =>
+													setSelectedEvent(userEvent)
+												} // Edit on click
+											>
+												<CardContent>
+													<Typography
+														variant="h6"
+														gutterBottom
+													>
+														{userEvent.title}
+													</Typography>
+													<Typography
+														variant="h7"
+														color="textSecondary"
+													>
+														{` Submitted By: ${
+															getUserById(
+																userEvent.user_id
+															).rank || "N/A"
+														} ${
+															getUserById(
+																userEvent.user_id
+															).first_name || "N/A"
+														} ${
+															getUserById(
+																userEvent.user_id
+															).last_name || "N/A"
+														}`}
+													</Typography>
+													<Typography
+														variant="body2"
+														color="textSecondary"
+														sx={{ paddingTop: "5px" }}
+													>
+														{userEvent.description}
+													</Typography>
+												</CardContent>
+											</Card>
+										</Badge>
+									))}
+							</Box>
+						</>
 					)}
 					{tabValue === 2 && (
 						<>
