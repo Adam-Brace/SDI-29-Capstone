@@ -62,39 +62,40 @@ router.get("/schedule/", async (req, res) => {
 });
 
 router.get("/schedule/:id", async (req, res) => {
-	try {
-		const events = await knex("events")
-			.select()
-			.where("user_id", req.params.id);
+  try {
+    const userId = req.params.id;
 
-		const user = await knex("users")
-			.select()
-			.where("id", req.params.id)
-			.first();
+    const user = await knex("users").where({ id: userId }).first();
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
-		if (!user) {
-			return res.status(404).json({ error: "User not found" });
-		}
+    const events = await knex("events").where({ user_id: userId });
 
-		const response = {
-			id: req.params.id,
-			label: {
-				title: `${user.rank} ${user.first_name} ${user.last_name}`,
-			},
-			data: events.map((event) => ({
-				id: event.id,
-				startDate: event.start_date,
-				endDate: event.end_date,
-				title: event.title,
-				description: event.description,
-				bgColor: event.color,
-			})),
-		};
+    const response = {
+      id: user.id,
+      label: {
+        title: `${user.rank} ${user.first_name} ${user.last_name}`,
+        subtitle: `${user.crew} ${user.position}`,
+        icon: `http://localhost:${PORT}/user/generate-image/${user.id}`,
+      },
+      data: events.map((event) => ({
+        id: event.id,
+        chatId: event.chat_id,
+        startDate: event.start_date,
+        endDate: event.end_date,
+        title: event.title,
+        description: event.description,
+        bgColor: event.color,
+        status: event.status,
+        userMessage: event.user_message,
+      })),
+    };
 
-		res.status(200).json(response);
-	} catch (err) {
-		res.status(500).json({ error: err.message });
-	}
+    res.status(200).json(response);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 router.get("/raw", async (req, res) => {
@@ -183,12 +184,9 @@ router.patch("/:id/status", async (req, res) => {
 		const { id } = req.params;
 		const { status } = req.body;
 
-		const [updatedEvent] = await knex("events").where("id", id).update(
-			{
-				status,
-			},
-			"*"
-		);
+		const [updatedEvent] = await knex("events")
+			.where("id", id)
+			.update(req.body, "*");
 
 		if (updatedEvent) {
 			res.status(200).json(updatedEvent);

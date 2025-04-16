@@ -26,7 +26,7 @@ export default function Admin() {
 	const { user } = useAuth();
 	const [users, setUsers] = useState([]);
 	const [events, setEvents] = useState([]);
-	const [openDialog, setOpenDialog] = useState(false);
+	const [dialog, setDialog] = useState({ open: false });
 	const [selectedEvent, setSelectedEvent] = useState(null);
 	const [filteredUsers, setFilteredUsers] = useState([]);
 	const [searchTerm, setSearchTerm] = useState("");
@@ -45,6 +45,22 @@ export default function Admin() {
 		setSelectedUser(null);
 	};
 
+	const formatTimestamp = (timestamp) => {
+		const date = new Date(timestamp);
+		const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+		return date.toLocaleString("en-US", {
+			year: "numeric",
+			month: "short",
+			day: "numeric",
+			hour: "2-digit",
+			minute: "2-digit",
+			hour12: false,
+			timeZone: timeZone,
+		});
+	};
+
+	// Fetch all users and store them in the `users` state
 	useEffect(() => {
 		fetch(`${API_URL}/user`)
 			.then((res) => res.json())
@@ -78,29 +94,64 @@ export default function Admin() {
 		);
 	};
 
-	const handleApproveDeny = async (id, status) => {
+	const getUser = (id) => {
+		fetch(`${API_URL}/user/${id}`)
+			.then((res) => res.json())
+			.then((data) => {
+				return data;
+			})
+			.catch((err) => console.error("Error fetching users:", err));
+	};
+
+	// Helper function to get user details by ID
+	const getUserById = (id) => {
+		return users.find((user) => user.id === id) || {};
+	};
+
+	const handleApproveDeny = async (id, status, message, admin_id) => {
+		console.log("handleApproveDeny called with:", id, status, message);
 		try {
 			const response = await fetch(`${API_URL}/events/${id}/status`, {
 				method: "PATCH",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ status }),
+				body: JSON.stringify({
+					status,
+					admin_message: message,
+					admin_id,
+				}),
 			});
 
 			if (!response.ok) {
-				throw new Error("Network response was not ok");
+				throw new Error(
+					`Failed to update event: ${response.statusText}`
+				);
 			}
 
 			const data = await response.json();
 			console.log("Event updated successfully:", data);
 			setEvents((prevEvents) =>
 				prevEvents.map((event) =>
-					event.id === id ? { ...event, status } : event
+					event.id === id
+						? { ...event, status, admin_message: message, admin_id }
+						: event
 				)
 			);
+			setSelectedEvent((prevSelectedEvent) =>
+				prevSelectedEvent && prevSelectedEvent.id === id
+					? {
+							...prevSelectedEvent,
+							status,
+							admin_message: message,
+							admin_id,
+					  }
+					: prevSelectedEvent
+			);
 		} catch (error) {
-			console.error("Error updating event:", error);
+			console.error("Error updating event:", error.message);
+		} finally {
+			setDialog({ open: false });
 		}
 	};
 
@@ -145,6 +196,7 @@ export default function Admin() {
 							.map((userEvent) =>
 								user.id === userEvent.user_id ? (
 									<Badge
+										key={userEvent.id}
 										color={
 											userEvent.status === "approved"
 												? "success"
@@ -218,6 +270,7 @@ export default function Admin() {
 							)
 							.map((userEvent) => (
 								<Badge
+									key={userEvent.id}
 									color={
 										userEvent.status === "approved"
 											? "success"
@@ -322,6 +375,7 @@ export default function Admin() {
 				{(tabValue === 0 || tabValue === 1) &&
 					(selectedEvent ? (
 						<Card
+							key={selectedEvent.id}
 							sx={{
 								padding: 3,
 								boxShadow: 3,
@@ -333,6 +387,40 @@ export default function Admin() {
 								<Typography variant="h4" gutterBottom>
 									{selectedEvent.title}
 								</Typography>
+								<Typography
+									variant="h6"
+									color="textSecondary"
+									gutterBottom
+								>
+									{` Submitted By: ${
+										getUserById(selectedEvent.user_id)
+											.rank || "N/A"
+									} ${
+										getUserById(selectedEvent.user_id)
+											.first_name || "N/A"
+									} ${
+										getUserById(selectedEvent.user_id)
+											.last_name || "N/A"
+									}`}
+								</Typography>
+								{selectedEvent.admin_id && (
+									<Typography
+										variant="h6"
+										color="textSecondary"
+										gutterBottom
+									>
+										{` Approved By: ${
+											getUserById(selectedEvent.admin_id)
+												.rank || "N/A"
+										} ${
+											getUserById(selectedEvent.admin_id)
+												.first_name || "N/A"
+										} ${
+											getUserById(selectedEvent.admin_id)
+												.last_name || "N/A"
+										}`}
+									</Typography>
+								)}
 								<Typography variant="body1" gutterBottom>
 									Status:{" "}
 									{selectedEvent.status.replace(
@@ -360,21 +448,16 @@ export default function Admin() {
 									color="textSecondary"
 									gutterBottom
 								>
-									Start Date: {selectedEvent.start_date}
+									Start Date:{" "}
+									{formatTimestamp(selectedEvent.start_date)}
 								</Typography>
 								<Typography
 									variant="body2"
 									color="textSecondary"
 									gutterBottom
 								>
-									End Date: {selectedEvent.end_date}
-								</Typography>
-								<Typography
-									variant="body2"
-									color="textSecondary"
-									gutterBottom
-								>
-									Color: {selectedEvent.color}
+									End Date:{" "}
+									{formatTimestamp(selectedEvent.end_date)}
 								</Typography>
 							</CardContent>
 							{tabValue === 1 && (
@@ -389,10 +472,11 @@ export default function Admin() {
 										variant="contained"
 										color="success"
 										onClick={() =>
-											handleApproveDeny(
-												selectedEvent.id,
-												"approved"
-											)
+											setDialog({
+												open: true,
+												event: selectedEvent,
+												status: "approved",
+											})
 										}
 									>
 										Approve
@@ -401,10 +485,11 @@ export default function Admin() {
 										variant="contained"
 										color="error"
 										onClick={() =>
-											handleApproveDeny(
-												selectedEvent.id,
-												"denied"
-											)
+											setDialog({
+												open: true,
+												event: selectedEvent,
+												status: "denied",
+											})
 										}
 									>
 										Deny
@@ -479,16 +564,66 @@ export default function Admin() {
 							Select a user to view and edit their details.
 						</Typography>
 					))}
-				<Dialog open={openDialog} onClose={""}>
-					<DialogTitle>Edit</DialogTitle>
-					<DialogContent>test</DialogContent>
-					<DialogActions>
-						<Button onClick={""}>Cancel</Button>
-						<Button onClick={""} color="primary">
-							Save
-						</Button>
-					</DialogActions>
-				</Dialog>
+				{dialog.open && (
+					<Dialog
+						open={dialog.open}
+						onClose={() => setDialog({ open: false })}
+					>
+						<DialogTitle
+							sx={{ paddingBottom: "0px" }}
+						>{`${dialog.status.replace(/^./, (match) =>
+							match.toUpperCase()
+						)} - ${dialog.event.title}`}</DialogTitle>
+						<DialogContent sx={{ paddingBottom: "0px" }}>
+							<Typography variant="body2">
+								Leave a message for the user if needed:
+							</Typography>
+						</DialogContent>
+						<DialogContent sx={{ paddingBottom: "0px" }}>
+							<TextField
+								margin="dense"
+								name="admin_message"
+								label="Admin Message"
+								type="text"
+								fullWidth
+								multiline
+								rows={4}
+								value={dialog.event.admin_message || ""}
+								onChange={(e) =>
+									setDialog((prev) => ({
+										...prev,
+										event: {
+											...prev.event,
+											admin_message: e.target.value,
+										},
+									}))
+								}
+							/>
+						</DialogContent>
+						<DialogActions>
+							<Button
+								onClick={() => setDialog({ open: false })}
+								color="secondary"
+							>
+								Cancel
+							</Button>
+							<Button
+								onClick={() =>
+									handleApproveDeny(
+										dialog.event.id,
+										dialog.status,
+										dialog.event.admin_message,
+										user.id
+									)
+								}
+								color="primary"
+								variant="contained"
+							>
+								Save
+							</Button>
+						</DialogActions>
+					</Dialog>
+				)}
 			</Box>
 		</Box>
 	);
