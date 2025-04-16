@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
 
-import { Routes, Route, Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Routes, Route } from "react-router-dom";
 import LoginPage from "./Routes/LoginPage/LoginPage";
 import RegisterPage from "./Routes/RegisterPage/RegisterPage";
 import Admin from "./Routes/Admin/Admin.jsx";
@@ -12,30 +12,37 @@ import NotFound from "./Components/NotFound";
 import HomePage from "./Routes/HomePage";
 import Nav from "./Components/Nav.jsx";
 import MyRequests from "./Routes/MyRequests.jsx";
+import SimpleResetPassword from "./Components/SimpleResetPassword"; // New import
 
 export default function App() {
 	const { logout } = useAuth();
 	const { user } = useAuth();
-
 	const sampleUser = {
 		rank: "Capt",
 		firstName: "Jane",
 		lastName: "Doe",
 	};
+
 	const [theme, setTheme] = useState("light");
 
-	useEffect(() => {
-		const storedTheme = localStorage.getItem("theme") || "light";
-		setTheme(storedTheme);
-		document.body.className = storedTheme + "-theme";
-	}, []);
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme") || "light";
+    setTheme(storedTheme);
+    document.body.className = storedTheme + "-theme";
+  }, []);
 
-	const toggleTheme = () => {
-		const newTheme = theme === "light" ? "dark" : "light";
-		setTheme(newTheme);
-		localStorage.setItem("theme", newTheme);
-		document.body.className = newTheme + "-theme";
-	};
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    localStorage.setItem("theme", newTheme);
+    document.body.className = newTheme + "-theme";
+  };
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme") || "light";
+    setTheme(storedTheme);
+    document.body.className = storedTheme + "-theme";
+  }, []);
 
 	return (
 		<>
