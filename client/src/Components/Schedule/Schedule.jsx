@@ -91,7 +91,7 @@ export default function Schedule() {
 
 		try {
 			const response = await fetch(
-				`${API_URL}/events/schedule/${selectedTile.id}`,
+				`${API_URL}/events/${selectedTile.id}`,
 				{
 					method: "DELETE",
 					headers: {
