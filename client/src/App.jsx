@@ -65,9 +65,18 @@ export default function App() {
 						</ProtectedRoute>
 					}
 				/>
+
+				<Route
+					path="/myrequests"
+					element={
+						<ProtectedRoute admin={false}>
+							<Admin />
+						</ProtectedRoute>
+					}
+				/>
+
 				<Route path="/login" element={<LoginPage />} />
 				<Route path="/register" element={<RegisterPage />} />
-				<Route path="/myrequests" element={<MyRequests />} />
 				<Route path="*" element={<NotFound />} />
 			</Routes>
 		</>

@@ -1,15 +1,20 @@
-import React, { use, useEffect, useState } from "react";
-import Box from "@mui/material/Box";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import TextField from "@mui/material/TextField";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
-import Avatar from "@mui/material/Avatar";
-import ListItemText from "@mui/material/ListItemText";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
+import React, { useEffect, useState } from "react";
+import {
+	Box,
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	DialogActions,
+	Tabs,
+	Tab,
+	TextField,
+	Badge,
+	Typography,
+	Divider,
+	Card,
+	CardContent,
+	Button,
+} from "@mui/material";
 import Edit from "../../UserData/Edit";
 import UserBadge from "../../Components/UserBadge";
 import { useAuth } from "../../Context/AuthContext";
@@ -21,14 +26,23 @@ export default function Admin() {
 	const { user } = useAuth();
 	const [users, setUsers] = useState([]);
 	const [events, setEvents] = useState([]);
+	const [openDialog, setOpenDialog] = useState(false);
 	const [selectedEvent, setSelectedEvent] = useState(null);
 	const [filteredUsers, setFilteredUsers] = useState([]);
 	const [searchTerm, setSearchTerm] = useState("");
 	const [selectedUser, setSelectedUser] = useState(null);
 	const [tabValue, setTabValue] = useState(0);
 
+	const statusOrder = {
+		pending: 0,
+		approved: 1,
+		denied: 2,
+	};
+
 	const handleTabChange = (event, newValue) => {
 		setTabValue(newValue);
+		setSelectedEvent(null);
+		setSelectedUser(null);
 	};
 
 	useEffect(() => {
@@ -64,15 +78,48 @@ export default function Admin() {
 		);
 	};
 
+	const handleApproveDeny = async (id, status) => {
+		try {
+			const response = await fetch(`${API_URL}/events/${id}/status`, {
+				method: "PATCH",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ status }),
+			});
+
+			if (!response.ok) {
+				throw new Error("Network response was not ok");
+			}
+
+			const data = await response.json();
+			console.log("Event updated successfully:", data);
+			setEvents((prevEvents) =>
+				prevEvents.map((event) =>
+					event.id === id ? { ...event, status } : event
+				)
+			);
+		} catch (error) {
+			console.error("Error updating event:", error);
+		}
+	};
+
 	return (
-		<Box sx={{ display: "flex", flexDirection: "row", height: "100vh" }}>
+		<Box
+			sx={{
+				display: "flex",
+				flexDirection: "row",
+				height: "100vh",
+				padding: 2,
+			}}
+		>
 			{/* Sidebar */}
 			<Box
 				sx={{
 					width: "30%",
 					borderRight: 1,
 					borderColor: "divider",
-					padding: 2,
+					paddingRight: 4,
 				}}
 			>
 				<Tabs
@@ -85,48 +132,134 @@ export default function Admin() {
 					{user.permissions == "admin" && <Tab label="Requests" />}
 					{user.permissions == "admin" && <Tab label="Users" />}
 				</Tabs>
-				<Divider sx={{ marginY: 2 }} />
+				<Divider sx={{ marginBottom: 4, marginTop: 0 }} />
+
 				{tabValue === 0 && (
-					<List>
-						{events.map((userEvent) =>
-							user.id == userEvent.user_id ? (
-								<ListItem
-									key={userEvent.id}
-									onClick={() => setSelectedEvent(userEvent)} // Edit on click
-									button // Makes the ListItem clickable
-								>
-									<ListItemText
-										primary={userEvent.title}
-										secondary={userEvent.description}
-									/>
-								</ListItem>
-							) : (
-								userEvent.length > 0 && (
-									<ListItem key={0}>
-										<ListItemText
-											primary={"No requests Found"}
-										/>
-									</ListItem>
-								)
+					<Box>
+						{events
+							.sort(
+								(a, b) =>
+									statusOrder[a.status] -
+									statusOrder[b.status]
 							)
-						)}
-					</List>
+							.map((userEvent) =>
+								user.id === userEvent.user_id ? (
+									<Badge
+										color={
+											userEvent.status === "approved"
+												? "success"
+												: userEvent.status === "denied"
+												? "error"
+												: "warning"
+										}
+										badgeContent=" "
+										sx={{ width: "100%" }}
+									>
+										<Card
+											key={userEvent.id}
+											sx={{
+												width: "100%",
+												marginBottom: 2,
+												cursor: "pointer",
+												"&:hover": {
+													boxShadow: 6,
+												},
+											}}
+											onClick={() =>
+												setSelectedEvent(userEvent)
+											} // Edit on click
+										>
+											<CardContent>
+												<Typography
+													variant="h6"
+													gutterBottom
+												>
+													{userEvent.title}
+												</Typography>
+												<Typography
+													variant="body2"
+													color="textSecondary"
+												>
+													{userEvent.description}
+												</Typography>
+											</CardContent>
+										</Card>
+									</Badge>
+								) : (
+									userEvent.length > 0 && (
+										<Card
+											key={0}
+											sx={{
+												marginBottom: 2,
+												cursor: "default",
+											}}
+										>
+											<CardContent>
+												<Typography
+													variant="body2"
+													color="textSecondary"
+												>
+													No requests found
+												</Typography>
+											</CardContent>
+										</Card>
+									)
+								)
+							)}
+					</Box>
 				)}
 				{tabValue === 1 && (
-					<List>
-						{events.map((userEvent) => (
-							<ListItem
-								key={userEvent.id}
-								onClick={() => setSelectedEvent(userEvent)} // Edit on click
-								button // Makes the ListItem clickable
-							>
-								<ListItemText
-									primary={userEvent.title}
-									secondary={userEvent.description}
-								/>
-							</ListItem>
-						))}
-					</List>
+					<Box>
+						{events
+							.sort(
+								(a, b) =>
+									statusOrder[a.status] -
+									statusOrder[b.status]
+							)
+							.map((userEvent) => (
+								<Badge
+									color={
+										userEvent.status === "approved"
+											? "success"
+											: userEvent.status === "denied"
+											? "error"
+											: "warning"
+									}
+									badgeContent=" "
+									sx={{ width: "100%" }}
+								>
+									<Card
+										key={userEvent.id}
+										sx={{
+											width: "100%",
+											marginBottom: 2,
+											cursor: "pointer",
+											"&:hover": {
+												boxShadow: 6,
+											},
+										}}
+										onClick={() =>
+											setSelectedEvent(userEvent)
+										} // Edit on click
+									>
+										<CardContent>
+											<Typography
+												variant="h6"
+												gutterBottom
+											>
+												{userEvent.title}
+											</Typography>
+											<Typography
+												variant="body2"
+												color="textSecondary"
+											>
+												{userEvent.description}
+											</Typography>
+										</CardContent>
+									</Card>
+								</Badge>
+							))}
+					</Box>
 				)}
 				{tabValue === 2 && (
 					<>
@@ -139,25 +272,41 @@ export default function Admin() {
 							onChange={handleSearchChange}
 							sx={{ marginBottom: 2 }}
 						/>
-						<List>
+						<Box>
 							{filteredUsers.map((userMap) => (
-								<ListItem
+								<Card
 									key={userMap.id}
-									onClick={() => {
-										setSelectedUser(userMap);
+									sx={{
+										marginBottom: 2,
+										cursor: "pointer",
+										"&:hover": {
+											boxShadow: 6,
+										},
 									}}
-									button
+									onClick={() => setSelectedUser(userMap)}
 								>
-									<ListItemAvatar>
+									<CardContent
+										sx={{
+											display: "flex",
+											alignItems: "center",
+										}}
+									>
 										<UserBadge id={userMap.id} />
-									</ListItemAvatar>
-									<ListItemText
-										primary={`${userMap.rank} ${userMap.first_name} ${userMap.last_name}`}
-										secondary={userMap.email}
-									/>
-								</ListItem>
+										<Box sx={{ marginLeft: 2 }}>
+											<Typography variant="h6">
+												{`${userMap.rank} ${userMap.first_name} ${userMap.last_name}`}
+											</Typography>
+											<Typography
+												variant="body2"
+												color="textSecondary"
+											>
+												{userMap.email}
+											</Typography>
+										</Box>
+									</CardContent>
+								</Card>
 							))}
-						</List>
+						</Box>
 					</>
 				)}
 			</Box>
@@ -172,36 +321,118 @@ export default function Admin() {
 			>
 				{(tabValue === 0 || tabValue === 1) &&
 					(selectedEvent ? (
-						<Box>
-							<Typography variant="h4" gutterBottom>
-								{selectedEvent.title}
-							</Typography>
-							<Typography variant="body1">
-								{selectedEvent.description}
-							</Typography>
-							<Typography variant="body2" color="textSecondary">
-								Start Date: {selectedEvent.start_date}
-							</Typography>
-							<Typography variant="body2" color="textSecondary">
-								End Date: {selectedEvent.end_date}
-							</Typography>
-							<Typography variant="body2" color="textSecondary">
-								Color: {selectedEvent.color}
-							</Typography>
-						</Box>
+						<Card
+							sx={{
+								padding: 3,
+								boxShadow: 3,
+								borderRadius: 2,
+								marginBottom: 2,
+							}}
+						>
+							<CardContent>
+								<Typography variant="h4" gutterBottom>
+									{selectedEvent.title}
+								</Typography>
+								<Typography variant="body1" gutterBottom>
+									Status:{" "}
+									{selectedEvent.status.replace(
+										/^./,
+										(match) => match.toUpperCase()
+									)}
+								</Typography>
+								{selectedEvent.user_message && (
+									<Typography variant="body1" gutterBottom>
+										User Message:{" "}
+										{selectedEvent.user_message}
+									</Typography>
+								)}
+								{selectedEvent.admin_message && (
+									<Typography variant="body1" gutterBottom>
+										Admin Message:{" "}
+										{selectedEvent.admin_message}
+									</Typography>
+								)}
+								<Typography variant="body2" gutterBottom>
+									{selectedEvent.description}
+								</Typography>
+								<Typography
+									variant="body2"
+									color="textSecondary"
+									gutterBottom
+								>
+									Start Date: {selectedEvent.start_date}
+								</Typography>
+								<Typography
+									variant="body2"
+									color="textSecondary"
+									gutterBottom
+								>
+									End Date: {selectedEvent.end_date}
+								</Typography>
+								<Typography
+									variant="body2"
+									color="textSecondary"
+									gutterBottom
+								>
+									Color: {selectedEvent.color}
+								</Typography>
+							</CardContent>
+							{tabValue === 1 && (
+								<Box
+									sx={{
+										display: "flex",
+										justifyContent: "space-between",
+										marginTop: 2,
+									}}
+								>
+									<Button
+										variant="contained"
+										color="success"
+										onClick={() =>
+											handleApproveDeny(
+												selectedEvent.id,
+												"approved"
+											)
+										}
+									>
+										Approve
+									</Button>
+									<Button
+										variant="contained"
+										color="error"
+										onClick={() =>
+											handleApproveDeny(
+												selectedEvent.id,
+												"denied"
+											)
+										}
+									>
+										Deny
+									</Button>
+								</Box>
+							)}
+						</Card>
 					) : (
 						<Typography variant="h6" color="textSecondary">
-							Select a event to view.
+							Select an event to view.
 						</Typography>
 					))}
 				{tabValue === 2 &&
 					(selectedUser ? (
-						<Box>
-							<Typography variant="h4" gutterBottom>
-								{selectedUser.rank} {selectedUser.first_name}{" "}
-								{selectedUser.last_name}'s Details
-							</Typography>
-							<Box>
+						<Card
+							sx={{
+								padding: 3,
+								boxShadow: 3,
+								borderRadius: 2,
+								marginBottom: 2,
+							}}
+						>
+							<CardContent>
+								<Typography variant="h4" gutterBottom>
+									{selectedUser.rank}{" "}
+									{selectedUser.first_name}{" "}
+									{selectedUser.last_name}'s Details
+								</Typography>
 								<Typography variant="body2" gutterBottom>
 									First Name: {selectedUser.first_name}
 								</Typography>
@@ -229,17 +460,35 @@ export default function Admin() {
 								<Typography variant="body2" gutterBottom>
 									Role: {selectedUser.permissions}
 								</Typography>
-							</Box>
-							<Edit
-								id={selectedUser.id}
-								currentData={selectedUser}
-							/>
-						</Box>
+								<Box
+									sx={{
+										display: "flex",
+										justifyContent: "flex-start",
+										marginTop: 2,
+									}}
+								>
+									<Edit
+										id={selectedUser.id}
+										currentData={selectedUser}
+									/>
+								</Box>
+							</CardContent>
+						</Card>
 					) : (
 						<Typography variant="h6" color="textSecondary">
 							Select a user to view and edit their details.
 						</Typography>
 					))}
+				<Dialog open={openDialog} onClose={""}>
+					<DialogTitle>Edit</DialogTitle>
+					<DialogContent>test</DialogContent>
+					<DialogActions>
+						<Button onClick={""}>Cancel</Button>
+						<Button onClick={""} color="primary">
+							Save
+						</Button>
+					</DialogActions>
+				</Dialog>
 			</Box>
 		</Box>
 	);

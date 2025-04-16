@@ -72,6 +72,7 @@ export default function Schedule() {
 		} catch (error) {
 			console.error("Error fetching data:", error);
 		} finally {
+			handleOpenEditDialog();
 			setIsLoading(false);
 		}
 	};
@@ -91,7 +92,7 @@ export default function Schedule() {
 
 		try {
 			const response = await fetch(
-				`${API_URL}/events/schedule/${selectedTile.id}`,
+				`${API_URL}/events/${selectedTile.id}`,
 				{
 					method: "DELETE",
 					headers: {
