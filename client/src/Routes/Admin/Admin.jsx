@@ -80,6 +80,16 @@ export default function Admin() {
 			.catch((err) => console.error("Error fetching users:", err));
 	}, []);
 
+	useEffect(() => {
+		// Disable scrolling when the component mounts
+		document.body.style.overflow = "hidden";
+
+		// Re-enable scrolling when the component unmounts
+		return () => {
+			document.body.style.overflow = "auto";
+		};
+	}, []);
+
 	const handleSearchChange = (event) => {
 		const term = event.target.value.toLowerCase();
 		setSearchTerm(term);
@@ -161,7 +171,6 @@ export default function Admin() {
 				display: "flex",
 				flexDirection: "row",
 				height: "100vh",
-				padding: 2,
 			}}
 		>
 			{/* Sidebar */}
@@ -170,10 +179,10 @@ export default function Admin() {
 					width: "30%",
 					borderRight: 1,
 					borderColor: "divider",
-					paddingRight: 4,
 				}}
 			>
 				<Tabs
+					sx={{ marginTop: 2 }}
 					value={tabValue}
 					onChange={handleTabChange}
 					aria-label="Admin Tabs"
@@ -183,18 +192,101 @@ export default function Admin() {
 					{user.permissions == "admin" && <Tab label="Requests" />}
 					{user.permissions == "admin" && <Tab label="Users" />}
 				</Tabs>
-				<Divider sx={{ marginBottom: 4, marginTop: 0 }} />
-
-				{tabValue === 0 && (
-					<Box>
-						{events
-							.sort(
-								(a, b) =>
-									statusOrder[a.status] -
-									statusOrder[b.status]
-							)
-							.map((userEvent) =>
-								user.id === userEvent.user_id ? (
+				<Divider sx={{ marginTop: 0 }} />
+				<Box
+					sx={{
+						height: "calc(100vh - 64px)", // Adjust height as needed
+						overflowY: "auto", // Enable vertical scrolling
+						paddingLeft: 2,
+						paddingRight: 4,
+						paddingTop: 6,
+					}}
+				>
+					{tabValue === 0 && (
+						<Box>
+							{events
+								.sort(
+									(a, b) =>
+										statusOrder[a.status] -
+										statusOrder[b.status]
+								)
+								.map((userEvent) =>
+									user.id === userEvent.user_id ? (
+										<Badge
+											key={userEvent.id}
+											color={
+												userEvent.status === "approved"
+													? "success"
+													: userEvent.status ===
+													  "denied"
+													? "error"
+													: "warning"
+											}
+											badgeContent=" "
+											sx={{ width: "100%" }}
+										>
+											<Card
+												key={userEvent.id}
+												sx={{
+													width: "100%",
+													marginBottom: 2,
+													cursor: "pointer",
+													"&:hover": {
+														boxShadow: 6,
+													},
+												}}
+												onClick={() =>
+													setSelectedEvent(userEvent)
+												} // Edit on click
+											>
+												<CardContent>
+													<Typography
+														variant="h6"
+														gutterBottom
+													>
+														{userEvent.title}
+													</Typography>
+													<Typography
+														variant="body2"
+														color="textSecondary"
+													>
+														{userEvent.description}
+													</Typography>
+												</CardContent>
+											</Card>
+										</Badge>
+									) : (
+										userEvent.length > 0 && (
+											<Card
+												key={0}
+												sx={{
+													marginBottom: 2,
+													cursor: "default",
+												}}
+											>
+												<CardContent>
+													<Typography
+														variant="body2"
+														color="textSecondary"
+													>
+														No requests found
+													</Typography>
+												</CardContent>
+											</Card>
+										)
+									)
+								)}
+						</Box>
+					)}
+					{tabValue === 1 && (
+						<Box>
+							{events
+								.sort(
+									(a, b) =>
+										statusOrder[a.status] -
+										statusOrder[b.status]
+								)
+								.map((userEvent) => (
 									<Badge
 										key={userEvent.id}
 										color={
@@ -229,158 +321,85 @@ export default function Admin() {
 													{userEvent.title}
 												</Typography>
 												<Typography
+													variant="h7"
+													color="textSecondary"
+												>
+													{` Submitted By: ${
+														getUserById(
+															userEvent.user_id
+														).rank || "N/A"
+													} ${
+														getUserById(
+															userEvent.user_id
+														).first_name || "N/A"
+													} ${
+														getUserById(
+															userEvent.user_id
+														).last_name || "N/A"
+													}`}
+												</Typography>
+												<Typography
 													variant="body2"
 													color="textSecondary"
+													sx={{ paddingTop: "5px" }}
 												>
 													{userEvent.description}
 												</Typography>
 											</CardContent>
 										</Card>
 									</Badge>
-								) : (
-									userEvent.length > 0 && (
-										<Card
-											key={0}
-											sx={{
-												marginBottom: 2,
-												cursor: "default",
-											}}
-										>
-											<CardContent>
-												<Typography
-													variant="body2"
-													color="textSecondary"
-												>
-													No requests found
-												</Typography>
-											</CardContent>
-										</Card>
-									)
-								)
-							)}
-					</Box>
-				)}
-				{tabValue === 1 && (
-					<Box>
-						{events
-							.sort(
-								(a, b) =>
-									statusOrder[a.status] -
-									statusOrder[b.status]
-							)
-							.map((userEvent) => (
-								<Badge
-									key={userEvent.id}
-									color={
-										userEvent.status === "approved"
-											? "success"
-											: userEvent.status === "denied"
-											? "error"
-											: "warning"
-									}
-									badgeContent=" "
-									sx={{ width: "100%" }}
-								>
+								))}
+						</Box>
+					)}
+					{tabValue === 2 && (
+						<>
+							<TextField
+								fullWidth
+								variant="outlined"
+								label="Search Users"
+								placeholder="Search by name, rank, or email"
+								value={searchTerm}
+								onChange={handleSearchChange}
+								sx={{ marginBottom: 2 }}
+							/>
+							<Box>
+								{filteredUsers.map((userMap) => (
 									<Card
-										key={userEvent.id}
+										key={userMap.id}
 										sx={{
-											width: "100%",
 											marginBottom: 2,
 											cursor: "pointer",
 											"&:hover": {
 												boxShadow: 6,
 											},
 										}}
-										onClick={() =>
-											setSelectedEvent(userEvent)
-										} // Edit on click
+										onClick={() => setSelectedUser(userMap)}
 									>
-										<CardContent>
-											<Typography
-												variant="h6"
-												gutterBottom
-											>
-												{userEvent.title}
-											</Typography>
-											<Typography
-												variant="h7"
-												color="textSecondary"
-											>
-												{` Submitted By: ${
-													getUserById(
-														userEvent.user_id
-													).rank || "N/A"
-												} ${
-													getUserById(
-														userEvent.user_id
-													).first_name || "N/A"
-												} ${
-													getUserById(
-														userEvent.user_id
-													).last_name || "N/A"
-												}`}
-											</Typography>
-											<Typography
-												variant="body2"
-												color="textSecondary"
-												sx={{ paddingTop: "5px" }}
-											>
-												{userEvent.description}
-											</Typography>
+										<CardContent
+											sx={{
+												display: "flex",
+												alignItems: "center",
+											}}
+										>
+											<UserBadge id={userMap.id} />
+											<Box sx={{ marginLeft: 2 }}>
+												<Typography variant="h6">
+													{`${userMap.rank} ${userMap.first_name} ${userMap.last_name}`}
+												</Typography>
+												<Typography
+													variant="body2"
+													color="textSecondary"
+												>
+													{userMap.email}
+												</Typography>
+											</Box>
 										</CardContent>
 									</Card>
-								</Badge>
-							))}
-					</Box>
-				)}
-				{tabValue === 2 && (
-					<>
-						<TextField
-							fullWidth
-							variant="outlined"
-							label="Search Users"
-							placeholder="Search by name, rank, or email"
-							value={searchTerm}
-							onChange={handleSearchChange}
-							sx={{ marginBottom: 2 }}
-						/>
-						<Box>
-							{filteredUsers.map((userMap) => (
-								<Card
-									key={userMap.id}
-									sx={{
-										marginBottom: 2,
-										cursor: "pointer",
-										"&:hover": {
-											boxShadow: 6,
-										},
-									}}
-									onClick={() => setSelectedUser(userMap)}
-								>
-									<CardContent
-										sx={{
-											display: "flex",
-											alignItems: "center",
-										}}
-									>
-										<UserBadge id={userMap.id} />
-										<Box sx={{ marginLeft: 2 }}>
-											<Typography variant="h6">
-												{`${userMap.rank} ${userMap.first_name} ${userMap.last_name}`}
-											</Typography>
-											<Typography
-												variant="body2"
-												color="textSecondary"
-											>
-												{userMap.email}
-											</Typography>
-										</Box>
-									</CardContent>
-								</Card>
-							))}
-						</Box>
-					</>
-				)}
+								))}
+							</Box>
+						</>
+					)}
+				</Box>
 			</Box>
 
 			{/* Main Content */}

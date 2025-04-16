@@ -3,7 +3,7 @@ import { useAuth } from "../Context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "./Logo.jsx";
 import UserBadge from "./UserBadge";
-import MyRequests from '../Routes/MyRequests';
+import MyRequests from "../Routes/MyRequests";
 import {
 	AppBar,
 	Toolbar,
@@ -70,7 +70,7 @@ export default function Nav() {
 							color="inherit"
 							sx={{ textTransform: "none" }}
 						>
-							Home
+							Schedule
 						</Button>
 					)}
 					{user?.permissions === "admin" && (
@@ -204,7 +204,7 @@ export default function Nav() {
 							navigate("/");
 						}}
 					>
-						Home
+						Schedule
 					</MenuItem>
 				)}
 				{user?.permissions === "admin" && (
