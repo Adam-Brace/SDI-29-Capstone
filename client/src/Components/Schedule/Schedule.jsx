@@ -123,10 +123,8 @@ export default function Schedule() {
 			return;
 		}
 
-		// Format dates for the form
-		const startDate = dayjs(selectedTile.startDate).format(
-			"YYYY-MM-DDTHH:mm"
-		);
+		// Format dates for the form in local time
+		const startDate = dayjs(selectedTile.startDate).format("YYYY-MM-DDTHH:mm");
 		const endDate = dayjs(selectedTile.endDate).format("YYYY-MM-DDTHH:mm");
 
 		setEditForm({
@@ -173,8 +171,8 @@ export default function Schedule() {
 					},
 					body: JSON.stringify({
 						title: editForm.title,
-						startDate: editForm.startDate,
-						endDate: editForm.endDate,
+						startDate: dayjs(editForm.startDate).toISOString(),
+						endDate: dayjs(editForm.endDate).toISOString(),
 						description: editForm.description,
 					}),
 				}
@@ -189,8 +187,8 @@ export default function Schedule() {
 				setSelectedTile({
 					...selectedTile,
 					title: editForm.title,
-					startDate: editForm.startDate,
-					endDate: editForm.endDate,
+					startDate: dayjs(editForm.startDate).toISOString(),
+					endDate: dayjs(editForm.endDate).toISOString(),
 					description: editForm.description,
 				});
 			} else {
@@ -214,8 +212,8 @@ export default function Schedule() {
 				body: JSON.stringify({
 					user_id: selectedUser.id,
 					title: createForm.title,
-					startDate: createForm.startDate,
-					endDate: createForm.endDate,
+					startDate: dayjs(createForm.startDate).toISOString(),
+					endDate: dayjs(createForm.endDate).toISOString(),
 					description: createForm.description,
 					bgColor: getEventColor(createForm.description),
 					user_message: userMessage || null,
