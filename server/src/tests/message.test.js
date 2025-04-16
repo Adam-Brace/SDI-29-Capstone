@@ -18,7 +18,7 @@ describe("Message Routes", () => {
     timestamp: new Date().toISOString()
   };
 
-  // temp tests
+  // temp tests, just so the logs dont get mad
   it("adds two numbers", () => {
     const result = 2 + 3;
     expect(result).toBe(5);
