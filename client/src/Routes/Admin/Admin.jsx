@@ -303,8 +303,27 @@ export default function Admin() {
 												{userEvent.title}
 											</Typography>
 											<Typography
+												variant="h7"
+												color="textSecondary"
+											>
+												{` Submitted By: ${
+													getUserById(
+														userEvent.user_id
+													).rank || "N/A"
+												} ${
+													getUserById(
+														userEvent.user_id
+													).first_name || "N/A"
+												} ${
+													getUserById(
+														userEvent.user_id
+													).last_name || "N/A"
+												}`}
+											</Typography>
+											<Typography
 												variant="body2"
 												color="textSecondary"
+												sx={{ paddingTop: "5px" }}
 											>
 												{userEvent.description}
 											</Typography>
