@@ -60,6 +60,7 @@ export default function Admin() {
 		});
 	};
 
+	// Fetch all users and store them in the `users` state
 	useEffect(() => {
 		fetch(`${API_URL}/user`)
 			.then((res) => res.json())
@@ -93,7 +94,21 @@ export default function Admin() {
 		);
 	};
 
-	const handleApproveDeny = async (id, status, message) => {
+	const getUser = (id) => {
+		fetch(`${API_URL}/user/${id}`)
+			.then((res) => res.json())
+			.then((data) => {
+				return data;
+			})
+			.catch((err) => console.error("Error fetching users:", err));
+	};
+
+	// Helper function to get user details by ID
+	const getUserById = (id) => {
+		return users.find((user) => user.id === id) || {};
+	};
+
+	const handleApproveDeny = async (id, status, message, admin_id) => {
 		console.log("handleApproveDeny called with:", id, status, message);
 		try {
 			const response = await fetch(`${API_URL}/events/${id}/status`, {
@@ -101,7 +116,11 @@ export default function Admin() {
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ status, admin_message: message }),
+				body: JSON.stringify({
+					status,
+					admin_message: message,
+					admin_id,
+				}),
 			});
 
 			if (!response.ok) {
@@ -115,13 +134,18 @@ export default function Admin() {
 			setEvents((prevEvents) =>
 				prevEvents.map((event) =>
 					event.id === id
-						? { ...event, status, admin_message: message }
+						? { ...event, status, admin_message: message, admin_id }
 						: event
 				)
 			);
 			setSelectedEvent((prevSelectedEvent) =>
 				prevSelectedEvent && prevSelectedEvent.id === id
-					? { ...prevSelectedEvent, status, admin_message: message }
+					? {
+							...prevSelectedEvent,
+							status,
+							admin_message: message,
+							admin_id,
+					  }
 					: prevSelectedEvent
 			);
 		} catch (error) {
@@ -172,6 +196,7 @@ export default function Admin() {
 							.map((userEvent) =>
 								user.id === userEvent.user_id ? (
 									<Badge
+										key={userEvent.id}
 										color={
 											userEvent.status === "approved"
 												? "success"
@@ -245,6 +270,7 @@ export default function Admin() {
 							)
 							.map((userEvent) => (
 								<Badge
+									key={userEvent.id}
 									color={
 										userEvent.status === "approved"
 											? "success"
@@ -349,6 +375,7 @@ export default function Admin() {
 				{(tabValue === 0 || tabValue === 1) &&
 					(selectedEvent ? (
 						<Card
+							key={selectedEvent.id}
 							sx={{
 								padding: 3,
 								boxShadow: 3,
@@ -360,6 +387,40 @@ export default function Admin() {
 								<Typography variant="h4" gutterBottom>
 									{selectedEvent.title}
 								</Typography>
+								<Typography
+									variant="h6"
+									color="textSecondary"
+									gutterBottom
+								>
+									{` Submitted By: ${
+										getUserById(selectedEvent.user_id)
+											.rank || "N/A"
+									} ${
+										getUserById(selectedEvent.user_id)
+											.first_name || "N/A"
+									} ${
+										getUserById(selectedEvent.user_id)
+											.last_name || "N/A"
+									}`}
+								</Typography>
+								{selectedEvent.admin_id && (
+									<Typography
+										variant="h6"
+										color="textSecondary"
+										gutterBottom
+									>
+										{` Approved By: ${
+											getUserById(selectedEvent.admin_id)
+												.rank || "N/A"
+										} ${
+											getUserById(selectedEvent.admin_id)
+												.first_name || "N/A"
+										} ${
+											getUserById(selectedEvent.admin_id)
+												.last_name || "N/A"
+										}`}
+									</Typography>
+								)}
 								<Typography variant="body1" gutterBottom>
 									Status:{" "}
 									{selectedEvent.status.replace(
@@ -397,13 +458,6 @@ export default function Admin() {
 								>
 									End Date:{" "}
 									{formatTimestamp(selectedEvent.end_date)}
-								</Typography>
-								<Typography
-									variant="body2"
-									color="textSecondary"
-									gutterBottom
-								>
-									Color: {selectedEvent.color}
 								</Typography>
 							</CardContent>
 							{tabValue === 1 && (
@@ -558,7 +612,8 @@ export default function Admin() {
 									handleApproveDeny(
 										dialog.event.id,
 										dialog.status,
-										dialog.event.admin_message
+										dialog.event.admin_message,
+										user.id
 									)
 								}
 								color="primary"
