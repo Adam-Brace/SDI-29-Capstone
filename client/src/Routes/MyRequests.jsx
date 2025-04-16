@@ -7,6 +7,10 @@ import {
   TextField,
   Typography,
   IconButton,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import '../styles/MyRequests.css';
@@ -25,7 +29,15 @@ function MyRequests() {
     userMessage: '',
   });
 
-  // Fetch events
+  const descriptionOptions = [
+    'Work',
+    'Leave',
+    'Appointment',
+    'Training',
+    'TDY',
+    'Deployment',
+  ];
+
   useEffect(() => {
     const fetchRequests = async () => {
       try {
@@ -42,12 +54,11 @@ function MyRequests() {
     if (user?.id) fetchRequests();
   }, [user]);
 
-  // Open modal and set form data
   const handleOpen = (event) => {
     setSelectedEvent(event);
     setFormData({
       title: event.title,
-      description: event.description,
+      description: event.description || '',
       startDate: new Date(event.startDate).toISOString().slice(0, 16),
       endDate: new Date(event.endDate).toISOString().slice(0, 16),
       userMessage: event.userMessage || '',
@@ -55,20 +66,17 @@ function MyRequests() {
     setOpen(true);
   };
 
-  // Close modal
   const handleClose = () => {
     setOpen(false);
     setSelectedEvent(null);
     setFormData({ title: '', description: '', startDate: '', endDate: '', userMessage: '' });
   };
 
-  // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Submit updated event
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -80,10 +88,10 @@ function MyRequests() {
           description: formData.description,
           startDate: formData.startDate,
           endDate: formData.endDate,
-          user_message: formData.userMessage, // Match backend field name
+          user_message: formData.userMessage,
         }),
       });
-      if (!response.ok) throw new Error('Failed to update event');
+      if (!response.ok) throw new Error('Failed to update');
       const updatedEvent = await response.json();
 
       // Update the requests state
@@ -104,7 +112,7 @@ function MyRequests() {
       handleClose();
     } catch (err) {
       console.error(err);
-      alert('Failed to update event');
+      alert('Failed to update');
     }
   };
 
@@ -133,7 +141,7 @@ function MyRequests() {
               {requests.map((req) => (
                 <tr key={req.id}>
                   <td>{req.title}</td>
-                  <td>{req.description}</td>
+                  <td>{req.description || 'N/A'}</td>
                   <td>{new Date(req.startDate).toLocaleString()}</td>
                   <td>{new Date(req.endDate).toLocaleString()}</td>
                   <td>
@@ -141,7 +149,7 @@ function MyRequests() {
                       {req.status}
                     </span>
                   </td>
-                  <td>{req.userMessage || 'No message'}</td>
+                  <td>{req.userMessage || 'No message was submitted.'}</td>
                   <td>
                     <IconButton onClick={() => handleOpen(req)} color="primary">
                       <EditIcon />
@@ -181,16 +189,22 @@ function MyRequests() {
               margin="normal"
               required
             />
-            <TextField
-              label="Description"
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              fullWidth
-              margin="normal"
-              multiline
-              rows={3}
-            />
+            <FormControl fullWidth margin="normal">
+              <InputLabel id="description-label">Description</InputLabel>
+              <Select
+                labelId="description-label"
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                label="Description"
+              >
+                {descriptionOptions.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
             <TextField
               label="Start Date"
               name="startDate"
