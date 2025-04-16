@@ -120,6 +120,11 @@ export default function Schedule() {
 	const handleOpenEditDialog = () => {
 		if (!selectedTile) return;
 
+
+		if (user.permissions !== "admin") {
+			return;
+		}
+
 		// Format dates for the form
 		const startDate = dayjs(selectedTile.startDate).format(
 			"YYYY-MM-DDTHH:mm"
