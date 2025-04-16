@@ -13,6 +13,7 @@ import {
 
 import { Close as CloseIcon, Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import { formatDate } from "../utilityFunctions";
+import { useAuth } from "../../../Context/AuthContext";
 
 const EventDetailsDialog = ({ 
   open, 
@@ -21,6 +22,7 @@ const EventDetailsDialog = ({
   onEdit, 
   onDelete 
 }) => {
+  const { user } = useAuth();
   if (!selectedTile) return null;
 
   return (
@@ -61,24 +63,26 @@ const EventDetailsDialog = ({
           </Box>
         </Box>
       </DialogContent>
-      <DialogActions sx={{ px: 3, pb: 3 }}>
-        <Button 
-          variant="contained" 
-          color="primary" 
-          startIcon={<EditIcon />}
-          onClick={onEdit}
-        >
-          Edit
-        </Button>
-        <Button 
-          variant="contained" 
-          color="error" 
-          startIcon={<DeleteIcon />}
-          onClick={onDelete}
-        >
-          Delete
-        </Button>
-      </DialogActions>
+      {user.permissions === "admin" && (
+        <DialogActions sx={{ px: 3, pb: 3 }}>
+          <Button 
+            variant="contained" 
+            color="primary" 
+            startIcon={<EditIcon />}
+            onClick={onEdit}
+          >
+            Edit
+          </Button>
+          <Button 
+            variant="contained" 
+            color="error" 
+            startIcon={<DeleteIcon />}
+            onClick={onDelete}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      )}
     </Dialog>
   );
 };
