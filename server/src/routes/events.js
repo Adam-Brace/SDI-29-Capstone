@@ -123,8 +123,15 @@ router.get("/raw/:id", async (req, res) => {
 
 router.post("/", async (req, res) => {
 	try {
-		const { user_id, startDate, endDate, title, description, bgColor, user_message } =
-			req.body;
+		const {
+			user_id,
+			startDate,
+			endDate,
+			title,
+			description,
+			bgColor,
+			user_message,
+		} = req.body;
 
 		const [newEvent] = await knex("events")
 			.insert({
@@ -157,6 +164,28 @@ router.patch("/:id", async (req, res) => {
 				title,
 				description,
 				color: bgColor,
+			},
+			"*"
+		);
+
+		if (updatedEvent) {
+			res.status(200).json(updatedEvent);
+		} else {
+			res.status(404).json({ error: "Event not found" });
+		}
+	} catch (err) {
+		res.status(500).json({ error: err.message });
+	}
+});
+
+router.patch("/:id/status", async (req, res) => {
+	try {
+		const { id } = req.params;
+		const { status } = req.body;
+
+		const [updatedEvent] = await knex("events").where("id", id).update(
+			{
+				status,
 			},
 			"*"
 		);
