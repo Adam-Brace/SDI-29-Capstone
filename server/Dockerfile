@@ -1,15 +1,19 @@
-# What image do you want to start building on?
-FROM node:20-alpine
-# Make a folder in your image where your app's source code can live
 
-# Tell your container where your app's source code will live
+FROM node:20
 WORKDIR /src/index
-# What source code do you what to copy, and where to put it?
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libcairo2-dev \
+    libpango1.0-dev \
+    libjpeg-dev \
+    libgif-dev \
+    librsvg2-dev \
+    python3 \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+COPY package*.json ./
+RUN npm install
 COPY . /src/index
-# What port will the container talk to the outside world with once created?
 ENV SERVER_PORT=$SERVER_PORT
 EXPOSE $SERVER_PORT
-# Does your app have any dependencies that should be installed?
-RUN npm install
-# How do you start your app?
 CMD npm start

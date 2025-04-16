@@ -1,7 +1,8 @@
-import { useState } from "react";
-import "./Edit.css";
+import React, { useState } from "react";
+import { Box, Button, TextField, Modal, Typography, Grid } from "@mui/material";
 const API_URL = import.meta.env.VITE_API_URL;
 import { useAuth } from "../Context/AuthContext";
+import { ReceiptLongRounded } from "@mui/icons-material";
 
 export default function Edit({ id, currentData }) {
 	const { user } = useAuth();
@@ -38,16 +39,14 @@ export default function Edit({ id, currentData }) {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				console.log("server response:", data);
-				console.log(data.message);
 				if (data.message) {
-					//alert("Profile updated!");
+					window.location.reload();
 					closeModal();
 				} else {
 					alert("Failed to update");
 				}
 			})
-			.catch((error) => {
+			.catch(() => {
 				alert("Failed to update");
 			});
 	};
@@ -73,128 +72,152 @@ export default function Edit({ id, currentData }) {
 
 	return (
 		<div>
-			<button className="med-btn" onClick={openModal}>
+			<Button variant="contained" color="primary" onClick={openModal}>
 				Edit
-			</button>
+			</Button>
 
-			{isModalOpen && (
-				<div className="modal-overlay">
-					<div className="modal">
-						<h2>Edit Item</h2>
-						<form onSubmit={(event) => event.preventDefault()}>
-							<div>
-								<label htmlFor="first_name">First Name:</label>
-								<input
-									type="text"
-									id="first_name"
+			<Modal open={isModalOpen} onClose={closeModal}>
+				<Box
+					sx={{
+						position: "absolute",
+						top: "50%",
+						left: "50%",
+						transform: "translate(-50%, -50%)",
+						width: 400, // Increased modal width
+						bgcolor: "background.paper",
+						boxShadow: 24,
+						p: 4,
+						borderRadius: 2,
+						display: "flex",
+						flexDirection: "column",
+						alignItems: "center",
+					}}
+				>
+					<Typography variant="h6" gutterBottom>
+						Edit Item
+					</Typography>
+					<form onSubmit={(event) => event.preventDefault()}>
+						<Grid container spacing={2} justifyContent="center">
+							<Grid item xs={12}>
+								<TextField
+									fullWidth
+									label="First Name"
 									name="first_name"
 									value={formData.first_name}
 									onChange={handleInputChange}
+									sx={{ width: "300px" }} // Ensure full width
 								/>
-							</div>
-
-							<div>
-								<label htmlFor="last_name">Last Name:</label>
-								<input
-									type="text"
-									id="last_name"
+							</Grid>
+							<Grid item xs={12}>
+								<TextField
+									fullWidth
+									label="Last Name"
 									name="last_name"
 									value={formData.last_name}
 									onChange={handleInputChange}
+									sx={{ width: "300px" }} // Ensure full width
 								/>
-							</div>
-
-							<div>
-								<label htmlFor="rank">Rank:</label>
-								<input
-									type="text"
-									id="rank"
+							</Grid>
+							<Grid item xs={12}>
+								<TextField
+									fullWidth
+									label="Rank"
 									name="rank"
 									value={formData.rank}
 									onChange={handleInputChange}
+									sx={{ width: "300px" }} // Ensure full width
 								/>
-							</div>
-
-							<div>
-								<label htmlFor="email">Email:</label>
-								<input
-									type="text"
-									id="email"
+							</Grid>
+							<Grid item xs={12}>
+								<TextField
+									fullWidth
+									label="Email"
 									name="email"
 									value={formData.email}
 									onChange={handleInputChange}
+									sx={{ width: "300px" }} // Ensure full width
 								/>
-							</div>
-
-							<div>
-								<label htmlFor="phone">Duty Phone:</label>
-								<input
-									type="text"
-									id="phone"
+							</Grid>
+							<Grid item xs={12}>
+								<TextField
+									fullWidth
+									label="Duty Phone"
 									name="phone"
 									value={formData.phone}
 									onChange={handleInputChange}
+									sx={{ width: "300px" }} // Ensure full width
 								/>
-							</div>
-
-							<div>
-								<label htmlFor="organization">
-									Organization:
-								</label>
-								<input
-									type="text"
-									id="organization"
+							</Grid>
+							<Grid item xs={12}>
+								<TextField
+									fullWidth
+									label="Organization"
 									name="organization"
 									value={formData.organization}
 									onChange={handleInputChange}
+									sx={{ width: "300px" }} // Ensure full width
 								/>
-							</div>
-
-							<div>
-								<label htmlFor="crew">Crew:</label>
-								<input
-									type="text"
-									id="crew"
+							</Grid>
+							<Grid item xs={12}>
+								<TextField
+									fullWidth
+									label="Crew"
 									name="crew"
 									value={formData.crew}
 									onChange={handleInputChange}
+									sx={{ width: "300px" }} // Ensure full width
 								/>
-							</div>
-
-							<div>
-								<label htmlFor="position">Position:</label>
-								<input
-									type="text"
-									id="position"
+							</Grid>
+							<Grid item xs={12}>
+								<TextField
+									fullWidth
+									label="Position"
 									name="position"
 									value={formData.position}
 									onChange={handleInputChange}
+									sx={{ width: "300px" }} // Ensure full width
 								/>
-							</div>
-							{user.permissions == "admin" && (
-								<div>
-									<label htmlFor="position">Role:</label>
-									<br />
-									<input
-										type="text"
-										id="position"
-										name="position"
+							</Grid>
+							{user.permissions === "admin" && (
+								<Grid item xs={12}>
+									<TextField
+										fullWidth
+										label="Role"
+										name="permissions"
 										value={formData.permissions}
 										onChange={handleInputChange}
+										sx={{ width: "300px" }} // Ensure full width
 									/>
-								</div>
+								</Grid>
 							)}
-
-							<button type="button" onClick={handleEdit}>
+						</Grid>
+						<Box
+							sx={{
+								display: "flex",
+								justifyContent: "center", // Center buttons horizontally
+								gap: 2, // Add spacing between buttons
+								marginTop: 2,
+								width: "100%", // Ensure buttons span the full width
+							}}
+						>
+							<Button
+								variant="contained"
+								color="primary"
+								onClick={handleEdit}
+							>
 								Submit
-							</button>
-							<button type="button" onClick={closeModal}>
+							</Button>
+							<Button
+								variant="contained"
+								color="error"
+								onClick={closeModal}
+							>
 								Cancel
-							</button>
-						</form>
-					</div>
-				</div>
-			)}
+							</Button>
+						</Box>
+					</form>
+				</Box>
+			</Modal>
 		</div>
 	);
 }

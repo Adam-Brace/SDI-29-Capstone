@@ -1,4 +1,4 @@
-import Admin from "../../src/Routes/Admin";
+import Admin from "../../src/Routes/Admin/Admin";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import { AuthProvider } from "../../src/Context/AuthContext";
 import { MemoryRouter } from "react-router-dom";
