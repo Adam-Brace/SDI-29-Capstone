@@ -44,40 +44,48 @@ export default function App() {
     document.body.className = storedTheme + "-theme";
   }, []);
 
-  return (
-    <>
-      <Nav />
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute admin={false}>
-              <HomePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute admin={false}>
-              <UserData />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute admin={false}>
-              <Admin />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/myrequests" element={<MyRequests />} />
-        <Route path="/reset-password" element={<SimpleResetPassword />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </>
-  );
+	return (
+		<>
+			<Nav />
+			<Routes>
+				<Route
+					path="/"
+					element={
+						<ProtectedRoute admin={false}>
+							<HomePage />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/profile"
+					element={
+						<ProtectedRoute admin={false}>
+							<UserData />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/admin"
+					element={
+						<ProtectedRoute admin={false}>
+							<Admin />
+						</ProtectedRoute>
+					}
+				/>
+
+				<Route
+					path="/myrequests"
+					element={
+						<ProtectedRoute admin={false}>
+							<Admin />
+						</ProtectedRoute>
+					}
+				/>
+
+				<Route path="/login" element={<LoginPage />} />
+				<Route path="/register" element={<RegisterPage />} />
+				<Route path="*" element={<NotFound />} />
+			</Routes>
+		</>
+	);
 }
