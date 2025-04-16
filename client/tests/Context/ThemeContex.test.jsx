@@ -1,5 +1,5 @@
-import ThemeContext from "../../src/Context/ThemeContex";
-import { useTheme, ThemeProvider } from "../../src/Context/ThemeContex";
+import ThemeContext from "../../src/Context/ThemeContext";
+import { useTheme, ThemeProvider } from "../../src/Context/ThemeContext";
 import { render, screen } from "@testing-library/react";
 import { AuthProvider } from "../../src/Context/AuthContext";
 import { MemoryRouter } from "react-router-dom";

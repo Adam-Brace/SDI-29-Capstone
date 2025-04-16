@@ -1,5 +1,18 @@
 import { render, screen, fireEvent, queryByText } from "@testing-library/react";
 import Edit from "../../src/UserData/Edit";
+import { vi } from "vitest";
+
+vi.mock("../../src/Context/AuthContext", () => ({
+  useAuth: () => ({
+    user: {
+      id: 1,
+      first_name: "Jane",
+      last_name: "Smith",
+      rank: "Captain",
+      permissions: "admin",
+    },
+  }),
+}));
 
 //Dummy data for currentData
 const dummyCurrentData = {
@@ -11,6 +24,7 @@ const dummyCurrentData = {
   organization: "Delta 1",
   crew: "Alpha",
   position: "CSS",
+  permissions: "user",
 };
 
 describe("Edit component", () => {
@@ -21,23 +35,22 @@ describe("Edit component", () => {
     fireEvent.click(screen.getByText(/Edit/));
 
     expect(screen.getByText(/Edit Item/)).toBeInTheDocument();
-    expect(screen.getByLabelText(/First Name:/)).toHaveValue("John");
-    expect(screen.getByLabelText(/Last Name:/)).toHaveValue("Doe");
-    expect(screen.getByLabelText(/Rank:/)).toHaveValue("TSgt");
-    expect(screen.getByLabelText(/Email:/)).toHaveValue("john.doe@example.com");
-    expect(screen.getByLabelText(/Duty Phone:/)).toHaveValue("999-999-9999");
-    expect(screen.getByLabelText(/Organization:/)).toHaveValue("Delta 1");
-    expect(screen.getByLabelText(/Crew:/)).toHaveValue("Alpha");
-    expect(screen.getByLabelText(/Position:/)).toHaveValue("CSS");
+    expect(screen.getByLabelText(/First Name/i)).toHaveValue("John");
+    expect(screen.getByLabelText(/Last Name/i)).toHaveValue("Doe");
+    expect(screen.getByLabelText(/Rank/i)).toHaveValue("TSgt");
+    expect(screen.getByLabelText(/Email/i)).toHaveValue("john.doe@example.com");
+    expect(screen.getByLabelText(/Duty Phone/i)).toHaveValue("999-999-9999");
+    expect(screen.getByLabelText(/Organization/i)).toHaveValue("Delta 1");
+    expect(screen.getByLabelText(/Crew/i)).toHaveValue("Alpha");
+    expect(screen.getByLabelText(/Position/i)).toHaveValue("CSS");
   });
 
   test("closeModal function when cancel button is clicked", () => {
-    //Testing closeModal has to include that the modal was opened to be closed.
     render(<Edit id={1} currentData={dummyCurrentData} />);
-    //Opened
+
     fireEvent.click(screen.getByText(/Edit/));
     expect(screen.getByText(/Edit Item/)).toBeInTheDocument();
-    //Closed by clicking cancel
+
     fireEvent.click(screen.getByText(/Cancel/));
     expect(screen.queryByText(/Edit Item/)).not.toBeInTheDocument();
   });

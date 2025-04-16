@@ -1,67 +1,49 @@
 import Admin from "../../src/Routes/Admin/Admin";
-import { render, screen, waitFor, within } from "@testing-library/react";
-import { AuthProvider } from "../../src/Context/AuthContext";
-import { MemoryRouter } from "react-router-dom";
-import { fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import { describe, test, vi, beforeEach } from "vitest";
+import { BrowserRouter as Router } from "react-router-dom";
+// import { useAuth } from "../../src/Context/AuthContext";
 
-import { vi } from "vitest";
-
-beforeEach(() => {
-  global.fetch = vi.fn(() =>
-    Promise.resolve({
-      ok: true,
-      json: () =>
-        Promise.resolve([
-          {
-            id: 1,
-            name: "Jessica",
-            email: "Jessica@example.com",
-            rank: "TSgt",
-          },
-        ]),
-    })
-  );
-});
+vi.mock("../../src/Context/AuthContext", () => ({
+  useAuth: () => ({
+    user: {
+      id: 1,
+      permissions: "admin",
+      first_name: "Jane",
+      last_name: "Doe",
+      email: "janedoe@example.com",
+      rank: "Major",
+    },
+  }),
+}));
 
 describe("Admin", () => {
-  test("renders admin page", () => {
+  test("renders Admin component", () => {
     render(
-      <AuthProvider>
-        <MemoryRouter>
-          <Admin />
-        </MemoryRouter>
-      </AuthProvider>
+      <Router>
+        <Admin />
+      </Router>
     );
-    expect(screen.getByRole("heading", { name: /Users/i })).toBeInTheDocument();
-    expect(
-      screen.getByPlaceholderText(/Search users by name, rank, or email/i)
-    ).toBeInTheDocument();
+
+    expect(screen.getByText("My Requests")).toBeInTheDocument();
   });
 
-  test("open and closes edit panel", async () => {
+  test("renders user list", async () => {
     render(
-      <AuthProvider>
-        <MemoryRouter>
-          <Admin />
-        </MemoryRouter>
-      </AuthProvider>
+      <Router>
+        <Admin />
+      </Router>
     );
-    const userList = await screen.findByRole("list");
-    const editButtons = await within(userList).findAllByRole("button");
-    expect(editButtons.length).toBeGreaterThan(0);
 
-    fireEvent.click(editButtons[0]);
+    expect(screen.getByRole("tablist")).toBeInTheDocument();
+  });
+  test("renders requests tab", () => {
+    render(
+      <Router>
+        <Admin />
+      </Router>
+    );
 
-    // await waitFor(() => {
-    //   expect(screen.getByText(/Close/i)).toBeInTheDocument();
-    // });
-
-    // const closeButton = await screen.findByRole("button", { name: /Close/i });
-    // expect(closeButton).toBeInTheDocument();
-    // fireEvent.click(closeButton);
-
-    // await waitFor(() => {
-    //   expect(screen.queryByText(/Close/i)).not.toBeInTheDocument();
-    // });
+    expect(screen.getByText("Requests")).toBeInTheDocument();
   });
 });

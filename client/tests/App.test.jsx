@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import App from "../src/App";
 import { MemoryRouter } from "react-router-dom";
 import { AuthProvider } from "../src/Context/AuthContext";
-import { ThemeProvider } from "../src/Context/ThemeContex";
+import { ThemeProvider } from "../src/Context/ThemeContext";
 import { AuthContext } from "../src/Context/AuthContext";
 import { test } from "vitest";
 
@@ -37,38 +37,6 @@ describe("App routes", () => {
     ).toBeInTheDocument();
   });
 
-  // test("renders profile page at /profile route", () => {
-  //   render(
-  //     <AuthProvider>
-  //       <ThemeProvider>
-  //         <MemoryRouter initialEntries={["/profile"]}>
-  //           <App />
-  //         </MemoryRouter>
-  //       </ThemeProvider>
-  //     </AuthProvider>
-  //   );
-
-  //   expect(
-  //     screen.getByRole("menuitem", { name: /profile/i })
-  //   ).toBeInTheDocument();
-  // });
-
-  // test("renders admin page at /admin route", () => {
-  //   const mockUser = { permissions: "admin" };
-  //   render(
-  //     <AuthContext.Provider value={{ user: mockUser }}>
-  //       <ThemeProvider>
-  //         <MemoryRouter initialEntries={["/admin"]}>
-  //           <App />
-  //         </MemoryRouter>
-  //       </ThemeProvider>
-  //     </AuthContext.Provider>
-  //   );
-
-  //   expect(screen.getByRole("button", { name: /admin/i })).toBeInTheDocument();
-  // expect(screen.getByRole("heading", { name: /users/i })).toBeInTheDocument();
-  // });
-
   test("renders not found page at unknown route", () => {
     render(
       <AuthProvider>
@@ -82,28 +50,4 @@ describe("App routes", () => {
 
     expect(screen.getByText(/404/i)).toBeInTheDocument();
   });
-
-  // //Test for Theme selection
-  // test("render theme toggle", () => {
-  //   render(
-  //     <AuthProvider>
-  //       <MemoryRouter>
-  //         {/* <SchedulerProvider> */}
-  //         <App />
-  //         {/* </SchedulerProvider> */}
-  //       </MemoryRouter>
-  //     </AuthProvider>
-  //   );
-
-  //   const toggleThemeButton = screen.getByRole("checkbox");
-  //   //   name: /Switch to Dark Mode/,
-  //   // });
-  //   expect(document.body.className).toBe("light-theme");
-
-  //   fireEvent.click(toggleThemeButton);
-  //   expect(document.body.className).toBe("dark-theme");
-
-  //   fireEvent.click(toggleThemeButton);
-  //   expect(document.body.className).toBe("light-theme");
-  // });
 });
