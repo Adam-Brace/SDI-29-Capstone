@@ -19,21 +19,13 @@ export default function Chat({ id }) {
 		fetch(`${API_URL}/message/message/${id}`)
 			.then((response) => response.json())
 			.then((data) => {
-				console.log("Fetched chat data:", data, id);
 				if (!data[0]) {
 					console.warn(
 						"No chat data found. Waiting for valid data..."
 					);
 					return; // Exit early if data[0] does not exist
 				}
-				setMainChat(data[0]); // Set the chat data only if data[0] exists
-				// if (!mainChat.messages) {
-				// 	setMainChat((mainChat) => ({
-				// 		...mainChat,
-				// 		messages: [],
-				// 	}));
-				// }
-				console.log("Chat data:", data[0]);
+				setMainChat(data[0]);
 			})
 			.catch((error) => {
 				console.error("Error fetching chat data:", error);

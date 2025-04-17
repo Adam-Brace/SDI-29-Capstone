@@ -103,6 +103,10 @@ export default function Admin() {
 		};
 	}, []);
 
+	useEffect(() => {
+		setFilteredEvents(events);
+	}, [events]);
+
 	const handleSearchChange = (event) => {
 		const term = event.target.value.toLowerCase();
 		setSearchTerm(term);
@@ -197,7 +201,6 @@ export default function Admin() {
 					return chatId;
 				})
 				.then((chatId) => {
-					console.log("Users added to chat successfully.");
 					setChat({ open: true, id: chatId });
 				})
 				.catch((err) => console.error("Error creating chat:", err));
@@ -213,7 +216,6 @@ export default function Admin() {
 	};
 
 	const handleApproveDeny = async (id, status, message, admin_id) => {
-		console.log("handleApproveDeny called with:", id, status, message);
 		try {
 			const response = await fetch(`${API_URL}/events/${id}/status`, {
 				method: "PATCH",
@@ -234,7 +236,6 @@ export default function Admin() {
 			}
 
 			const data = await response.json();
-			console.log("Event updated successfully:", data);
 			setEvents((prevEvents) =>
 				prevEvents.map((event) =>
 					event.id === id
