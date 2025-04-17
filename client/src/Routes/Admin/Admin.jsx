@@ -511,7 +511,7 @@ export default function Admin() {
 											},
 										}}
 										onClick={() => {
-											setSelectedEvent(userMap);
+											setSelectedUser(userMap);
 											setChat({ open: false });
 										}}
 									>
