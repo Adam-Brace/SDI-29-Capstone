@@ -19,32 +19,52 @@ export default function Chat({ id }) {
 		fetch(`${API_URL}/message/message/${id}`)
 			.then((response) => response.json())
 			.then((data) => {
-				setMainChat(data[0]);
+				console.log("Fetched chat data:", data, id);
+				if (!data[0]) {
+					console.warn(
+						"No chat data found. Waiting for valid data..."
+					);
+					return; // Exit early if data[0] does not exist
+				}
+				setMainChat(data[0]); // Set the chat data only if data[0] exists
+				// if (!mainChat.messages) {
+				// 	setMainChat((mainChat) => ({
+				// 		...mainChat,
+				// 		messages: [],
+				// 	}));
+				// }
+				console.log("Chat data:", data[0]);
 			})
 			.catch((error) => {
 				console.error("Error fetching chat data:", error);
 			});
+	}, [id]);
 
+	useEffect(() => {
 		// Listen for new messages from the server
-		socket.on("new_message", (newMessage) => {
+		const handleNewMessage = (newMessage) => {
 			if (newMessage.chat_id === id) {
 				setMainChat((prevChat) => ({
 					...prevChat,
-					messages: [...prevChat.messages, newMessage],
+					messages: [...(prevChat.messages || []), newMessage], // Fallback to an empty array if messages is undefined
 				}));
 			}
-		});
+		};
 
-		// Cleanup the socket connection on component unmount
+		socket.on("new_message", handleNewMessage);
+
+		// Cleanup the socket connection and listener on component unmount or when `id` changes
 		return () => {
-			socket.off("new_message");
-			socket.disconnect();
+			socket.off("new_message", handleNewMessage); // Remove the specific listener
+			console.log("Socket listener removed for chat ID:", id);
 		};
 	}, [id]);
 
 	// Scroll to the bottom whenever messages change
 	useEffect(() => {
-		scrollToBottom();
+		if (mainChat.messages.length > 0) {
+			scrollToBottom();
+		}
 	}, [mainChat.messages]);
 
 	// Function to scroll to the bottom of the messages

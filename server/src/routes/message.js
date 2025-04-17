@@ -2,35 +2,40 @@ const express = require("express");
 const knex = require("knex")(require("../../knexfile")["development"]);
 const router = express.Router();
 
-router.get("/message/:user_id", async (req, res) => {
-	let items = [];
-	knex("chat_members")
-		.select("chat_id")
-		.where("user_id", req.params.user_id)
-		.then((chatIds) => {
-			chatIds = chatIds.map((chat) => {
-				knex("chats")
+router.get("/message/:chat_id", async (req, res) => {
+	try {
+		// Get all chat IDs for the user
+		const chatIds = await knex("chat_members")
+			.select("chat_id")
+			.where("chat_id", req.params.chat_id);
+
+		// Fetch chat details and messages for each chat ID
+		const items = await Promise.all(
+			chatIds.map(async (chat) => {
+				const chatDetails = await knex("chats")
 					.select()
 					.where("id", chat.chat_id)
-					.then((chat) => {
-						knex("messages")
-							.select()
-							.where("chat_id", chat[0].id)
-							.then((messages) => {
-								items.push({
-									id: chat[0].id,
-									name: chat[0].name,
-									is_group: chat[0].is_group,
-									messages: messages,
-								});
-							})
-							.then(() => res.status(200).json(items))
-							.catch((err) =>
-								res.status(500).json({ error: err.message })
-							);
-					});
-			});
-		});
+					.first(); // Use `.first()` to get a single object instead of an array
+
+				const messages = await knex("messages")
+					.select()
+					.where("chat_id", chatDetails.id);
+
+				return {
+					id: chatDetails.id,
+					name: chatDetails.name,
+					is_group: chatDetails.is_group,
+					messages: messages,
+				};
+			})
+		);
+
+		// Send the response once all data is processed
+		res.status(200).json(items);
+	} catch (err) {
+		console.error("Error fetching messages:", err);
+		res.status(500).json({ error: err.message });
+	}
 });
 
 router.post("/message/", async (req, res) => {
@@ -50,7 +55,7 @@ router.post("/chat/", async (req, res) => {
 		.catch((err) => res.status(500).json({ error: err.message }));
 });
 
-router.post("/chat_members/", async (req, res) => {
+router.post("/chat_members", async (req, res) => {
 	knex("chat_members")
 		.insert(req.body)
 		.then(() => res.status(200).json({ message: "Member added" }))

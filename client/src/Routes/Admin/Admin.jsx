@@ -136,6 +136,7 @@ export default function Admin() {
 
 	const handleChat = (event) => {
 		if (!event.chat_id) {
+			// Create a new chat
 			fetch(`${API_URL}/message/chat/`, {
 				method: "POST",
 				headers: {
@@ -152,9 +153,19 @@ export default function Admin() {
 							"Content-Type": "application/json",
 						},
 						body: JSON.stringify({
-							chat_id: data.id.id,
+							chat_id: data.id.id, // Keep data.id.id as per the API response
 						}),
-					}).then(() => data.id.id); // Return the chat ID for further use
+					}).then(() => {
+						// Update the events state with the new chat ID
+						setEvents((prevEvents) =>
+							prevEvents.map((e) =>
+								e.id === event.id
+									? { ...e, chat_id: data.id.id }
+									: e
+							)
+						);
+						return data.id.id; // Return the chat ID for further use
+					});
 				})
 				.then((chatId) => {
 					// Get unique admin IDs and the event's user ID
@@ -168,30 +179,30 @@ export default function Admin() {
 					];
 
 					// Add each user to the chat
-					return Promise.all(
-						adminIds.map((id) =>
-							fetch(`${API_URL}/message/chat_members`, {
-								method: "POST",
-								headers: {
-									"Content-Type": "application/json",
-								},
-								body: JSON.stringify({
-									user_id: id,
-									chat_id: chatId,
-								}).then(() =>
-									setChat({ open: true, id: chatId })
-								),
-							}).catch((err) =>
-								console.error("Error adding user to chat:", err)
-							)
+
+					adminIds.map((id) =>
+						fetch(`${API_URL}/message/chat_members`, {
+							method: "POST",
+							headers: {
+								"Content-Type": "application/json",
+							},
+							body: JSON.stringify({
+								user_id: id,
+								chat_id: chatId,
+							}),
+						}).catch((err) =>
+							console.error("Error adding user to chat:", err)
 						)
 					);
+					return chatId;
 				})
-				.then(() => {
+				.then((chatId) => {
 					console.log("Users added to chat successfully.");
+					setChat({ open: true, id: chatId });
 				})
 				.catch((err) => console.error("Error creating chat:", err));
 		} else {
+			// Open an existing chat
 			setChat({ open: true, id: event.chat_id });
 		}
 	};
