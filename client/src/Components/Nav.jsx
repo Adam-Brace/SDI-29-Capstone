@@ -221,7 +221,7 @@ export default function Nav() {
 					<MenuItem
 						onClick={() => {
 							handleMobileMenuClose();
-							navigate("/requests");
+							navigate("/admin");
 						}}
 					>
 						My Requests
