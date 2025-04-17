@@ -8,7 +8,6 @@ exports.seed = async function (knex) {
 	await knex("events").insert([
 		{
 			user_id: 1,
-			chat_id: 1,
 			start_date: new Date("2025-04-16 00:00:00"),
 			end_date: new Date("2025-04-17 23:59:00"),
 			title: "Panama 12's",
@@ -17,7 +16,6 @@ exports.seed = async function (knex) {
 		},
 		{
 			user_id: 2,
-			chat_id: 2,
 			start_date: new Date("2025-04-16 00:00:00"),
 			end_date: new Date("2025-04-17 23:59:00"),
 			title: "Panama 12's",
@@ -27,7 +25,6 @@ exports.seed = async function (knex) {
 
 		{
 			user_id: 3,
-			chat_id: 3,
 			start_date: new Date("2025-04-18 00:00:00"),
 			end_date: new Date("2025-04-19 23:59:00"),
 			title: "Panama 12's",
@@ -36,7 +33,6 @@ exports.seed = async function (knex) {
 		},
 		{
 			user_id: 4,
-			chat_id: 4,
 			start_date: new Date("2025-04-18 00:00:00"),
 			end_date: new Date("2025-04-19 23:59:00"),
 			title: "Panama 12's",
@@ -46,7 +42,6 @@ exports.seed = async function (knex) {
 
 		{
 			user_id: 1,
-			chat_id: 1,
 			start_date: new Date("2025-04-20 00:00:00"),
 			end_date: new Date("2025-04-22 23:59:00"),
 			title: "Panama 12's",
@@ -55,7 +50,6 @@ exports.seed = async function (knex) {
 		},
 		{
 			user_id: 2,
-			chat_id: 2,
 			start_date: new Date("2025-04-20 00:00:00"),
 			end_date: new Date("2025-04-22 23:59:00"),
 			title: "Panama 12's",
@@ -65,7 +59,6 @@ exports.seed = async function (knex) {
 
 		{
 			user_id: 3,
-			chat_id: 3,
 			start_date: new Date("2025-04-23 00:00:00"),
 			end_date: new Date("2025-04-24 23:59:00"),
 			title: "Panama 12's",
@@ -74,7 +67,6 @@ exports.seed = async function (knex) {
 		},
 		{
 			user_id: 4,
-			chat_id: 4,
 			start_date: new Date("2025-04-23 00:00:00"),
 			end_date: new Date("2025-04-24 23:59:00"),
 			title: "Panama 12's",
@@ -84,7 +76,6 @@ exports.seed = async function (knex) {
 
 		{
 			user_id: 1,
-			chat_id: 1,
 			start_date: new Date("2025-04-25 00:00:00"),
 			end_date: new Date("2025-04-26 23:59:00"),
 			title: "Panama 12's",
@@ -93,7 +84,6 @@ exports.seed = async function (knex) {
 		},
 		{
 			user_id: 2,
-			chat_id: 2,
 			start_date: new Date("2025-04-25 00:00:00"),
 			end_date: new Date("2025-04-26 23:59:00"),
 			title: "Panama 12's",
@@ -103,7 +93,6 @@ exports.seed = async function (knex) {
 
 		{
 			user_id: 3,
-			chat_id: 3,
 			start_date: new Date("2025-04-27 00:00:00"),
 			end_date: new Date("2025-04-29 23:59:00"),
 			title: "Panama 12's",
@@ -112,7 +101,6 @@ exports.seed = async function (knex) {
 		},
 		{
 			user_id: 4,
-			chat_id: 4,
 			start_date: new Date("2025-04-27 00:00:00"),
 			end_date: new Date("2025-04-29 23:59:00"),
 			title: "Panama 12's",
@@ -122,7 +110,6 @@ exports.seed = async function (knex) {
 
 		{
 			user_id: 1,
-			chat_id: 1,
 			start_date: new Date("2025-04-30 00:00:00"),
 			end_date: new Date("2025-05-01 23:59:00"),
 			title: "Panama 12's",
@@ -131,7 +118,6 @@ exports.seed = async function (knex) {
 		},
 		{
 			user_id: 2,
-			chat_id: 2,
 			start_date: new Date("2025-04-30 00:00:00"),
 			end_date: new Date("2025-05-01 23:59:00"),
 			title: "Panama 12's",
@@ -141,7 +127,6 @@ exports.seed = async function (knex) {
 
 		{
 			user_id: 3,
-			chat_id: 3,
 			start_date: new Date("2025-05-02 00:00:00"),
 			end_date: new Date("2025-05-03 23:59:00"),
 			title: "Panama 12's",
@@ -150,7 +135,6 @@ exports.seed = async function (knex) {
 		},
 		{
 			user_id: 4,
-			chat_id: 4,
 			start_date: new Date("2025-05-02 00:00:00"),
 			end_date: new Date("2025-05-03 23:59:00"),
 			title: "Panama 12's",
@@ -160,7 +144,6 @@ exports.seed = async function (knex) {
 
 		{
 			user_id: 1,
-			chat_id: 1,
 			start_date: new Date("2025-05-04 00:00:00"),
 			end_date: new Date("2025-05-06 23:59:00"),
 			title: "Panama 12's",
@@ -169,7 +152,6 @@ exports.seed = async function (knex) {
 		},
 		{
 			user_id: 2,
-			chat_id: 2,
 			start_date: new Date("2025-05-04 00:00:00"),
 			end_date: new Date("2025-05-06 23:59:00"),
 			title: "Panama 12's",
@@ -179,7 +161,6 @@ exports.seed = async function (knex) {
 
 		{
 			user_id: 3,
-			chat_id: 3,
 			start_date: new Date("2025-05-07 00:00:00"),
 			end_date: new Date("2025-05-08 23:59:00"),
 			title: "Panama 12's",
@@ -188,7 +169,6 @@ exports.seed = async function (knex) {
 		},
 		{
 			user_id: 4,
-			chat_id: 4,
 			start_date: new Date("2025-05-07 00:00:00"),
 			end_date: new Date("2025-05-08 23:59:00"),
 			title: "Panama 12's",
@@ -198,7 +178,6 @@ exports.seed = async function (knex) {
 
 		{
 			user_id: 1,
-			chat_id: 1,
 			start_date: new Date("2025-05-09 00:00:00"),
 			end_date: new Date("2025-05-10 23:59:00"),
 			title: "Panama 12's",
@@ -207,7 +186,6 @@ exports.seed = async function (knex) {
 		},
 		{
 			user_id: 2,
-			chat_id: 2,
 			start_date: new Date("2025-05-09 00:00:00"),
 			end_date: new Date("2025-05-10 23:59:00"),
 			title: "Panama 12's",
@@ -217,7 +195,6 @@ exports.seed = async function (knex) {
 
 		{
 			user_id: 3,
-			chat_id: 3,
 			start_date: new Date("2025-05-11 00:00:00"),
 			end_date: new Date("2025-05-13 23:59:00"),
 			title: "Panama 12's",
@@ -226,13 +203,11 @@ exports.seed = async function (knex) {
 		},
 		{
 			user_id: 4,
-			chat_id: 4,
 			start_date: new Date("2025-05-11 00:00:00"),
 			end_date: new Date("2025-05-13 23:59:00"),
 			title: "Panama 12's",
 			description: "Night Shift",
 			status: "approved",
 		},
-
 	]);
 };
