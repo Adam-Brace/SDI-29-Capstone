@@ -4,6 +4,16 @@ import { describe, test, vi, beforeEach } from "vitest";
 import { BrowserRouter as Router } from "react-router-dom";
 // import { useAuth } from "../../src/Context/AuthContext";
 
+vi.mock("socket.io-client", () => {
+  return {
+    io: () => ({
+      on: vi.fn(),
+      emit: vi.fn(),
+      disconnect: vi.fn(),
+    }),
+  };
+});
+
 vi.mock("../../src/Context/AuthContext", () => ({
   useAuth: () => ({
     user: {
