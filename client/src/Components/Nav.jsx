@@ -86,7 +86,7 @@ export default function Nav() {
 					{user?.permissions !== "admin" && (
 						<Button
 							component={Link}
-							to="/requests"
+							to="/admin"
 							color="inherit"
 							sx={{ textTransform: "none" }}
 						>
