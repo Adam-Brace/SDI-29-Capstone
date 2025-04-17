@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import LoginPage from "./Routes/LoginPage/LoginPage";
@@ -25,24 +24,24 @@ export default function App() {
 
 	const [theme, setTheme] = useState("light");
 
-  useEffect(() => {
-    const storedTheme = localStorage.getItem("theme") || "light";
-    setTheme(storedTheme);
-    document.body.className = storedTheme + "-theme";
-  }, []);
+	useEffect(() => {
+		const storedTheme = localStorage.getItem("theme") || "light";
+		setTheme(storedTheme);
+		document.body.className = storedTheme + "-theme";
+	}, []);
 
-  const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
-    document.body.className = newTheme + "-theme";
-  };
+	const toggleTheme = () => {
+		const newTheme = theme === "light" ? "dark" : "light";
+		setTheme(newTheme);
+		localStorage.setItem("theme", newTheme);
+		document.body.className = newTheme + "-theme";
+	};
 
-  useEffect(() => {
-    const storedTheme = localStorage.getItem("theme") || "light";
-    setTheme(storedTheme);
-    document.body.className = storedTheme + "-theme";
-  }, []);
+	useEffect(() => {
+		const storedTheme = localStorage.getItem("theme") || "light";
+		setTheme(storedTheme);
+		document.body.className = storedTheme + "-theme";
+	}, []);
 
 	return (
 		<>
@@ -84,7 +83,11 @@ export default function App() {
 
 				<Route path="/login" element={<LoginPage />} />
 				<Route path="/register" element={<RegisterPage />} />
-        <Route path="/requests" element={<MyRequests />} />
+				<Route
+					path="/reset-password"
+					element={<SimpleResetPassword />}
+				/>
+				{/* <Route path="/requests" element={<MyRequests />} /> */}
 				<Route path="*" element={<NotFound />} />
 			</Routes>
 		</>
