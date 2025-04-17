@@ -15,6 +15,9 @@ import {
 	CardContent,
 	Button,
 } from "@mui/material";
+import ChatBubble from "@mui/icons-material/ChatBubble";
+import ChatIcon from "@mui/icons-material/Chat";
+import Tooltip from "@mui/material/Tooltip";
 import Edit from "../../UserData/Edit";
 import UserBadge from "../../Components/UserBadge";
 import { useAuth } from "../../Context/AuthContext";
@@ -101,7 +104,7 @@ export default function Admin() {
 	const handleSearchChange = (event) => {
 		const term = event.target.value.toLowerCase();
 		setSearchTerm(term);
-		
+
 		if (tabValue === 2) {
 			// Filter users
 			setFilteredUsers(
@@ -120,20 +123,13 @@ export default function Admin() {
 				return (
 					event.title.toLowerCase().includes(term) ||
 					event.description.toLowerCase().includes(term) ||
-					`${user.rank} ${user.first_name} ${user.last_name}`.toLowerCase().includes(term)
+					`${user.rank} ${user.first_name} ${user.last_name}`
+						.toLowerCase()
+						.includes(term)
 				);
 			});
 			setFilteredEvents(filtered);
 		}
-	};
-
-	const getUser = (id) => {
-		fetch(`${API_URL}/user/${id}`)
-			.then((res) => res.json())
-			.then((data) => {
-				return data;
-			})
-			.catch((err) => console.error("Error fetching users:", err));
 	};
 
 	// Helper function to get user details by ID
@@ -262,7 +258,11 @@ export default function Admin() {
 													setSelectedEvent(userEvent)
 												} // Edit on click
 											>
-												<CardContent>
+												<CardContent
+													style={{
+														paddingBottom: "16px",
+													}}
+												>
 													<Typography
 														variant="h6"
 														gutterBottom
@@ -325,7 +325,8 @@ export default function Admin() {
 											color={
 												userEvent.status === "approved"
 													? "success"
-													: userEvent.status === "denied"
+													: userEvent.status ===
+													  "denied"
 													? "error"
 													: "warning"
 											}
@@ -346,7 +347,11 @@ export default function Admin() {
 													setSelectedEvent(userEvent)
 												} // Edit on click
 											>
-												<CardContent>
+												<CardContent
+													style={{
+														paddingBottom: "16px",
+													}}
+												>
 													<Typography
 														variant="h6"
 														gutterBottom
@@ -364,7 +369,8 @@ export default function Admin() {
 														} ${
 															getUserById(
 																userEvent.user_id
-															).first_name || "N/A"
+															).first_name ||
+															"N/A"
 														} ${
 															getUserById(
 																userEvent.user_id
@@ -374,7 +380,9 @@ export default function Admin() {
 													<Typography
 														variant="body2"
 														color="textSecondary"
-														sx={{ paddingTop: "5px" }}
+														sx={{
+															paddingTop: "5px",
+														}}
 													>
 														{userEvent.description}
 													</Typography>
@@ -410,6 +418,9 @@ export default function Admin() {
 										onClick={() => setSelectedUser(userMap)}
 									>
 										<CardContent
+											style={{
+												paddingBottom: "16px",
+											}}
 											sx={{
 												display: "flex",
 												alignItems: "center",
@@ -449,16 +460,40 @@ export default function Admin() {
 						<Card
 							key={selectedEvent.id}
 							sx={{
-								padding: 3,
+								padding: "16px",
 								boxShadow: 3,
 								borderRadius: 2,
 								marginBottom: 2,
 							}}
 						>
-							<CardContent>
-								<Typography variant="h4" gutterBottom>
-									{selectedEvent.title}
-								</Typography>
+							<CardContent sx={{ padding: 0 }}>
+								<Box
+									sx={{
+										display: "flex",
+										justifyContent: "space-between",
+										alignItems: "center",
+									}}
+								>
+									<Typography variant="h4" gutterBottom>
+										{selectedEvent.title}
+									</Typography>
+									<Tooltip title="Open new chat">
+										<ChatBubble
+											sx={{
+												cursor: "pointer",
+												marginTop: "-15px",
+											}}
+										/>
+									</Tooltip>
+									<Tooltip title="Open chat">
+										<ChatIcon
+											sx={{
+												cursor: "pointer",
+												marginTop: "-15px",
+											}}
+										/>
+									</Tooltip>
+								</Box>
 								<Typography
 									variant="h6"
 									color="textSecondary"
@@ -578,13 +613,13 @@ export default function Admin() {
 					(selectedUser ? (
 						<Card
 							sx={{
-								padding: 3,
+								padding: 0,
 								boxShadow: 3,
 								borderRadius: 2,
 								marginBottom: 2,
 							}}
 						>
-							<CardContent>
+							<CardContent style={{ paddingBottom: "16px" }}>
 								<Typography variant="h4" gutterBottom>
 									{selectedUser.rank}{" "}
 									{selectedUser.first_name}{" "}
