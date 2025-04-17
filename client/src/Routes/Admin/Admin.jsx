@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import ChatBubble from "@mui/icons-material/ChatBubble";
 import ChatIcon from "@mui/icons-material/Chat";
+import { getEventColor } from "../../Components/Schedule/utilityFunctions";
 import Tooltip from "@mui/material/Tooltip";
 import Edit from "../../UserData/Edit";
 import UserBadge from "../../Components/UserBadge";
@@ -322,6 +323,14 @@ export default function Admin() {
 										>
 											<Card
 												key={userEvent.id}
+												style={{
+													borderLeftColor:
+														getEventColor(
+															userEvent.description
+														),
+													borderLeftWidth: 5,
+													borderLeftStyle: "solid",
+												}}
 												sx={{
 													width: "100%",
 													marginBottom: 2,
@@ -412,6 +421,14 @@ export default function Admin() {
 										>
 											<Card
 												key={userEvent.id}
+												style={{
+													borderLeftColor:
+														getEventColor(
+															userEvent.description
+														),
+													borderLeftWidth: 5,
+													borderLeftStyle: "solid",
+												}}
 												sx={{
 													width: "100%",
 													marginBottom: 2,
@@ -550,6 +567,13 @@ export default function Admin() {
 						(selectedEvent ? (
 							<Card
 								key={selectedEvent.id}
+								style={{
+									borderLeftColor: getEventColor(
+										selectedEvent.description
+									),
+									borderLeftWidth: 10,
+									borderLeftStyle: "solid",
+								}}
 								sx={{
 									padding: "16px",
 									boxShadow: 3,
