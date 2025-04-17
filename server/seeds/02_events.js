@@ -34,6 +34,7 @@ exports.seed = async function (knex) {
 			status: "approved",
 		},
 		{
+
 			user_id: 4,
 			start_date: new Date("2025-04-16 00:00:00"),
 			end_date: new Date("2025-04-17 23:59:00"),
@@ -43,6 +44,7 @@ exports.seed = async function (knex) {
 		},
 
 		{
+
 			user_id: 1,
 			start_date: new Date("2025-04-18 00:00:00"),
 			end_date: new Date("2025-04-20 23:59:00"),
@@ -77,6 +79,7 @@ exports.seed = async function (knex) {
 		},
 
 		{
+
 			user_id: 1,
 			start_date: new Date("2025-04-23 00:00:00"),
 			end_date: new Date("2025-04-24 23:59:00"),
@@ -102,6 +105,7 @@ exports.seed = async function (knex) {
 			status: "approved",
 		},
 		{
+
 			user_id: 4,
 			start_date: new Date("2025-04-25 00:00:00"),
 			end_date: new Date("2025-04-27 23:59:00"),
@@ -111,14 +115,17 @@ exports.seed = async function (knex) {
 		},
 
 		{
+
 			user_id: 1,
 			start_date: new Date("2025-04-28 00:00:00"),
+
 			end_date: new Date("2025-04-29 23:59:00"),
 			title: "Panama 12's",
 			description: "Day Shift",
 			status: "approved",
 		},
 		{
+
 			user_id: 2,
 			start_date: new Date("2025-04-28 00:00:00"),
 			end_date: new Date("2025-04-29 23:59:00"),
@@ -128,6 +135,7 @@ exports.seed = async function (knex) {
 		},
 
 		{
+
 			user_id: 3,
 			start_date: new Date("2025-04-30 00:00:00"),
 			end_date: new Date("2025-05-01 23:59:00"),
@@ -136,6 +144,7 @@ exports.seed = async function (knex) {
 			status: "approved",
 		},
 		{
+
 			user_id: 4,
 			start_date: new Date("2025-04-30 00:00:00"),
 			end_date: new Date("2025-05-01 23:59:00"),
@@ -145,6 +154,7 @@ exports.seed = async function (knex) {
 		},
 
 		{
+
 			user_id: 1,
 			start_date: new Date("2025-05-02 00:00:00"),
 			end_date: new Date("2025-05-04 23:59:00"),
@@ -153,6 +163,7 @@ exports.seed = async function (knex) {
 			status: "approved",
 		},
 		{
+
 			user_id: 2,
 			start_date: new Date("2025-05-02 00:00:00"),
 			end_date: new Date("2025-05-04 23:59:00"),
@@ -162,6 +173,7 @@ exports.seed = async function (knex) {
 		},
 
 		{
+
 			user_id: 3,
 			start_date: new Date("2025-05-05 00:00:00"),
 			end_date: new Date("2025-05-06 23:59:00"),
@@ -170,6 +182,7 @@ exports.seed = async function (knex) {
 			status: "approved",
 		},
 		{
+
 			user_id: 4,
 			start_date: new Date("2025-05-05 00:00:00"),
 			end_date: new Date("2025-05-06 23:59:00"),
@@ -179,6 +192,7 @@ exports.seed = async function (knex) {
 		},
 
 		{
+
 			user_id: 1,
 			start_date: new Date("2025-05-07 00:00:00"),
 			end_date: new Date("2025-05-08 23:59:00"),
@@ -187,6 +201,7 @@ exports.seed = async function (knex) {
 			status: "approved",
 		},
 		{
+
 			user_id: 2,
 			start_date: new Date("2025-05-07 00:00:00"),
 			end_date: new Date("2025-05-08 23:59:00"),
@@ -196,6 +211,7 @@ exports.seed = async function (knex) {
 		},
 
 		{
+
 			user_id: 3,
 			start_date: new Date("2025-05-09 00:00:00"),
 			end_date: new Date("2025-05-11 23:59:00"),
@@ -204,6 +220,7 @@ exports.seed = async function (knex) {
 			status: "approved",
 		},
 		{
+
 			user_id: 4,
 			start_date: new Date("2025-05-09 00:00:00"),
 			end_date: new Date("2025-05-11 23:59:00"),

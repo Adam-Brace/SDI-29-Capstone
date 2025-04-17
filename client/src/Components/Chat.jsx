@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { io } from "socket.io-client";
 import UserBadge from "./UserBadge";
 import { Stack, Chip, Typography, Box, TextField, Button } from "@mui/material";
@@ -7,56 +7,66 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 const socket = io(API_URL);
 
-export default function Chat() {
+export default function Chat({ id }) {
 	const { user } = useAuth();
-	const [chats, setChats] = useState([]);
+	const [mainChat, setMainChat] = useState({ messages: [] });
 	const [messageInput, setMessageInput] = useState("");
+	const messagesEndRef = useRef(null); // Ref for the invisible div at the bottom
+	const scrollableContainerRef = useRef(null); // Ref for the scrollable container
 
 	useEffect(() => {
-		if (!user) return;
 		// Fetch initial chat data
-		fetch(`API_URL/message/${user.id}`)
+		fetch(`${API_URL}/message/message/${id}`)
 			.then((response) => response.json())
 			.then((data) => {
-				setChats(data);
+				if (!data[0]) {
+					console.warn(
+						"No chat data found. Waiting for valid data..."
+					);
+					return; // Exit early if data[0] does not exist
+				}
+				setMainChat(data[0]);
 			})
 			.catch((error) => {
 				console.error("Error fetching chat data:", error);
 			});
+	}, [id]);
 
+	useEffect(() => {
 		// Listen for new messages from the server
-		socket.on("new_message", (newMessage) => {
-			setChats((prevChats) =>
-				prevChats.map((chat) =>
-					chat.id === newMessage.chat_id
-						? {
-								...chat,
-								messages: [...chat.messages, newMessage],
-						  }
-						: chat
-				)
-			);
-			console.log("New message received:", newMessage);
-		});
-
-		// Cleanup the socket connection on component unmount
-		return () => {
-			socket.disconnect();
+		const handleNewMessage = (newMessage) => {
+			if (newMessage.chat_id === id) {
+				setMainChat((prevChat) => ({
+					...prevChat,
+					messages: [...(prevChat.messages || []), newMessage], // Fallback to an empty array if messages is undefined
+				}));
+			}
 		};
-	}, [user]);
 
-	const formatTimestamp = (timestamp) => {
-		const date = new Date(timestamp);
-		const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+		socket.on("new_message", handleNewMessage);
 
-		return date.toLocaleString("en-US", {
-			month: "short",
-			day: "numeric",
-			hour: "2-digit",
-			minute: "2-digit",
-			hour12: false,
-			timeZone: timeZone,
-		});
+		// Cleanup the socket connection and listener on component unmount or when `id` changes
+		return () => {
+			socket.off("new_message", handleNewMessage); // Remove the specific listener
+			console.log("Socket listener removed for chat ID:", id);
+		};
+	}, [id]);
+
+	// Scroll to the bottom whenever messages change
+	useEffect(() => {
+		if (mainChat.messages.length > 0) {
+			scrollToBottom();
+		}
+	}, [mainChat.messages]);
+
+	// Function to scroll to the bottom of the messages
+	const scrollToBottom = () => {
+		if (scrollableContainerRef.current) {
+			scrollableContainerRef.current.scrollTo({
+				top: scrollableContainerRef.current.scrollHeight, // Scroll to the bottom
+				behavior: "smooth", // Smooth scrolling
+			});
+		}
 	};
 
 	const chip = (message) => {
@@ -112,6 +122,19 @@ export default function Chat() {
 		);
 	};
 
+	const formatTimestamp = (timestamp) => {
+		const date = new Date(timestamp);
+		const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+		return date.toLocaleString("en-US", {
+			month: "short",
+			day: "numeric",
+			hour: "2-digit",
+			minute: "2-digit",
+			hour12: false,
+			timeZone: timeZone,
+		});
+	};
 	const handleSendMessage = (chatId) => {
 		if (!messageInput.trim()) return;
 
@@ -126,67 +149,95 @@ export default function Chat() {
 	};
 
 	return (
-		<>
-			{chats.map((chat) => {
-				return (
-					<div key={chat.id} style={{ padding: "10px" }}>
-						<Typography variant="h5" gutterBottom>
-							{chat.name}
-						</Typography>
-						<Stack spacing={2} style={{ padding: "10px" }}>
-							{chat.messages.map((message) => chip(message))}
-						</Stack>
-						<Box sx={{ display: "flex", alignItems: "center" }}>
-							<TextField
-								fullWidth
-								autoComplete="off"
-								required={true}
-								label="Message"
-								id="messageInput"
-								value={messageInput}
-								onChange={(e) =>
-									setMessageInput(e.target.value)
-								}
-								onKeyDown={(e) => {
-									if (e.key === "Enter") {
-										e.preventDefault();
-										handleSendMessage(chat.id);
-									}
-								}}
-								sx={{
-									"& .MuiInputBase-input": {
-										color: "white",
-									},
-									"& .MuiInputLabel-root": {
-										color: "white",
-									},
-									"& .MuiOutlinedInput-root": {
-										"& fieldset": {
-											borderColor: "white",
-										},
-										"&:hover fieldset": {
-											borderColor: "gray",
-										},
-										"&.Mui-focused fieldset": {
-											borderColor: "gray",
-										},
-									},
-								}}
-							/>
-							<Button
-								variant="contained"
-								color="primary"
-								sx={{
-									marginLeft: "10px",
-								}}
-								onClick={() => handleSendMessage(chat.id)}
-							>
-								Submit
-							</Button>
-						</Box>
-					</div>
-				);
-			})}
-		</>
+		<Box
+			sx={{
+				display: "flex",
+				flexDirection: "column",
+				height: "100vh", // Full height for the chat component
+				overflow: "hidden", // Prevents the entire page from scrolling
+			}}
+		>
+			{/* Chat Name (Locked at the Top) */}
+			<Typography variant="h5" gutterBottom>
+				{mainChat.name}
+			</Typography>
+
+			{/* Scrollable Messages */}
+			<Box
+				ref={scrollableContainerRef} // Attach the ref to the scrollable container
+				sx={{
+					flex: 1, // Makes this section take up the remaining space
+					overflowY: "auto", // Enables vertical scrolling
+					padding: "25px",
+					// Space for the input box
+					position: "relative", // Ensures proper positioning
+				}}
+			>
+				<Stack spacing={2}>
+					{mainChat.messages.map((message) => chip(message))}
+				</Stack>
+				{/* Invisible div to scroll to */}
+				<div ref={messagesEndRef} />
+			</Box>
+
+			{/* Message Input (Locked at the Bottom) */}
+			<Box
+				sx={{
+					display: "flex",
+					alignItems: "center",
+					position: "sticky", // Keeps the input box at the bottom
+					bottom: 0, // Sticks to the bottom of the parent container
+					backgroundColor: "inherit", // Matches the background color
+					padding: "25px",
+					marginBottom: "100px",
+					zIndex: 1, // Ensures it stays above other content
+				}}
+			>
+				<TextField
+					fullWidth
+					autoComplete="off"
+					required={true}
+					label="Message"
+					id="messageInput"
+					value={messageInput}
+					onChange={(e) => setMessageInput(e.target.value)}
+					onKeyDown={(e) => {
+						if (e.key === "Enter") {
+							e.preventDefault();
+							handleSendMessage(mainChat.id);
+						}
+					}}
+					sx={{
+						"& .MuiInputBase-input": {
+							color: "white",
+						},
+						"& .MuiInputLabel-root": {
+							color: "white",
+						},
+						"& .MuiOutlinedInput-root": {
+							"& fieldset": {
+								borderColor: "white",
+							},
+							"&:hover fieldset": {
+								borderColor: "gray",
+							},
+							"&.Mui-focused fieldset": {
+								borderColor: "gray",
+							},
+						},
+					}}
+				/>
+				<Button
+					variant="contained"
+					color="primary"
+					sx={{
+						marginLeft: "10px",
+					}}
+					onClick={() => handleSendMessage(mainChat.id)}
+				>
+					Submit
+				</Button>
+			</Box>
+		</Box>
 	);
 }

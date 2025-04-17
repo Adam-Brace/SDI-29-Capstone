@@ -15,10 +15,15 @@ import {
 	CardContent,
 	Button,
 } from "@mui/material";
+import ChatBubble from "@mui/icons-material/ChatBubble";
+import ChatIcon from "@mui/icons-material/Chat";
+import { getEventColor } from "../../Components/Schedule/utilityFunctions";
+import Tooltip from "@mui/material/Tooltip";
 import Edit from "../../UserData/Edit";
 import UserBadge from "../../Components/UserBadge";
 import { useAuth } from "../../Context/AuthContext";
 import "../../styles/Admin.css";
+import Chat from "../../Components/Chat";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -28,6 +33,7 @@ export default function Admin() {
 	const [events, setEvents] = useState([]);
 	const [filteredEvents, setFilteredEvents] = useState([]);
 	const [dialog, setDialog] = useState({ open: false });
+	const [chat, setChat] = useState({ open: false });
 	const [selectedEvent, setSelectedEvent] = useState(null);
 	const [filteredUsers, setFilteredUsers] = useState([]);
 	const [searchTerm, setSearchTerm] = useState("");
@@ -98,10 +104,14 @@ export default function Admin() {
 		};
 	}, []);
 
+	useEffect(() => {
+		setFilteredEvents(events);
+	}, [events]);
+
 	const handleSearchChange = (event) => {
 		const term = event.target.value.toLowerCase();
 		setSearchTerm(term);
-		
+
 		if (tabValue === 2) {
 			// Filter users
 			setFilteredUsers(
@@ -120,20 +130,85 @@ export default function Admin() {
 				return (
 					event.title.toLowerCase().includes(term) ||
 					event.description.toLowerCase().includes(term) ||
-					`${user.rank} ${user.first_name} ${user.last_name}`.toLowerCase().includes(term)
+					`${user.rank} ${user.first_name} ${user.last_name}`
+						.toLowerCase()
+						.includes(term)
 				);
 			});
 			setFilteredEvents(filtered);
 		}
 	};
 
-	const getUser = (id) => {
-		fetch(`${API_URL}/user/${id}`)
-			.then((res) => res.json())
-			.then((data) => {
-				return data;
+	const handleChat = (event) => {
+		if (!event.chat_id) {
+			// Create a new chat
+			fetch(`${API_URL}/message/chat/`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ name: event.title }),
 			})
-			.catch((err) => console.error("Error fetching users:", err));
+				.then((res) => res.json())
+				.then((data) => {
+					// Update the event with the new chat ID
+					return fetch(`${API_URL}/message/events/${event.id}`, {
+						method: "PATCH",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify({
+							chat_id: data.id.id, // Keep data.id.id as per the API response
+						}),
+					}).then(() => {
+						// Update the events state with the new chat ID
+						setEvents((prevEvents) =>
+							prevEvents.map((e) =>
+								e.id === event.id
+									? { ...e, chat_id: data.id.id }
+									: e
+							)
+						);
+						return data.id.id; // Return the chat ID for further use
+					});
+				})
+				.then((chatId) => {
+					// Get unique admin IDs and the event's user ID
+					const adminIds = [
+						...new Set([
+							...users
+								.filter((user) => user.permissions === "admin")
+								.map((user) => user.id),
+							event.user_id,
+						]),
+					];
+
+					// Add each user to the chat
+
+					adminIds.map((id) =>
+						fetch(`${API_URL}/message/chat_members`, {
+							method: "POST",
+							headers: {
+								"Content-Type": "application/json",
+							},
+							body: JSON.stringify({
+								user_id: id,
+								chat_id: chatId,
+							}),
+						}).catch((err) =>
+							console.error("Error adding user to chat:", err)
+						)
+					);
+					return chatId;
+				})
+				.then((chatId) => {
+					setChat({ open: true, id: chatId });
+				})
+				.catch((err) => console.error("Error creating chat:", err));
+		} else {
+			// Open an existing chat
+			setChat({ open: true, id: event.chat_id });
+		}
 	};
 
 	// Helper function to get user details by ID
@@ -142,7 +217,6 @@ export default function Admin() {
 	};
 
 	const handleApproveDeny = async (id, status, message, admin_id) => {
-		console.log("handleApproveDeny called with:", id, status, message);
 		try {
 			const response = await fetch(`${API_URL}/events/${id}/status`, {
 				method: "PATCH",
@@ -163,7 +237,6 @@ export default function Admin() {
 			}
 
 			const data = await response.json();
-			console.log("Event updated successfully:", data);
 			setEvents((prevEvents) =>
 				prevEvents.map((event) =>
 					event.id === id
@@ -218,7 +291,7 @@ export default function Admin() {
 				<Divider sx={{ marginTop: 0 }} />
 				<Box
 					sx={{
-						height: "calc(100vh - 64px)", // Adjust height as needed
+						height: "calc(100vh - 200px)", // Adjust height as needed
 						overflowY: "auto", // Enable vertical scrolling
 						paddingLeft: 2,
 						paddingRight: 4,
@@ -250,6 +323,14 @@ export default function Admin() {
 										>
 											<Card
 												key={userEvent.id}
+												style={{
+													borderLeftColor:
+														getEventColor(
+															userEvent.description
+														),
+													borderLeftWidth: 5,
+													borderLeftStyle: "solid",
+												}}
 												sx={{
 													width: "100%",
 													marginBottom: 2,
@@ -258,11 +339,16 @@ export default function Admin() {
 														boxShadow: 6,
 													},
 												}}
-												onClick={() =>
-													setSelectedEvent(userEvent)
-												} // Edit on click
+												onClick={() => {
+													setSelectedEvent(userEvent);
+													setChat({ open: false });
+												}} // Edit on click
 											>
-												<CardContent>
+												<CardContent
+													style={{
+														paddingBottom: "16px",
+													}}
+												>
 													<Typography
 														variant="h6"
 														gutterBottom
@@ -325,7 +411,8 @@ export default function Admin() {
 											color={
 												userEvent.status === "approved"
 													? "success"
-													: userEvent.status === "denied"
+													: userEvent.status ===
+													  "denied"
 													? "error"
 													: "warning"
 											}
@@ -334,6 +421,14 @@ export default function Admin() {
 										>
 											<Card
 												key={userEvent.id}
+												style={{
+													borderLeftColor:
+														getEventColor(
+															userEvent.description
+														),
+													borderLeftWidth: 5,
+													borderLeftStyle: "solid",
+												}}
 												sx={{
 													width: "100%",
 													marginBottom: 2,
@@ -342,11 +437,16 @@ export default function Admin() {
 														boxShadow: 6,
 													},
 												}}
-												onClick={() =>
-													setSelectedEvent(userEvent)
-												} // Edit on click
+												onClick={() => {
+													setSelectedEvent(userEvent);
+													setChat({ open: false });
+												}} // Edit on click
 											>
-												<CardContent>
+												<CardContent
+													style={{
+														paddingBottom: "16px",
+													}}
+												>
 													<Typography
 														variant="h6"
 														gutterBottom
@@ -364,7 +464,8 @@ export default function Admin() {
 														} ${
 															getUserById(
 																userEvent.user_id
-															).first_name || "N/A"
+															).first_name ||
+															"N/A"
 														} ${
 															getUserById(
 																userEvent.user_id
@@ -374,7 +475,9 @@ export default function Admin() {
 													<Typography
 														variant="body2"
 														color="textSecondary"
-														sx={{ paddingTop: "5px" }}
+														sx={{
+															paddingTop: "5px",
+														}}
 													>
 														{userEvent.description}
 													</Typography>
@@ -407,9 +510,15 @@ export default function Admin() {
 												boxShadow: 6,
 											},
 										}}
-										onClick={() => setSelectedUser(userMap)}
+										onClick={() => {
+											setSelectedEvent(userMap);
+											setChat({ open: false });
+										}}
 									>
 										<CardContent
+											style={{
+												paddingBottom: "16px",
+											}}
 											sx={{
 												display: "flex",
 												alignItems: "center",
@@ -437,266 +546,336 @@ export default function Admin() {
 			</Box>
 
 			{/* Main Content */}
-			<Box
-				sx={{
-					flex: 1,
-					padding: 3,
-					overflowY: "auto",
-				}}
-			>
-				{(tabValue === 0 || tabValue === 1) &&
-					(selectedEvent ? (
-						<Card
-							key={selectedEvent.id}
-							sx={{
-								padding: 3,
-								boxShadow: 3,
-								borderRadius: 2,
-								marginBottom: 2,
-							}}
-						>
-							<CardContent>
-								<Typography variant="h4" gutterBottom>
-									{selectedEvent.title}
-								</Typography>
-								<Typography
-									variant="h6"
-									color="textSecondary"
-									gutterBottom
-								>
-									{` Submitted By: ${
-										getUserById(selectedEvent.user_id)
-											.rank || "N/A"
-									} ${
-										getUserById(selectedEvent.user_id)
-											.first_name || "N/A"
-									} ${
-										getUserById(selectedEvent.user_id)
-											.last_name || "N/A"
-									}`}
-								</Typography>
-								{selectedEvent.admin_id && (
+			{chat.open ? (
+				<Box
+					sx={{
+						flex: 1,
+						padding: 3,
+					}}
+				>
+					<Chat id={chat.id} />
+				</Box>
+			) : (
+				<Box
+					sx={{
+						flex: 1,
+						padding: 3,
+						overflowY: "auto",
+					}}
+				>
+					{(tabValue === 0 || tabValue === 1) &&
+						(selectedEvent ? (
+							<Card
+								key={selectedEvent.id}
+								style={{
+									borderLeftColor: getEventColor(
+										selectedEvent.description
+									),
+									borderLeftWidth: 10,
+									borderLeftStyle: "solid",
+								}}
+								sx={{
+									padding: "16px",
+									boxShadow: 3,
+									borderRadius: 2,
+									marginBottom: 2,
+								}}
+							>
+								<CardContent sx={{ padding: 0 }}>
+									<Box
+										sx={{
+											display: "flex",
+											justifyContent: "space-between",
+											alignItems: "center",
+										}}
+									>
+										<Typography variant="h4" gutterBottom>
+											{selectedEvent.title}
+											{selectedEvent.chat_id}
+										</Typography>
+										{selectedEvent.chat_id ? (
+											<Tooltip title="Open chat">
+												<ChatIcon
+													onClick={() =>
+														handleChat(
+															selectedEvent
+														)
+													}
+													sx={{
+														cursor: "pointer",
+														marginTop: "-15px",
+													}}
+												/>
+											</Tooltip>
+										) : (
+											<Tooltip title="Open new chat">
+												<ChatBubble
+													onClick={() =>
+														handleChat(
+															selectedEvent
+														)
+													}
+													sx={{
+														cursor: "pointer",
+														marginTop: "-15px",
+													}}
+												/>
+											</Tooltip>
+										)}
+									</Box>
 									<Typography
 										variant="h6"
 										color="textSecondary"
 										gutterBottom
 									>
-										{` Approved By: ${
-											getUserById(selectedEvent.admin_id)
+										{` Submitted By: ${
+											getUserById(selectedEvent.user_id)
 												.rank || "N/A"
 										} ${
-											getUserById(selectedEvent.admin_id)
+											getUserById(selectedEvent.user_id)
 												.first_name || "N/A"
 										} ${
-											getUserById(selectedEvent.admin_id)
+											getUserById(selectedEvent.user_id)
 												.last_name || "N/A"
 										}`}
 									</Typography>
-								)}
-								<Typography variant="body1" gutterBottom>
-									Status:{" "}
-									{selectedEvent.status.replace(
-										/^./,
-										(match) => match.toUpperCase()
+									{selectedEvent.admin_id && (
+										<Typography
+											variant="h6"
+											color="textSecondary"
+											gutterBottom
+										>
+											{` Approved By: ${
+												getUserById(
+													selectedEvent.admin_id
+												).rank || "N/A"
+											} ${
+												getUserById(
+													selectedEvent.admin_id
+												).first_name || "N/A"
+											} ${
+												getUserById(
+													selectedEvent.admin_id
+												).last_name || "N/A"
+											}`}
+										</Typography>
 									)}
-								</Typography>
-								{selectedEvent.user_message && (
 									<Typography variant="body1" gutterBottom>
-										User Message:{" "}
-										{selectedEvent.user_message}
+										Status:{" "}
+										{selectedEvent.status.replace(
+											/^./,
+											(match) => match.toUpperCase()
+										)}
 									</Typography>
-								)}
-								{selectedEvent.admin_message && (
-									<Typography variant="body1" gutterBottom>
-										Admin Message:{" "}
-										{selectedEvent.admin_message}
+									{selectedEvent.user_message && (
+										<Typography
+											variant="body1"
+											gutterBottom
+										>
+											User Message:{" "}
+											{selectedEvent.user_message}
+										</Typography>
+									)}
+									{selectedEvent.admin_message && (
+										<Typography
+											variant="body1"
+											gutterBottom
+										>
+											Admin Message:{" "}
+											{selectedEvent.admin_message}
+										</Typography>
+									)}
+									<Typography variant="body2" gutterBottom>
+										{selectedEvent.description}
 									</Typography>
+									<Typography
+										variant="body2"
+										color="textSecondary"
+										gutterBottom
+									>
+										Start Date:{" "}
+										{formatTimestamp(
+											selectedEvent.start_date
+										)}
+									</Typography>
+									<Typography
+										variant="body2"
+										color="textSecondary"
+										gutterBottom
+									>
+										End Date:{" "}
+										{formatTimestamp(
+											selectedEvent.end_date
+										)}
+									</Typography>
+								</CardContent>
+								{tabValue === 1 && (
+									<Box
+										sx={{
+											display: "flex",
+											justifyContent: "space-between",
+											marginTop: 2,
+										}}
+									>
+										<Button
+											variant="contained"
+											color="success"
+											onClick={() =>
+												setDialog({
+													open: true,
+													event: selectedEvent,
+													status: "approved",
+												})
+											}
+										>
+											Approve
+										</Button>
+										<Button
+											variant="contained"
+											color="error"
+											onClick={() =>
+												setDialog({
+													open: true,
+													event: selectedEvent,
+													status: "denied",
+												})
+											}
+										>
+											Deny
+										</Button>
+									</Box>
 								)}
-								<Typography variant="body2" gutterBottom>
-									{selectedEvent.description}
-								</Typography>
-								<Typography
-									variant="body2"
-									color="textSecondary"
-									gutterBottom
-								>
-									Start Date:{" "}
-									{formatTimestamp(selectedEvent.start_date)}
-								</Typography>
-								<Typography
-									variant="body2"
-									color="textSecondary"
-									gutterBottom
-								>
-									End Date:{" "}
-									{formatTimestamp(selectedEvent.end_date)}
-								</Typography>
-							</CardContent>
-							{tabValue === 1 && (
-								<Box
-									sx={{
-										display: "flex",
-										justifyContent: "space-between",
-										marginTop: 2,
-									}}
-								>
-									<Button
-										variant="contained"
-										color="success"
-										onClick={() =>
-											setDialog({
-												open: true,
-												event: selectedEvent,
-												status: "approved",
-											})
-										}
-									>
-										Approve
-									</Button>
-									<Button
-										variant="contained"
-										color="error"
-										onClick={() =>
-											setDialog({
-												open: true,
-												event: selectedEvent,
-												status: "denied",
-											})
-										}
-									>
-										Deny
-									</Button>
-								</Box>
-							)}
-						</Card>
-					) : (
-						<Typography variant="h6" color="textSecondary">
-							Select an event to view.
-						</Typography>
-					))}
-				{tabValue === 2 &&
-					(selectedUser ? (
-						<Card
-							sx={{
-								padding: 3,
-								boxShadow: 3,
-								borderRadius: 2,
-								marginBottom: 2,
-							}}
-						>
-							<CardContent>
-								<Typography variant="h4" gutterBottom>
-									{selectedUser.rank}{" "}
-									{selectedUser.first_name}{" "}
-									{selectedUser.last_name}'s Details
-								</Typography>
-								<Typography variant="body2" gutterBottom>
-									First Name: {selectedUser.first_name}
-								</Typography>
-								<Typography variant="body2" gutterBottom>
-									Last Name: {selectedUser.last_name}
-								</Typography>
-								<Typography variant="body2" gutterBottom>
-									Rank: {selectedUser.rank}
-								</Typography>
-								<Typography variant="body2" gutterBottom>
-									Email: {selectedUser.email}
-								</Typography>
-								<Typography variant="body2" gutterBottom>
-									Duty Phone: {selectedUser.phone}
-								</Typography>
-								<Typography variant="body2" gutterBottom>
-									Organization: {selectedUser.organization}
-								</Typography>
-								<Typography variant="body2" gutterBottom>
-									Crew: {selectedUser.crew}
-								</Typography>
-								<Typography variant="body2" gutterBottom>
-									Position: {selectedUser.position}
-								</Typography>
-								<Typography variant="body2" gutterBottom>
-									Role: {selectedUser.permissions}
-								</Typography>
-								<Box
-									sx={{
-										display: "flex",
-										justifyContent: "flex-start",
-										marginTop: 2,
-									}}
-								>
-									<Edit
-										id={selectedUser.id}
-										currentData={selectedUser}
-									/>
-								</Box>
-							</CardContent>
-						</Card>
-					) : (
-						<Typography variant="h6" color="textSecondary">
-							Select a user to view and edit their details.
-						</Typography>
-					))}
-				{dialog.open && (
-					<Dialog
-						open={dialog.open}
-						onClose={() => setDialog({ open: false })}
-					>
-						<DialogTitle
-							sx={{ paddingBottom: "0px" }}
-						>{`${dialog.status.replace(/^./, (match) =>
-							match.toUpperCase()
-						)} - ${dialog.event.title}`}</DialogTitle>
-						<DialogContent sx={{ paddingBottom: "0px" }}>
-							<Typography variant="body2">
-								Leave a message for the user if needed:
+							</Card>
+						) : (
+							<Typography variant="h6" color="textSecondary">
+								Select an event to view.
 							</Typography>
-						</DialogContent>
-						<DialogContent sx={{ paddingBottom: "0px" }}>
-							<TextField
-								margin="dense"
-								name="admin_message"
-								label="Admin Message"
-								type="text"
-								fullWidth
-								multiline
-								rows={4}
-								value={dialog.event.admin_message || ""}
-								onChange={(e) =>
-									setDialog((prev) => ({
-										...prev,
-										event: {
-											...prev.event,
-											admin_message: e.target.value,
-										},
-									}))
-								}
-							/>
-						</DialogContent>
-						<DialogActions>
-							<Button
-								onClick={() => setDialog({ open: false })}
-								color="secondary"
+						))}
+					{tabValue === 2 &&
+						(selectedUser ? (
+							<Card
+								sx={{
+									padding: 0,
+									boxShadow: 3,
+									borderRadius: 2,
+									marginBottom: 2,
+								}}
 							>
-								Cancel
-							</Button>
-							<Button
-								onClick={() =>
-									handleApproveDeny(
-										dialog.event.id,
-										dialog.status,
-										dialog.event.admin_message,
-										user.id
-									)
-								}
-								color="primary"
-								variant="contained"
-							>
-								Save
-							</Button>
-						</DialogActions>
-					</Dialog>
-				)}
-			</Box>
+								<CardContent style={{ paddingBottom: "16px" }}>
+									<Typography variant="h4" gutterBottom>
+										{selectedUser.rank}{" "}
+										{selectedUser.first_name}{" "}
+										{selectedUser.last_name}'s Details
+									</Typography>
+									<Typography variant="body2" gutterBottom>
+										First Name: {selectedUser.first_name}
+									</Typography>
+									<Typography variant="body2" gutterBottom>
+										Last Name: {selectedUser.last_name}
+									</Typography>
+									<Typography variant="body2" gutterBottom>
+										Rank: {selectedUser.rank}
+									</Typography>
+									<Typography variant="body2" gutterBottom>
+										Email: {selectedUser.email}
+									</Typography>
+									<Typography variant="body2" gutterBottom>
+										Duty Phone: {selectedUser.phone}
+									</Typography>
+									<Typography variant="body2" gutterBottom>
+										Organization:{" "}
+										{selectedUser.organization}
+									</Typography>
+									<Typography variant="body2" gutterBottom>
+										Crew: {selectedUser.crew}
+									</Typography>
+									<Typography variant="body2" gutterBottom>
+										Position: {selectedUser.position}
+									</Typography>
+									<Typography variant="body2" gutterBottom>
+										Role: {selectedUser.permissions}
+									</Typography>
+									<Box
+										sx={{
+											display: "flex",
+											justifyContent: "flex-start",
+											marginTop: 2,
+										}}
+									>
+										<Edit
+											id={selectedUser.id}
+											currentData={selectedUser}
+										/>
+									</Box>
+								</CardContent>
+							</Card>
+						) : (
+							<Typography variant="h6" color="textSecondary">
+								Select a user to view and edit their details.
+							</Typography>
+						))}
+					{dialog.open && (
+						<Dialog
+							open={dialog.open}
+							onClose={() => setDialog({ open: false })}
+						>
+							<DialogTitle
+								sx={{ paddingBottom: "0px" }}
+							>{`${dialog.status.replace(/^./, (match) =>
+								match.toUpperCase()
+							)} - ${dialog.event.title}`}</DialogTitle>
+							<DialogContent sx={{ paddingBottom: "0px" }}>
+								<Typography variant="body2">
+									Leave a message for the user if needed:
+								</Typography>
+							</DialogContent>
+							<DialogContent sx={{ paddingBottom: "0px" }}>
+								<TextField
+									margin="dense"
+									name="admin_message"
+									label="Admin Message"
+									type="text"
+									fullWidth
+									multiline
+									rows={4}
+									value={dialog.event.admin_message || ""}
+									onChange={(e) =>
+										setDialog((prev) => ({
+											...prev,
+											event: {
+												...prev.event,
+												admin_message: e.target.value,
+											},
+										}))
+									}
+								/>
+							</DialogContent>
+							<DialogActions>
+								<Button
+									onClick={() => setDialog({ open: false })}
+									color="secondary"
+								>
+									Cancel
+								</Button>
+								<Button
+									onClick={() =>
+										handleApproveDeny(
+											dialog.event.id,
+											dialog.status,
+											dialog.event.admin_message,
+											user.id
+										)
+									}
+									color="primary"
+									variant="contained"
+								>
+									Save
+								</Button>
+							</DialogActions>
+						</Dialog>
+					)}
+				</Box>
+			)}
 		</Box>
 	);
 }

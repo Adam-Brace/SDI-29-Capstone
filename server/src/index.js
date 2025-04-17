@@ -30,18 +30,14 @@ app.use(express.json());
 const userRoute = require("./routes/user");
 const eventsRoute = require("./routes/events");
 const messageRoute = require("./routes/message");
-const { create } = require("domain");
 
 app.use("/user", userRoute);
 app.use("/events", eventsRoute);
 app.use("/message", messageRoute);
 
 io.on("connection", (socket) => {
-	console.log("User connected:", socket.id);
-
 	// Listen for send_message events
 	socket.on("send_message", async (data) => {
-		console.log("Received data:", data);
 		try {
 			// Save the message to the database
 			const [newMessage] = await knex("messages").insert(

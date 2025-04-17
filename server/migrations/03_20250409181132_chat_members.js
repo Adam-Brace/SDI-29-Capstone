@@ -9,6 +9,7 @@ exports.up = function (knex) {
 		table.foreign("chat_id").references("users.id").onDelete("CASCADE");
 		table.integer("user_id");
 		table.foreign("user_id").references("users.id").onDelete("CASCADE");
+		table.boolean("read").defaultTo(false);
 		table.timestamps(true, true);
 	});
 };
